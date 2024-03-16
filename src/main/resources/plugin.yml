@@ -1,0 +1,4 @@
+name: PitRedux
+version: '${project.version}'
+main: me.keegan.pitredux.ThePitRedux
+api-version: '1.16'
