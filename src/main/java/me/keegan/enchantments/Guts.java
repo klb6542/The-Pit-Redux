@@ -1,6 +1,7 @@
 package me.keegan.enchantments;
 
 import me.keegan.utils.enchantUtil;
+import org.bukkit.Material;
 import java.text.MessageFormat;
 
 import static me.keegan.utils.formatUtil.*;
@@ -10,10 +11,9 @@ import static me.keegan.utils.formatUtil.*;
  */
 
 public class Guts extends enchantUtil {
-
     @Override
-    public enchantTypes[] getEnchantType() {
-        return new enchantTypes[]{enchantTypes.SWORD};
+    public Material[] getEnchantMaterial() {
+        return new Material[]{Material.GOLDEN_SWORD};
     }
 
     @Override
@@ -47,6 +47,6 @@ public class Guts extends enchantUtil {
 
     @Override
     public void procEnchant() {
-        // write enchantment code here
+
     }
 }
