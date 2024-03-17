@@ -5,6 +5,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class entityUtil {
     public static @Nullable LivingEntity getDamager(EntityDamageEvent e) {
         if (e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
