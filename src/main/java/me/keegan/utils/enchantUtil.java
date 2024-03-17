@@ -4,14 +4,10 @@ package me.keegan.utils;
  * Copyright (c) 2024. Created by klb.
  */
 
-public abstract class enchantUtil {
-    public enum enchantTypes {
-        SWORD,
-        BOW,
-        PANTS
-    }
+import org.bukkit.Material;
 
-    public abstract enchantTypes[] getEnchantType();
+public abstract class enchantUtil {
+    public abstract Material[] getEnchantMaterial();
     public abstract String getName();
     public abstract String getEnchantName();
     public abstract String[] getEnchantDescription();
