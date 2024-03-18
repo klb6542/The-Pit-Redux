@@ -1,5 +1,6 @@
 package me.keegan.utils;
 
+import me.keegan.enchantments.Guts;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,8 +12,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static me.keegan.utils.formatUtil.*;
+import static me.keegan.utils.romanUtil.*;
+
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
 
 public class mysticUtil implements CommandExecutor {
     private final List<enchantUtil> enchants = new ArrayList<>();
@@ -38,17 +48,37 @@ public class mysticUtil implements CommandExecutor {
         return this.enchants;
     }
 
-    public Boolean hasEnchant(ItemStack itemStack, String enchantName) {
+    public Boolean hasEnchant(ItemStack itemStack, enchantUtil enchant) {
         List<String> lore = this.getItemLore(itemStack);
 
-        return lore != null && lore.stream().anyMatch(s -> s.contains(enchantName));
+        return lore != null && lore.stream().anyMatch(s -> s.contains(enchant.getName()));
     }
 
-    public void addEnchant(ItemStack itemStack, String enchantName, Integer enchantLevel) {
+    public void addEnchant(ItemStack itemStack, enchantUtil enchant, Integer enchantLevel) {
+        if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the sword!"); return; }
+        if (itemStack.getItemMeta() == null) { return; }
 
+        enchantLevel = (enchantLevel - 1 < enchant.getMaxLevel()) ? enchantLevel : 1; // fix
+        List<String> lore = (this.getItemLore(itemStack) != null) ? this.getItemLore(itemStack) : new ArrayList<>();
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        String name = (enchant.isRareEnchant())
+                ? MessageFormat.format("{0}RARE! {1}{2} {3}", lightPurple, blue, enchant.getName(), integerToRoman(enchantLevel))
+                : MessageFormat.format("{0}{1} {2}", blue, enchant.getName(), integerToRoman(enchantLevel));
+        String description = enchant.getEnchantDescription()[enchantLevel - 1];
+
+        if (!lore.isEmpty()) {
+            lore.add("");
+        }
+
+        lore.add(name);
+        lore.add(description);
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 
-    public void removeEnchant(ItemStack itemStack, String enchantName) {
+    public void removeEnchant(ItemStack itemStack, enchantUtil enchant) {
 
     }
 
@@ -85,21 +115,11 @@ public class mysticUtil implements CommandExecutor {
         ThePitRedux.getPlugin().getLogger().info("YOO S");
 
         ItemStack itemStack = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        assert itemMeta != null;
 
-        List<String> lore = new ArrayList<>();
-        lore.add("Hello, world!");
-        lore.add("This is some");
-        lore.add(ChatColor.GREEN + "Cool");
-        lore.add("lore!");
-
-        itemMeta.setLore(lore);
-        itemStack.setItemMeta(itemMeta);
+        this.addEnchant(itemStack, new Guts(), 3);
+        this.addEnchant(itemStack, new Guts(), 2);
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack);
-
-        List<String> theLore = this.getItemLore(itemStack);
 
         return true;
     }
