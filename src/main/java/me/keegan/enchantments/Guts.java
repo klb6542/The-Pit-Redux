@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.text.MessageFormat;
@@ -46,7 +45,7 @@ public class Guts extends enchantUtil {
 
     @Override
     public Integer getMaxLevel() {
-        return this.healingPerLevel.length;
+        return this.getEnchantDescription().length;
     }
 
     @Override
