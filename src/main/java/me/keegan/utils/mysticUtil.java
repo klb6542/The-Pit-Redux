@@ -2,7 +2,6 @@ package me.keegan.utils;
 
 import me.keegan.enchantments.Guts;
 import me.keegan.pitredux.ThePitRedux;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
