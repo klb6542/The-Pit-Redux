@@ -3,6 +3,7 @@ package me.keegan.pitredux;
 import me.keegan.enchantments.Guts;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.playerDamageHandler;
+import me.keegan.utils.mysticUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -12,13 +13,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class ThePitRedux extends JavaPlugin {
     private static ThePitRedux plugin;
 
-    private void registerEvents() {
+    private void registerListeners() {
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new entityDamageHandler(), this);
     }
 
-    private void registerEnchantments() {
-        getServer().getPluginManager().registerEvents(new Guts(), this);
+    private void registerEnchants() {
+        mysticUtil mysticUtilInstance = me.keegan.utils.mysticUtil.getInstance();
+
+        mysticUtilInstance.registerEnchant(new Guts());
+    }
+
+    private void registerCommands() {
+        getCommand("hello").setExecutor(new mysticUtil());
     }
 
     @Override
@@ -26,8 +33,9 @@ public final class ThePitRedux extends JavaPlugin {
         plugin = this;
         getLogger().info("Hello, world");
 
-        registerEnchantments();
-        registerEvents();
+        registerEnchants(); // also registers the event listeners
+        registerListeners();
+        registerCommands();
     }
 
     @Override

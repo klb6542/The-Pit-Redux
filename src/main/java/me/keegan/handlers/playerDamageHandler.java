@@ -11,15 +11,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
  */
 
 public class playerDamageHandler implements Listener {
-
-
     @EventHandler(priority = EventPriority.HIGHEST) // executed last
     public void playerDamaged(EntityDamageByEntityEvent e) {
        // Entity player = e.getEntity();
        // if (!(player instanceof Player)) { return; }
 
-        ThePitRedux.getPlugin().getLogger().info(String.valueOf(e.getDamage()));
-        ThePitRedux.getPlugin().getLogger().info(String.valueOf(e.getFinalDamage()));
         ThePitRedux.getPlugin().getLogger().info("Priority High");
         e.setDamage(0);
     }

@@ -1,5 +1,6 @@
 package me.keegan.enchantments;
 
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -16,7 +17,7 @@ import static me.keegan.utils.formatUtil.*;
  * Copyright (c) 2024. Created by klb.
  */
 
-public class Guts extends enchantUtil implements Listener {
+public class Guts extends enchantUtil {
     private final Double[] healingPerLevel = new Double[]{0.25, 0.5, 1.0};
 
     @Override
@@ -54,8 +55,8 @@ public class Guts extends enchantUtil implements Listener {
     }
 
     @Override
-    public void procEnchant(LivingEntity damaged, LivingEntity damager, Object... args) {
-
+    public void executeEnchant(LivingEntity damaged, LivingEntity damager, EntityDamageByEntityEvent e, Object... args) {
+        ThePitRedux.getPlugin().getLogger().info(damager.getName() + " attacked a living entity!");
     }
 
     @EventHandler
@@ -64,7 +65,8 @@ public class Guts extends enchantUtil implements Listener {
         Entity damager = e.getDamager();
 
         if (!(damaged instanceof LivingEntity) || !(damager instanceof  LivingEntity)) { return; }
+        Object[] args = new Object[]{};
 
-
+        this.attemptEnchantExecution((LivingEntity) damaged, (LivingEntity) damager, e, args);
     }
 }
