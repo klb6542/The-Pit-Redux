@@ -14,7 +14,7 @@ public abstract class enchantUtil implements Listener {
     public abstract String getName();
     public abstract String getEnchantName();
     public abstract String[] getEnchantDescription();
-    public abstract Number getMaxLevel();
+    public abstract Integer getMaxLevel();
     public abstract boolean isRareEnchant();
     public abstract void executeEnchant(LivingEntity damaged, LivingEntity damager, EntityDamageByEntityEvent e, Object... args);
 
