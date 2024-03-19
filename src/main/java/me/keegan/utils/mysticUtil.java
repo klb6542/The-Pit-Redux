@@ -155,7 +155,7 @@ public class mysticUtil implements CommandExecutor {
     }
 
     public void addEnchant(ItemStack itemStack, enchantUtil enchant, Integer enchantLevel) {
-        //if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the item!"); return; }
+        if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the item!"); return; }
 
         enchantLevel = Math.max(1, Math.min(3, enchantLevel));; // fix (basically Math.clamp(1, 3, enchantLevel))
         List<String> lore = (this.getItemLore(itemStack) != null) ? this.getItemLore(itemStack) : new ArrayList<>();
