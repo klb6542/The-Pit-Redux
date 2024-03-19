@@ -18,6 +18,7 @@ import java.util.List;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
+import static org.bukkit.Material.*;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -31,6 +32,36 @@ public class mysticUtil implements CommandExecutor {
 
     public static mysticUtil getInstance() {
         return new mysticUtil();
+    }
+
+    private @Nullable List<String> getItemLore(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) { return null; }
+
+        return (itemMeta.hasLore()) ? itemMeta.getLore() : null;
+    }
+
+    private Integer getEnchantIndex(ItemStack itemStack, enchantUtil enchant, List<String> lore) {
+        // returns the index where the enchantment is
+        for (int i = 0; i < lore.size(); i++) {
+            if (!lore.get(i).contains(blue + enchant.getName())) { continue; }
+
+            return i;
+        }
+
+        return -1;
+    }
+
+    private Boolean containsEnchant(List<String> lore, Integer loreIndex, Iterator iterator) {
+        // used only for getEnchantCount method & getTokens method
+        while (iterator.hasNext()) {
+            enchantUtil enchant = (enchantUtil) iterator.next();
+            if (!lore.get(loreIndex).contains(blue + enchant.getName())) { continue; }
+
+            return true;
+        }
+
+        return false;
     }
 
     public void registerEnchant(enchantUtil enchant) {
@@ -59,36 +90,6 @@ public class mysticUtil implements CommandExecutor {
         return enchants;
     }
 
-    private @Nullable List<String> getItemLore(ItemStack itemStack) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) { return null; }
-
-        return (itemMeta.hasLore()) ? itemMeta.getLore() : null;
-    }
-
-    private Integer getEnchantIndex(ItemStack itemStack, enchantUtil enchant, List<String> lore) {
-        // returns the index where the enchantment is
-        for (int i = 0; i < lore.size(); i++) {
-            if (!lore.get(i).contains(enchant.getName())) { continue; }
-
-            return i;
-        }
-
-        return -1;
-    }
-
-    private Boolean containsEnchant(List<String> lore, Integer loreIndex, Iterator iterator) {
-        // used only for getEnchantCount method
-        while (iterator.hasNext()) {
-            enchantUtil enchant = (enchantUtil) iterator.next();
-            if (!lore.get(loreIndex).contains(blue + enchant.getName())) { continue; }
-
-            return true;
-        }
-
-        return false;
-    }
-
     public Integer getEnchantCount(ItemStack itemStack) {
         List<String> lore = this.getItemLore(itemStack);
         int count = 0;
@@ -114,6 +115,39 @@ public class mysticUtil implements CommandExecutor {
         return count;
     }
 
+    private Integer retrieveEnchantTokens(List<String> lore, Integer enchantIndex) {
+        // used only for getTokens method
+        String[] splitLore = lore.get(enchantIndex).split(" ");
+
+        return romanToInteger(splitLore[splitLore.length - 1]);
+    }
+
+    public Integer getEnchantTokens(ItemStack itemStack) {
+        List<String> lore = this.getItemLore(itemStack);
+        int tokens = 0;
+        if (lore == null) { return tokens; }
+
+        for (int i = 0; i < lore.size(); i++) {
+
+            switch (itemStack.getType()) {
+                case GOLDEN_SWORD:
+                    if (!this.containsEnchant(lore, i, swordEnchants.iterator())) { break; }
+                    tokens += this.retrieveEnchantTokens(lore, i);
+                    break;
+                case BOW:
+                    if (!this.containsEnchant(lore, i, bowEnchants.iterator())) { break; }
+                    tokens += this.retrieveEnchantTokens(lore, i);
+                    break;
+                case LEATHER_LEGGINGS:
+                    if (!this.containsEnchant(lore, i, pantsEnchants.iterator())) { break; }
+                    tokens += this.retrieveEnchantTokens(lore, i);
+                    break;
+            }
+        }
+
+        return tokens;
+    }
+
     public Boolean hasEnchant(ItemStack itemStack, enchantUtil enchant) {
         List<String> lore = this.getItemLore(itemStack);
 
@@ -121,9 +155,9 @@ public class mysticUtil implements CommandExecutor {
     }
 
     public void addEnchant(ItemStack itemStack, enchantUtil enchant, Integer enchantLevel) {
-        if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the item!"); return; }
+        //if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the item!"); return; }
 
-        enchantLevel = (enchantLevel - 1 < enchant.getMaxLevel()) ? enchantLevel : 3; // fix
+        enchantLevel = Math.max(1, Math.min(3, enchantLevel));; // fix (basically Math.clamp(1, 3, enchantLevel))
         List<String> lore = (this.getItemLore(itemStack) != null) ? this.getItemLore(itemStack) : new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -174,9 +208,8 @@ public class mysticUtil implements CommandExecutor {
         if (enchantIndex == -1) { return 0; }
 
         String[] splitLore = lore.get(enchantIndex).split(" ");
-        String romanEnchantLevel = splitLore[splitLore.length - 1];
 
-        return romanToInteger(romanEnchantLevel);
+        return romanToInteger(splitLore[splitLore.length - 1]);
     }
 
     public void addLives(ItemStack itemStack, Integer lives) {
@@ -203,15 +236,14 @@ public class mysticUtil implements CommandExecutor {
         return 0;
     }
 
-    public Integer getTokens(ItemStack itemStack) {
-        return 0;
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        ItemStack itemStack = new ItemStack(Material.GOLDEN_SWORD);
+        ItemStack itemStack = new ItemStack(GOLDEN_SWORD);
 
-        this.addEnchant(itemStack, new Guts(), 1);
+        this.addEnchant(itemStack, new Guts(), 2);
+        this.addEnchant(itemStack, new Guts(), 0);
+        this.addEnchant(itemStack, new Guts(), 5);
+        ThePitRedux.getPlugin().getLogger().info(String.valueOf(this.getEnchantTokens(itemStack)) + " is the amount of tokens!");
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack);
         return true;
