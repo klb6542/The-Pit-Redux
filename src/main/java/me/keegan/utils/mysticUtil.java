@@ -167,7 +167,16 @@ public class mysticUtil implements CommandExecutor {
     }
 
     public Integer getEnchantLevel(ItemStack itemStack, enchantUtil enchant) {
-        return 0;
+        List<String> lore = this.getItemLore(itemStack);
+        if (lore == null) { return 0; }
+
+        Integer enchantIndex = this.getEnchantIndex(itemStack, enchant, lore);
+        if (enchantIndex == -1) { return 0; }
+
+        String[] splitLore = lore.get(enchantIndex).split(" ");
+        String romanEnchantLevel = splitLore[splitLore.length - 1];
+
+        return romanToInteger(romanEnchantLevel);
     }
 
     public void addLives(ItemStack itemStack, Integer lives) {
