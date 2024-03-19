@@ -1,9 +1,5 @@
 package me.keegan.utils;
 
-/*
- * Copyright (c) 2024. Created by klb.
- */
-
 public class romanUtil {
     public static String integerToRoman(Integer number, Boolean removeRomanOne) {
         String[] thousands = {"", "M", "MM", "MMM"};
@@ -14,5 +10,18 @@ public class romanUtil {
         String romanNumber = thousands[number / 1000] + hundreds[(number % 1000) / 100] + tens[(number % 100) / 10] + units[number % 10];
 
         return (romanNumber.equals("I") && removeRomanOne) ? "" : romanNumber;
+    }
+
+    public static Integer romanToInteger(String romanNumber) {
+
+        switch (romanNumber) {
+            case "II":
+                return 2;
+            case "III":
+                return 3;
+            default:
+                return 1;
+        }
+
     }
 }
