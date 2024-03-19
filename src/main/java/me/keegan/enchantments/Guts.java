@@ -1,12 +1,10 @@
 package me.keegan.enchantments;
 
-import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.text.MessageFormat;
 
@@ -17,7 +15,7 @@ import static me.keegan.utils.formatUtil.*;
  */
 
 public class Guts extends enchantUtil {
-    private final Double[] healingPerLevel = new Double[]{0.25, 0.5, 1.0};
+    private final Double[] healingPerLevel = new Double[]{0.5, 1.0, 2.0};
 
     @Override
     public Material[] getEnchantMaterial() {
@@ -49,18 +47,26 @@ public class Guts extends enchantUtil {
     }
 
     @Override
-    public void executeEnchant(LivingEntity damaged, LivingEntity damager, EntityDamageByEntityEvent e, Object... args) {
-        ThePitRedux.getPlugin().getLogger().info(damager.getName() + " attacked a living entity!");
+    public void executeEnchant(Object... args) {
+        int enchantLevel = (int) args[2];
+
+        EntityDeathEvent e = (EntityDeathEvent) args[0];
+        LivingEntity killer = e.getEntity().getKiller();
+
+        this.heal(killer, healingPerLevel[enchantLevel]);
     }
 
     @EventHandler
-    public void entityDamaged(EntityDamageByEntityEvent e) {
-        Entity damaged = e.getEntity();
-        Entity damager = e.getDamager();
+    public void entityKilled(EntityDeathEvent e) {
+        LivingEntity damaged = e.getEntity();
+        if (damaged.getKiller() == null) { return; }
 
-        if (!(damaged instanceof LivingEntity) || !(damager instanceof  LivingEntity)) { return; }
-        Object[] args = new Object[]{};
+        Object[] args = new Object[]{
+                e,
+                damaged.getKiller().getInventory().getItemInMainHand(),
+                this
+        };
 
-        this.attemptEnchantExecution((LivingEntity) damaged, (LivingEntity) damager, e, args);
+        this.attemptEnchantExecution(args);
     }
 }
