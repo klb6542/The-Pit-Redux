@@ -16,7 +16,7 @@ public class playerDamageHandler implements Listener {
        // Entity player = e.getEntity();
        // if (!(player instanceof Player)) { return; }
 
-        ThePitRedux.getPlugin().getLogger().info("Priority High");
-        e.setDamage(0);
+       // ThePitRedux.getPlugin().getLogger().info("Priority High");
+       // e.setDamage(0);
     }
 }
