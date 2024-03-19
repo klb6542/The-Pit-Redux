@@ -30,11 +30,6 @@ public class Guts extends enchantUtil {
     }
 
     @Override
-    public String getEnchantName() {
-        return this.getName();
-    }
-
-    @Override
     public String[] getEnchantDescription() {
         return new String[]{
                 MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, healingPerLevel[0]),

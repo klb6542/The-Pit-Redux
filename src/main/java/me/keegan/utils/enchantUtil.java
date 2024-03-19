@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 public abstract class enchantUtil implements Listener {
     public abstract Material[] getEnchantMaterial();
     public abstract String getName();
-    public abstract String getEnchantName();
     public abstract String[] getEnchantDescription();
     public abstract Integer getMaxLevel();
     public abstract boolean isRareEnchant();
