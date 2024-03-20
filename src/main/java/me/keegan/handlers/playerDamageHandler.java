@@ -55,9 +55,9 @@ public class playerDamageHandler implements Listener {
     }
 
     private void resetDamageValues(EntityDamageByEntityEvent e) {
-        this.multiplicativeDamage.put(e, 1.0);
-        this.additiveDamage.put(e, 0.0);
-        this.reductionDamage.put(e, 0.0);
+        this.multiplicativeDamage.remove(e);
+        this.multiplicativeDamage.remove(e);
+        this.multiplicativeDamage.remove(e);
     }
 
     public void addMultiplicativeDamage(EntityDamageByEntityEvent e, Double damage) {
