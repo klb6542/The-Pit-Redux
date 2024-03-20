@@ -41,8 +41,10 @@ public class playerDamageHandler implements Listener {
 
         if (this.additiveDamage == 0.0 && this.reductionDamage == 0.0) { return finalDamage; }
 
-        double enchantAdditivePercent = (this.additiveDamage < this.reductionDamage) ? this.reductionDamage - this.additiveDamage : this.additiveDamage - this.reductionDamage;
-        double enchantAdditive = Math.abs(enchantAdditivePercent) * finalDamage; // -50.0% * 5 = -2.5 reduction | 50.0% * 5 = 2.5 damage
+        double enchantAdditivePercent = (this.additiveDamage < this.reductionDamage)
+                ? (this.reductionDamage - this.additiveDamage) / 100
+                : (this.additiveDamage - this.reductionDamage) / 100;
+        double enchantAdditive = Math.abs(enchantAdditivePercent) * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
 
         // new damage cannot be negative, so use Math.max
         return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive) : finalDamage + enchantAdditive;
