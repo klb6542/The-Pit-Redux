@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public abstract class enchantUtil implements Listener {
     public abstract Material[] getEnchantMaterial();
@@ -20,6 +22,11 @@ public abstract class enchantUtil implements Listener {
     // below is included incase there is an enchantment to reduce/cancel healing or any other methods
     public void heal(LivingEntity entity, Double amount) {
         entity.setHealth(entity.getHealth() + amount);
+    }
+
+    public void setSpeed(LivingEntity entity, Integer amplifier, Integer duration) {
+        // times 20 because 20 ticks = 1 second
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration * 20, amplifier));
     }
 
     /*
