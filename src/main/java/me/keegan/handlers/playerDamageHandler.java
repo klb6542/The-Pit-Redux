@@ -6,6 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+
+import java.util.HashMap;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -13,9 +16,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class playerDamageHandler implements Listener {
     private static playerDamageHandler instance;
-    private Double multiplicativeDamage = 1.0;
-    private Double additiveDamage = 0.0;
-    private Double reductionDamage = 0.0;
+    private final HashMap<EntityDamageEvent, Double> multiplicativeDamage = new HashMap<>();
+    private final HashMap<EntityDamageEvent, Double> additiveDamage = new HashMap<>();
+    private final HashMap<EntityDamageEvent, Double> reductionDamage = new HashMap<>();
 
     public static playerDamageHandler getInstance() {
         if (instance == null) {
@@ -25,7 +28,7 @@ public class playerDamageHandler implements Listener {
         return instance;
     }
 
-    private Double calculateNewDamage(Double finalDamage) {
+    private Double calculateNewDamage(EntityDamageByEntityEvent e, Double finalDamage) {
         /*
          * Damage is calculated additively.
          * How damage works:
@@ -39,43 +42,44 @@ public class playerDamageHandler implements Listener {
          * Multiplicative damage is not in The Hypixel Pit.
          */
 
-        if (this.additiveDamage == 0.0 && this.reductionDamage == 0.0) { return finalDamage; }
+        if (this.additiveDamage.getOrDefault(e, 0.0) == 0.0 && this.reductionDamage.getOrDefault(e, 0.0) == 0.0) { return finalDamage; }
 
-        double enchantAdditivePercent = (this.additiveDamage < this.reductionDamage)
-                ? (this.reductionDamage - this.additiveDamage) / 100
-                : (this.additiveDamage - this.reductionDamage) / 100;
+        double enchantAdditivePercent
+                = (this.additiveDamage.getOrDefault(e, 0.0) < this.reductionDamage.getOrDefault(e, 0.0))
+                ? (this.reductionDamage.getOrDefault(e, 0.0) - this.additiveDamage.getOrDefault(e, 0.0)) / 100
+                : (this.additiveDamage.getOrDefault(e, 0.0) - this.reductionDamage.getOrDefault(e, 0.0)) / 100;
         double enchantAdditive = Math.abs(enchantAdditivePercent) * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
 
         // new damage cannot be negative, so use Math.max
         return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive) : finalDamage + enchantAdditive;
     }
 
-    private void resetDamageValues() {
-        this.multiplicativeDamage = 1.0;
-        this.additiveDamage = 0.0;
-        this.reductionDamage = 0.0;
+    private void resetDamageValues(EntityDamageByEntityEvent e) {
+        this.multiplicativeDamage.put(e, 1.0);
+        this.additiveDamage.put(e, 0.0);
+        this.reductionDamage.put(e, 0.0);
     }
 
-    public void addMultiplicativeDamage(Double damage) {
-        this.multiplicativeDamage += damage;
+    public void addMultiplicativeDamage(EntityDamageByEntityEvent e, Double damage) {
+        this.multiplicativeDamage.put(e, this.multiplicativeDamage.getOrDefault(e, 1.0));
     }
 
-    public void addDamage(Double damage) {
-        this.additiveDamage += damage;
+    public void addDamage(EntityDamageByEntityEvent e, Double damage) {
+        this.additiveDamage.put(e, this.additiveDamage.getOrDefault(e, 0.0));
     }
 
-    public void reduceDamage(Double damage) {
-        this.reductionDamage -= damage;
+    public void reduceDamage(EntityDamageByEntityEvent e, Double damage) {
+        this.reductionDamage.put(e, this.reductionDamage.getOrDefault(e, 0.0));
     }
 
     // executed last
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
         LivingEntity entity = (LivingEntity) e.getEntity();
-        Double newFinalDamage = calculateNewDamage(e.getFinalDamage());
+        Double newFinalDamage = calculateNewDamage(e, e.getFinalDamage());
 
         e.setDamage(newFinalDamage);
-        resetDamageValues();
+        resetDamageValues(e);
 
         ThePitRedux.getPlugin().getLogger().info("Priority High");
     }
