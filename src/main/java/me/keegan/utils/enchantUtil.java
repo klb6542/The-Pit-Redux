@@ -4,7 +4,6 @@ package me.keegan.utils;
  * Copyright (c) 2024. Created by klb.
  */
 
-import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Listener;
