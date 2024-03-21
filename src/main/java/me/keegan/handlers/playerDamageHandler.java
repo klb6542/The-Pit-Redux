@@ -1,7 +1,6 @@
 package me.keegan.handlers;
 
 import me.keegan.pitredux.ThePitRedux;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -61,21 +60,20 @@ public class playerDamageHandler implements Listener {
     }
 
     public void addMultiplicativeDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.multiplicativeDamage.put(e, this.multiplicativeDamage.getOrDefault(e, 1.0));
+        this.multiplicativeDamage.put(e, this.multiplicativeDamage.getOrDefault(e, 1.0) + damage);
     }
 
     public void addDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.additiveDamage.put(e, this.additiveDamage.getOrDefault(e, 0.0));
+        this.additiveDamage.put(e, this.additiveDamage.getOrDefault(e, 0.0) + damage);
     }
 
     public void reduceDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.reductionDamage.put(e, this.reductionDamage.getOrDefault(e, 0.0));
+        this.reductionDamage.put(e, this.reductionDamage.getOrDefault(e, 0.0) + damage);
     }
 
     // executed last
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
-        LivingEntity entity = (LivingEntity) e.getEntity();
         Double newFinalDamage = calculateNewDamage(e, e.getFinalDamage());
 
         e.setDamage(newFinalDamage);
