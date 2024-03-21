@@ -5,6 +5,7 @@ package me.keegan.utils;
  */
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +22,7 @@ public abstract class enchantUtil implements Listener {
 
     // below is included incase there is an enchantment to reduce/cancel healing or any other methods
     public void heal(LivingEntity entity, Double amount) {
-        entity.setHealth(entity.getHealth() + amount);
+       entity.setHealth(Math.max(0.0, Math.min(entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), amount + entity.getHealth())));
     }
 
     public void setSpeed(LivingEntity entity, Integer amplifier, Integer duration) {
