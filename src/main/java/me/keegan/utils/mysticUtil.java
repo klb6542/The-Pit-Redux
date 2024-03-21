@@ -187,14 +187,21 @@ public class mysticUtil implements CommandExecutor {
 
         for (int i = 0; i < lore.size(); i++) {
             if (!lore.get(i).contains(enchant.getName())) { // write old enchant lore to new enchant lore
-                newLore.add(i, lore.get(i));
+                newLore.add(newLore.size(), lore.get(i));
+                continue;
             }
 
             for (int j = i; j < lore.size(); j++) { // reaches enchant to skip over
-                if (!lore.get(j).isEmpty()) { i++; }
+                i++; // skipping
 
-                break; // stop loop when reaches end of enchantment description
+                // stop loop when reaches end of enchantment description
+                if (!lore.get(j).isEmpty()) { i++; break; };
             }
+        }
+
+        // delete extra space at end of lore
+        if (!newLore.isEmpty() && newLore.get(newLore.size() - 1).isEmpty()) {
+            newLore.remove(newLore.size() - 1);
         }
 
         itemMeta.setLore(newLore);
@@ -243,6 +250,7 @@ public class mysticUtil implements CommandExecutor {
 
         this.addEnchant(itemStack, new Guts(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
+        this.removeEnchant(itemStack, new Guts());
         ThePitRedux.getPlugin().getLogger().info(String.valueOf(this.getEnchantTokens(itemStack)) + " is the amount of tokens!");
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack);
