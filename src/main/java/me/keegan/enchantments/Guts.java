@@ -47,7 +47,7 @@ public class Guts extends enchantUtil {
     }
 
     @Override
-    public void executeEnchant(Object... args) {
+    public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 
         EntityDeathEvent e = (EntityDeathEvent) args[0];
