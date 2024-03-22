@@ -1,6 +1,8 @@
 package me.keegan.utils;
 
 import me.keegan.enchantments.Guts;
+import me.keegan.enchantments.Lifesteal;
+import me.keegan.enchantments.MegaLongbow;
 import me.keegan.enchantments.SpeedyKill;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Material;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -167,12 +170,18 @@ public class mysticUtil implements CommandExecutor {
                 : MessageFormat.format("{0}{1} {2}", blue, enchant.getName(), integerToRoman(enchantLevel, true));
         String description = enchant.getEnchantDescription()[enchantLevel - 1];
 
+        // do not change this it's okay
         if (!lore.isEmpty()) {
             lore.add("");
         }
 
         lore.add(name);
-        lore.add(description);
+
+        if (description.contains("/n")) {
+            lore.addAll(Arrays.asList(description.split("/n")));
+        }else {
+            lore.add(description);
+        }
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -247,13 +256,16 @@ public class mysticUtil implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ItemStack itemStack = new ItemStack(GOLDEN_SWORD);
-
         this.addEnchant(itemStack, new Guts(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
-        this.removeEnchant(itemStack, new Guts());
+        this.addEnchant(itemStack, new Lifesteal(), 3);
+
+        ItemStack itemStack2 = new ItemStack(BOW);
+        this.addEnchant(itemStack2, new MegaLongbow(),  3);
+
         ThePitRedux.getPlugin().getLogger().info(String.valueOf(this.getEnchantTokens(itemStack)) + " is the amount of tokens!");
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack);
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2);
         return true;
     }
 }
