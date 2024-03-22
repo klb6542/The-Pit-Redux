@@ -27,7 +27,7 @@ public class playerDamageHandler implements Listener {
         return instance;
     }
 
-    private Double calculateNewDamage(EntityDamageByEntityEvent e, Double finalDamage) {
+    public Double calculateNewDamage(EntityDamageByEntityEvent e, Double finalDamage) {
         /*
          * Damage is calculated additively.
          * How damage works:
@@ -57,6 +57,18 @@ public class playerDamageHandler implements Listener {
         this.multiplicativeDamage.remove(e);
         this.multiplicativeDamage.remove(e);
         this.multiplicativeDamage.remove(e);
+    }
+
+    public Double getMultiplicativeDamage(EntityDamageByEntityEvent e) {
+        return this.multiplicativeDamage.getOrDefault(e, 1.0);
+    }
+
+    public Double getDamage(EntityDamageByEntityEvent e) {
+        return this.additiveDamage.getOrDefault(e, 0.0);
+    }
+
+    public Double getReductionDamage(EntityDamageByEntityEvent e) {
+        return this.reductionDamage.getOrDefault(e, 0.0);
     }
 
     public void addMultiplicativeDamage(EntityDamageByEntityEvent e, Double damage) {
