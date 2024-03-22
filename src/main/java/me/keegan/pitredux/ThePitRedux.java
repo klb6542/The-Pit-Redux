@@ -1,6 +1,8 @@
 package me.keegan.pitredux;
 
 import me.keegan.enchantments.Guts;
+import me.keegan.enchantments.Lifesteal;
+import me.keegan.enchantments.MegaLongbow;
 import me.keegan.enchantments.SpeedyKill;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.playerDamageHandler;
@@ -24,6 +26,8 @@ public final class ThePitRedux extends JavaPlugin {
 
         mysticUtilInstance.registerEnchant(new Guts());
         mysticUtilInstance.registerEnchant(new SpeedyKill());
+        mysticUtilInstance.registerEnchant(new Lifesteal());
+        mysticUtilInstance.registerEnchant(new MegaLongbow());
     }
 
     private void registerCommands() {
