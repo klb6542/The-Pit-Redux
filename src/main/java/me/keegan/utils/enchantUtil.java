@@ -40,6 +40,14 @@ public abstract class enchantUtil implements Listener {
         entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration * 20, amplifier));
     }
 
+    public boolean isOnCooldown(Object e) {
+        return this.cooldown.containsKey(e.getClass().cast(e));
+    }
+
+    public void addCooldown(Object e, UUID uuid, Integer duration) {
+        cooldown.put(e.getClass().cast(e), uuid);
+    }
+
     /*
      * Object[] args contains:
 
