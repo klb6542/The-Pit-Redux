@@ -1,11 +1,7 @@
 package me.keegan.utils;
 
-import me.keegan.enchantments.Guts;
-import me.keegan.enchantments.Lifesteal;
-import me.keegan.enchantments.MegaLongbow;
-import me.keegan.enchantments.SpeedyKill;
+import me.keegan.enchantments.*;
 import me.keegan.pitredux.ThePitRedux;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -256,7 +252,7 @@ public class mysticUtil implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ItemStack itemStack = new ItemStack(GOLDEN_SWORD);
-        this.addEnchant(itemStack, new Guts(), 3);
+        this.addEnchant(itemStack, new Perun(), 2);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
 
