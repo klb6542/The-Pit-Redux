@@ -18,6 +18,7 @@ public class playerDamageHandler implements Listener {
     private final HashMap<EntityDamageEvent, Double> multiplicativeDamage = new HashMap<>();
     private final HashMap<EntityDamageEvent, Double> additiveDamage = new HashMap<>();
     private final HashMap<EntityDamageEvent, Double> reductionDamage = new HashMap<>();
+    private final HashMap<EntityDamageEvent, Double> trueDamage = new HashMap<>();
 
     public static playerDamageHandler getInstance() {
         if (instance == null) {
@@ -27,7 +28,7 @@ public class playerDamageHandler implements Listener {
         return instance;
     }
 
-    public Double calculateNewDamage(EntityDamageByEntityEvent e, Double finalDamage) {
+    public Double calculateNewDamage(EntityDamageByEntityEvent e, double finalDamage) {
         /*
          * Damage is calculated additively.
          * How damage works:
@@ -53,10 +54,16 @@ public class playerDamageHandler implements Listener {
         return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive) : finalDamage + enchantAdditive;
     }
 
+    public Double calculateTrueDamage(EntityDamageByEntityEvent e) {
+        // implements mirrors later on
+        return this.getTrueDamage(e);
+    }
+
     private void resetDamageValues(EntityDamageByEntityEvent e) {
         this.multiplicativeDamage.remove(e);
         this.multiplicativeDamage.remove(e);
         this.multiplicativeDamage.remove(e);
+        this.trueDamage.remove(e);
     }
 
     public Double getMultiplicativeDamage(EntityDamageByEntityEvent e) {
@@ -67,30 +74,42 @@ public class playerDamageHandler implements Listener {
         return this.additiveDamage.getOrDefault(e, 0.0);
     }
 
+    public Double getTrueDamage(EntityDamageByEntityEvent e) {
+        return this.trueDamage.getOrDefault(e, 0.0);
+    }
+
     public Double getReductionDamage(EntityDamageByEntityEvent e) {
         return this.reductionDamage.getOrDefault(e, 0.0);
     }
 
-    public void addMultiplicativeDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.multiplicativeDamage.put(e, this.multiplicativeDamage.getOrDefault(e, 1.0) + damage);
+    public void addMultiplicativeDamage(EntityDamageByEntityEvent e, double damage) {
+        this.multiplicativeDamage.put(e, this.getMultiplicativeDamage(e) + damage);
     }
 
-    public void addDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.additiveDamage.put(e, this.additiveDamage.getOrDefault(e, 0.0) + damage);
+    public void addDamage(EntityDamageByEntityEvent e, double damage) {
+        this.additiveDamage.put(e, this.getDamage(e) + damage);
     }
 
-    public void reduceDamage(EntityDamageByEntityEvent e, Double damage) {
-        this.reductionDamage.put(e, this.reductionDamage.getOrDefault(e, 0.0) + damage);
+    public void addTrueDamage(EntityDamageByEntityEvent e, double damage) {
+        this.trueDamage.put(e, this.getTrueDamage(e) + damage);
+        ThePitRedux.getPlugin().getLogger().info(this.trueDamage.get(e) + " is the other true damage");
+    }
+
+    public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
+        this.reductionDamage.put(e, this.getReductionDamage(e) + damage);
     }
 
     // executed last
+    // use playerDamagerHandler.instance, otherwise you are calculating values from this class which is
+    // not used by other enchantments; aka they won't exist
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
-        Double newFinalDamage = calculateNewDamage(e, e.getFinalDamage());
+        double newFinalDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
+        newFinalDamage += playerDamageHandler.instance.calculateTrueDamage(e);
 
         e.setDamage(newFinalDamage);
-        resetDamageValues(e);
 
+        playerDamageHandler.instance.resetDamageValues(e);
         ThePitRedux.getPlugin().getLogger().info("Priority High");
     }
 }
