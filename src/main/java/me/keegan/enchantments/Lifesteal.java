@@ -14,6 +14,10 @@ import java.text.MessageFormat;
 import static me.keegan.utils.formatUtil.gray;
 import static me.keegan.utils.formatUtil.red;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class Lifesteal extends enchantUtil {
     private final Integer[] healingPercentPerLevel = new Integer[]{4, 8, 13};
     private final double maxHeartsToHeal = 1.5; // in hearts not hp
@@ -57,7 +61,7 @@ public class Lifesteal extends enchantUtil {
         int enchantLevel = (int) args[2];
 
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
-        LivingEntity damager = (LivingEntity) e.getDamager();
+        Player damager = (Player) e.getDamager();
 
         this.heal(damager,
                 Math.max(0.0,
@@ -69,13 +73,13 @@ public class Lifesteal extends enchantUtil {
     // but before playerDamageHandler @EventHandler executes
     @EventHandler(priority = EventPriority.HIGH)
     public void entityDamaged(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof Player)) { return; }
+        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof LivingEntity)) { return; }
 
-        Player damager = (Player) e.getDamager();
+        LivingEntity damager = (LivingEntity) e.getDamager();
 
         Object[] args = new Object[]{
                 e,
-                damager.getInventory().getItemInMainHand(),
+                (damager.getEquipment() != null) ? damager.getEquipment().getItemInMainHand() : null,
                 this
         };
 
