@@ -11,6 +11,10 @@ import java.text.MessageFormat;
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.integerToRoman;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class SpeedyKill extends enchantUtil {
     private final Integer[] speedAmplifierPerLevel = new Integer[]{0, 0, 1};
     private final Integer[] speedDurationPerLevel = new Integer[]{6, 9, 6};
