@@ -83,14 +83,14 @@ public class Perun extends enchantUtil {
         if (this.getHitCounter(damagerUniqueId) >= hitsNeeded[enchantLevel]) {
             this.resetHitCounter(damagerUniqueId);
 
-            int count = 0;
-
             // enchantLevel is 1 less than it actually is so that it can index arrays
             if (enchantLevel <= 1) {
                 // perun 1 & 2
                 playerDamageHandler.getInstance().addTrueDamage(e, trueDamagePerLevel[enchantLevel]);
             }else{
                 // perun 3
+                int count = 0;
+
                 ItemStack[] armor
                         = (damaged.getEquipment().getArmorContents()) != null
                         ? damaged.getEquipment().getArmorContents()
