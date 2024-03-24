@@ -1,12 +1,17 @@
 package me.keegan.utils;
 
-import me.keegan.enchantments.*;
+import me.keegan.builders.mystic;
+import me.keegan.enchantments.Perun;
+import me.keegan.enchantments.SpeedyKill;
 import me.keegan.pitredux.ThePitRedux;
+import org.bukkit.Color;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,6 +153,13 @@ public class mysticUtil implements CommandExecutor {
         return tokens;
     }
 
+    public Boolean isMystic(ItemStack itemStack) {
+        return (itemStack != null
+                && itemStack.hasItemMeta()
+                && itemStack.getItemMeta().getPersistentDataContainer()
+                .has(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING));
+    }
+
     public Boolean hasEnchant(ItemStack itemStack, enchantUtil enchant) {
         List<String> lore = this.getItemLore(itemStack);
 
@@ -160,6 +172,11 @@ public class mysticUtil implements CommandExecutor {
         enchantLevel = Math.max(1, Math.min(enchant.getMaxLevel(), enchantLevel)); // fix (basically Math.clamp(1, 3, enchantLevel))
         List<String> lore = (this.getItemLore(itemStack) != null) ? this.getItemLore(itemStack) : new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
+
+        // if fresh mystic then
+        if (lore.contains(mystic.defaultLore.get(0))) {
+            lore.clear();
+        }
 
         String name = (enchant.isRareEnchant())
                 ? MessageFormat.format("{0}RARE! {1}{2} {3}", lightPurple, blue, enchant.getName(), integerToRoman(enchantLevel, true))
@@ -251,15 +268,19 @@ public class mysticUtil implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        ItemStack itemStack = new ItemStack(GOLDEN_SWORD);
-        this.addEnchant(itemStack, new Perun(), 2);
+        ItemStack itemStack = new mystic.Builder()
+                            .material(GOLDEN_SWORD)
+                            .lives(25)
+                            .build();
+        this.addEnchant(itemStack, new Perun(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
-        this.addEnchant(itemStack, new Lifesteal(), 3);
 
-        ItemStack itemStack2 = new ItemStack(BOW);
-        this.addEnchant(itemStack2, new MegaLongbow(),  3);
-
-        ThePitRedux.getPlugin().getLogger().info(String.valueOf(this.getEnchantTokens(itemStack)) + " is the amount of tokens!");
+        ItemStack itemStack2 = new mystic.Builder()
+                .material(LEATHER_LEGGINGS)
+                .lives(25)
+                .color(Color.RED)
+                .chatColor(red)
+                .build();
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2);
         return true;
