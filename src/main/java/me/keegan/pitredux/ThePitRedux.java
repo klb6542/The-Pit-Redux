@@ -2,6 +2,7 @@ package me.keegan.pitredux;
 
 import me.keegan.enchantments.*;
 import me.keegan.handlers.entityDamageHandler;
+import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.mysticUtil;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ public final class ThePitRedux extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new entityDamageHandler(), this);
+        getServer().getPluginManager().registerEvents(new mysticHandler(), this);
     }
 
     private void registerEnchants() {
