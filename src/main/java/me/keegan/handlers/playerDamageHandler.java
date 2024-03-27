@@ -1,6 +1,8 @@
 package me.keegan.handlers;
 
 import me.keegan.pitredux.ThePitRedux;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -92,7 +94,6 @@ public class playerDamageHandler implements Listener {
 
     public void addTrueDamage(EntityDamageByEntityEvent e, double damage) {
         this.trueDamage.put(e, this.getTrueDamage(e) + damage);
-        ThePitRedux.getPlugin().getLogger().info(this.trueDamage.get(e) + " is the other true damage");
     }
 
     public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
@@ -104,12 +105,16 @@ public class playerDamageHandler implements Listener {
     // not used by other enchantments; aka they won't exist
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
-        double newFinalDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
-        newFinalDamage += playerDamageHandler.instance.calculateTrueDamage(e);
+        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof LivingEntity)) { return; }
+        LivingEntity damaged = (LivingEntity) e.getEntity();
 
-        e.setDamage(newFinalDamage);
+        double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
+        double trueDamage = playerDamageHandler.instance.calculateTrueDamage(e);
 
+        e.setDamage(calculatedDamage);
+        damaged.setHealth(Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), damaged.getHealth() - trueDamage)));
+
+        ThePitRedux.getPlugin().getLogger().info(" " + damaged.getHealth());
         playerDamageHandler.instance.resetDamageValues(e);
-        ThePitRedux.getPlugin().getLogger().info("Priority High");
     }
 }
