@@ -3,6 +3,7 @@ package me.keegan.utils;
 import me.keegan.builders.mystic;
 import me.keegan.enchantments.Perun;
 import me.keegan.enchantments.SpeedyKill;
+import me.keegan.enums.livesEnums;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
@@ -16,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
@@ -43,7 +41,7 @@ public class mysticUtil implements CommandExecutor {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) { return null; }
 
-        return (itemMeta.hasLore()) ? itemMeta.getLore() : null;
+        return (itemMeta.hasLore()) ? itemMeta.getLore() : new ArrayList<>();
     }
 
     private Integer getEnchantIndex(ItemStack itemStack, enchantUtil enchant, List<String> lore) {
@@ -99,7 +97,7 @@ public class mysticUtil implements CommandExecutor {
         List<String> lore = this.getItemLore(itemStack);
         int count = 0;
 
-        if (lore == null) { return count; }
+        if (lore == null || lore.isEmpty()) { return count; }
 
         for (int i = 0; i < lore.size(); i++) {
 
@@ -130,7 +128,8 @@ public class mysticUtil implements CommandExecutor {
     public Integer getEnchantTokens(ItemStack itemStack) {
         List<String> lore = this.getItemLore(itemStack);
         int tokens = 0;
-        if (lore == null) { return tokens; }
+
+        if (lore == null || lore.isEmpty()) { return tokens; }
 
         for (int i = 0; i < lore.size(); i++) {
 
@@ -170,8 +169,11 @@ public class mysticUtil implements CommandExecutor {
         if (this.hasEnchant(itemStack, enchant)) { ThePitRedux.getPlugin().getLogger().info("This enchant is already on the item!"); return; }
 
         enchantLevel = Math.max(1, Math.min(enchant.getMaxLevel(), enchantLevel)); // fix (basically Math.clamp(1, 3, enchantLevel))
-        List<String> lore = (this.getItemLore(itemStack) != null) ? this.getItemLore(itemStack) : new ArrayList<>();
+        List<String> lore = this.getItemLore(itemStack);
         ItemMeta itemMeta = itemStack.getItemMeta();
+
+        // has no itemMeta, return null
+        if (lore == null) { return; }
 
         // if fresh mystic then
         if (lore.contains(mystic.defaultLore.get(0))) {
@@ -232,7 +234,7 @@ public class mysticUtil implements CommandExecutor {
 
     public Integer getEnchantLevel(ItemStack itemStack, enchantUtil enchant) {
         List<String> lore = this.getItemLore(itemStack);
-        if (lore == null) { return 0; }
+        if (lore == null || lore.isEmpty()) { return 0; }
 
         Integer enchantIndex = this.getEnchantIndex(itemStack, enchant, lore);
         if (enchantIndex == -1) { return 0; }
@@ -242,44 +244,144 @@ public class mysticUtil implements CommandExecutor {
         return romanToInteger(splitLore[splitLore.length - 1]);
     }
 
-    public void addLives(ItemStack itemStack, Integer lives) {
-
+    private String createLives() {
+        return MessageFormat.format("{0}Lives: {1}0{0}/0", gray, red);
     }
 
-    public void addMaxLives(ItemStack itemStack, Integer maxLives) {
-
+    private String createLives(Integer minLives, Integer maxLives) {
+        return (minLives <= 3)
+                ? MessageFormat.format("{0}Lives: {1}{2}{0}/{3}", gray, red, minLives, maxLives)
+                : MessageFormat.format("{0}Lives: {1}{2}{0}/{3}", gray, green, minLives, maxLives);
     }
 
-    public void removeLives(ItemStack itemStack, Integer lives) {
+    /*
+    private String getTextFormats(String formattedLives) {
+        // returns the color formatting and other text formatting to apply back
+        char[] textFormatsArray = formattedLives.toCharArray();
 
+        for (int i = 0; i < textFormatsArray.length; i++) {
+            if (textFormatsArray[i] == '§' || (i >= 1 && textFormatsArray[i - 1] == '§')) { continue; }
+
+            textFormatsArray[i] = ' ';
+        }
+
+        StringBuilder textFormats = new StringBuilder();
+
+        for (char character : textFormatsArray) {
+            // if it reaches the lives stop loop
+            if (character == ' ') { break; }
+
+            textFormats.append(character);
+        }
+
+        return textFormats.toString();
+    }
+     */
+
+    public String getLivesFromTextFormats(String formattedLives) {
+        // returns the lives from the formattedLives string
+        char[] livesArray = formattedLives.toCharArray();
+
+        for (int i = 0; i < livesArray.length; i++) {
+            if (livesArray[i] != '§') { continue; }
+
+            livesArray[i] = ' ';
+            livesArray[i + 1] = ' ';
+        }
+
+        StringBuilder lives = new StringBuilder();
+
+        for (char character : livesArray) {
+            if (character == ' ') { continue; }
+
+            lives.append(character);
+        }
+
+        return lives.toString();
     }
 
-    public void removeMaxLives(ItemStack itemStack, Integer maxLives) {
+    public @Nullable String getLives(ItemStack itemStack, livesEnums livesEnum) {
+        List<String> lore = this.getItemLore(itemStack);
 
+        // no itemMeta
+        if (lore == null || lore.isEmpty()) { return null; }
+
+        String livesText = lore.get(0);
+        ThePitRedux.getPlugin().getLogger().info(livesText);
+        int indexToGetLives = (livesEnum == livesEnums.LIVES) ? 0 : 1;
+
+        ThePitRedux.getPlugin().getLogger().info(livesText);
+        return livesText.split(" ")[1].split("/")[indexToGetLives];
     }
 
-    public Integer getLives(ItemStack itemStack) {
-        return 0;
+    public void addLives(ItemStack itemStack, Integer lives, livesEnums livesEnum) {
+        List<String> lore = this.getItemLore(itemStack);
+
+        // no itemMeta
+        if (lore == null) { return; }
+        if (lore.isEmpty()) { lore.add(0, this.createLives()); }
+
+        // remove default lore
+        if (lore.get(0).equals(mystic.defaultLore.get(0))) {
+            lore.clear();
+            lore.add(0, this.createLives());
+        }
+
+        // keep lines below to ensure new lore gets added to itemMeta
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+
+        // lives with color/text formatting
+        livesEnums oppositeLivesEnum
+                = (livesEnum == livesEnums.LIVES)
+                ? livesEnums.MAX_LIVES
+                : livesEnums.LIVES;
+        String formattedLives = this.getLives(itemStack, livesEnum);
+
+        // lives without color/text formatting
+        int itemStackLives = Integer.parseInt(this.getLivesFromTextFormats(formattedLives)) + lives;
+        int itemStackMaxLives = Integer.parseInt(this.getLivesFromTextFormats(this.getLives(itemStack, oppositeLivesEnum)));
+
+
+        String finalItemStackLivesLore = (livesEnum == livesEnums.LIVES)
+                ? this.createLives(itemStackLives, itemStackMaxLives)
+                : this.createLives(itemStackMaxLives, itemStackLives);
+
+
+        lore.remove(0);
+        lore.add(0, finalItemStackLivesLore);
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 
-    public Integer getMaxLives(ItemStack itemStack) {
-        return 0;
+    public void removeLives(ItemStack itemStack, Integer lives, livesEnums livesEnum) {
+        this.addLives(itemStack, -lives, livesEnum);
+        if (Integer.parseInt(this.getLivesFromTextFormats(this.getLives(itemStack, livesEnums.LIVES))) > 0) { return; }
+
+        // destroy itemstack
+        itemStack.setAmount(0);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ItemStack itemStack = new mystic.Builder()
                             .material(GOLDEN_SWORD)
-                            .lives(25)
                             .build();
+
+        // always add the max lives before the lives to avoid issues
+        mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.MAX_LIVES);
+        mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.LIVES);
+        mysticUtil.getInstance().removeLives(itemStack, 5, livesEnums.LIVES);
+
         this.addEnchant(itemStack, new Perun(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
                 .material(LEATHER_LEGGINGS)
-                .lives(25)
-                .color(Color.RED)
-                .chatColor(red)
+                .color(Color.LIME)
+                .chatColor(green)
                 .build();
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2);
