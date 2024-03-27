@@ -1,7 +1,6 @@
 package me.keegan.builders;
 
 import me.keegan.pitredux.ThePitRedux;
-import me.keegan.utils.mysticUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -12,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,14 +88,12 @@ public class mystic {
         return itemStack;
     }
 
-    private static ItemStack buildMystic(Builder builder) {
+    private static ItemStack buildMystic(@NotNull Builder builder) {
         ItemStack itemStack = new ItemStack(builder.material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemMeta.getPersistentDataContainer().set(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING, "mystic");
-
-        mysticUtil.getInstance().addMaxLives(itemStack, builder.lives);
-        mysticUtil.getInstance().addLives(itemStack, builder.lives);
+        itemStack.setItemMeta(itemMeta);
 
         switch (builder.material) {
             case GOLDEN_SWORD:
@@ -111,7 +109,6 @@ public class mystic {
 
     public static class Builder {
         private Material material;
-        private Integer lives;
 
         private Color color;
         private ChatColor chatColor;
@@ -122,11 +119,6 @@ public class mystic {
 
         public Builder material(Material material) {
             this.material = material;
-            return this;
-        }
-
-        public Builder lives(Integer lives) {
-            this.lives = lives;
             return this;
         }
 
