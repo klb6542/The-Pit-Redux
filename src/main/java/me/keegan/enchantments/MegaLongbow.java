@@ -22,6 +22,8 @@ public class MegaLongbow extends enchantUtil {
     private final Integer[] jumpBoostAmplifierPerLevel = new Integer[]{1, 2, 3};
     private final int jumpBoostDuration = 2;
 
+    public static double arrowSpeed = 2.90;
+
     @Override
     public Material[] getEnchantMaterial() {
         return new Material[]{Material.BOW};
@@ -71,7 +73,7 @@ public class MegaLongbow extends enchantUtil {
         this.addCooldown(shooter.getUniqueId(), (long) 1.01, cooldownEnums.NORMAL);
 
         arrow.setCritical(true);
-        arrow.setVelocity(shooter.getLocation().getDirection().multiply(2.90));
+        arrow.setVelocity(shooter.getEyeLocation().getDirection().multiply(arrowSpeed));
 
         this.setJumpBoost(shooter, jumpBoostAmplifierPerLevel[enchantLevel], jumpBoostDuration);
     }
