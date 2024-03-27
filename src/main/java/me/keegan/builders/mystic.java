@@ -93,6 +93,8 @@ public class mystic {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemMeta.getPersistentDataContainer().set(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING, "mystic");
+
+        // set itemMeta back to itemStack to make sure its fully updated
         itemStack.setItemMeta(itemMeta);
 
         switch (builder.material) {
