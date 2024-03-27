@@ -1,11 +1,14 @@
 package me.keegan.utils;
 
 import me.keegan.builders.mystic;
+import me.keegan.enchantments.MegaLongbow;
 import me.keegan.enchantments.Perun;
 import me.keegan.enchantments.SpeedyKill;
+import me.keegan.enchantments.Volley;
 import me.keegan.enums.livesEnums;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -307,7 +310,6 @@ public class mysticUtil implements CommandExecutor {
         if (lore == null || lore.isEmpty()) { return null; }
 
         String livesText = lore.get(0);
-        ThePitRedux.getPlugin().getLogger().info(livesText);
         int indexToGetLives = (livesEnum == livesEnums.LIVES) ? 0 : 1;
 
         ThePitRedux.getPlugin().getLogger().info(livesText);
@@ -379,10 +381,15 @@ public class mysticUtil implements CommandExecutor {
         this.addEnchant(itemStack, new SpeedyKill(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
-                .material(LEATHER_LEGGINGS)
-                .color(Color.LIME)
-                .chatColor(green)
+                .material(Material.BOW)
                 .build();
+
+
+        mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.MAX_LIVES);
+        mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
+
+        this.addEnchant(itemStack2, new Volley(), 3);
+        this.addEnchant(itemStack2, new MegaLongbow(), 3);
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2);
         return true;
