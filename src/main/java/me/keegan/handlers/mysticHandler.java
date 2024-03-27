@@ -8,6 +8,10 @@ import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class mysticHandler implements Listener {
     @EventHandler
     public void prepareAnvil(PrepareAnvilEvent e) {
