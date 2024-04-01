@@ -1,6 +1,7 @@
 package me.keegan.enchantments;
 
 import me.keegan.enums.cooldownEnums;
+import me.keegan.enums.mysticEnums;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -28,6 +29,11 @@ public class Perun extends enchantUtil {
     @Override
     public Material[] getEnchantMaterial() {
         return new Material[]{Material.GOLDEN_SWORD};
+    }
+
+    @Override
+    public mysticEnums getEnchantType() {
+        return mysticEnums.NORMAL;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class Perun extends enchantUtil {
     }
 
     @Override
-    public void executeEnchant(Object... args) {
+    public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
@@ -80,34 +86,33 @@ public class Perun extends enchantUtil {
         this.addHitToHitCounter(damagerUniqueId, 1);
         this.addCooldown(damagerUniqueId, (long) durationUntilHitsReset, cooldownEnums.RESET_HIT_COUNTER);
 
-        if (this.getHitCounter(damagerUniqueId) >= hitsNeeded[enchantLevel]) {
-            this.resetHitCounter(damagerUniqueId);
+        if (this.getHitCounter(damagerUniqueId) < hitsNeeded[enchantLevel]) { return; }
+        this.resetHitCounter(damagerUniqueId);
 
-            // enchantLevel is 1 less than it actually is so that it can index arrays
-            if (enchantLevel <= 1) {
-                // perun 1 & 2
-                playerDamageHandler.getInstance().addTrueDamage(e, trueDamagePerLevel[enchantLevel]);
-            }else{
-                // perun 3
-                int count = 0;
+        // enchantLevel is 1 less than it actually is so that it can index arrays
+        if (enchantLevel <= 1) {
+            // perun 1 & 2
+            playerDamageHandler.getInstance().addTrueDamage(e, trueDamagePerLevel[enchantLevel]);
+        }else{
+            // perun 3
+            int count = 0;
 
-                ItemStack[] armor
-                        = (damaged.getEquipment().getArmorContents()) != null
-                        ? damaged.getEquipment().getArmorContents()
-                        : new ItemStack[]{};
+            ItemStack[] armor
+                    = (damaged.getEquipment().getArmorContents()) != null
+                    ? damaged.getEquipment().getArmorContents()
+                    : new ItemStack[]{};
 
-                for (ItemStack armorPiece : armor) {
-                    if (armorPiece.getEnchantments().isEmpty()) { continue; }
+            for (ItemStack armorPiece : armor) {
+                if (armorPiece == null || armorPiece.getEnchantments().isEmpty()) { continue; }
 
-                    count++;
-                }
-
-                // multiply trueDamagePerLevel value by how many armor pieces have enchantment, then plus 1 heart
-                playerDamageHandler.getInstance().addTrueDamage(e, (trueDamagePerLevel[enchantLevel] * count) + 2);
+                count++;
             }
 
-            damaged.getWorld().strikeLightningEffect(damaged.getLocation());
+            // multiply trueDamagePerLevel value by how many armor pieces have enchantment, then plus 1 heart
+            playerDamageHandler.getInstance().addTrueDamage(e, (trueDamagePerLevel[enchantLevel] * count) + 2);
         }
+
+        damaged.getWorld().strikeLightningEffect(damaged.getLocation());
     }
 
     @EventHandler
