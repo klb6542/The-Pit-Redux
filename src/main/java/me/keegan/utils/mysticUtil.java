@@ -1,11 +1,10 @@
 package me.keegan.utils;
 
 import me.keegan.builders.mystic;
-import me.keegan.enchantments.MegaLongbow;
-import me.keegan.enchantments.Perun;
-import me.keegan.enchantments.SpeedyKill;
-import me.keegan.enchantments.Volley;
+import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
+import me.keegan.enums.mysticEnums;
+import me.keegan.mysticwell.mysticWell;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -370,6 +369,7 @@ public class mysticUtil implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ItemStack itemStack = new mystic.Builder()
                             .material(GOLDEN_SWORD)
+                            .type(mysticEnums.NORMAL)
                             .build();
 
         // always add the max lives before the lives to avoid issues
@@ -379,19 +379,30 @@ public class mysticUtil implements CommandExecutor {
 
         this.addEnchant(itemStack, new Perun(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
+        this.addEnchant(itemStack, new Guts(), 3);
+        this.addEnchant(itemStack, new Lifesteal(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
                 .material(Material.BOW)
+                .type(mysticEnums.NORMAL)
                 .build();
-
 
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
 
-        this.addEnchant(itemStack2, new Volley(), 3);
         this.addEnchant(itemStack2, new MegaLongbow(), 3);
+        this.addEnchant(itemStack2, new Volley(), 3);
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2);
+        ItemStack itemStack3 = new mystic.Builder()
+                .material(LEATHER_LEGGINGS)
+                .type(mysticEnums.NORMAL)
+                .color(Color.LIME)
+                .chatColor(green)
+                .build();
+
+        ItemStack itemStack4 = new mysticWell().createItem();
+
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4);
         return true;
     }
 }
