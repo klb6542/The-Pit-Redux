@@ -1,6 +1,7 @@
 package me.keegan.enchantments;
 
 import me.keegan.enums.cooldownEnums;
+import me.keegan.enums.mysticEnums;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -22,11 +23,16 @@ public class MegaLongbow extends enchantUtil {
     private final Integer[] jumpBoostAmplifierPerLevel = new Integer[]{1, 2, 3};
     private final int jumpBoostDuration = 2;
 
-    public static double arrowSpeed = 2.90;
+    private final double arrowSpeed = 2.90;
 
     @Override
     public Material[] getEnchantMaterial() {
         return new Material[]{Material.BOW};
+    }
+
+    @Override
+    public mysticEnums getEnchantType() {
+        return mysticEnums.NORMAL;
     }
 
     @Override
@@ -39,15 +45,18 @@ public class MegaLongbow extends enchantUtil {
         return new String[]{
                 MessageFormat.format("{0}One shot per second, this bow is/n" +
                         "{0}automatically fully drawn and/n" +
-                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green, integerToRoman(jumpBoostAmplifierPerLevel[0] + 1, false), jumpBoostDuration),
+                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green,
+                        integerToRoman(jumpBoostAmplifierPerLevel[0] + 1, false), jumpBoostDuration),
 
                 MessageFormat.format("{0}One shot per second, this bow is/n" +
                         "{0}automatically fully drawn and/n" +
-                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green, integerToRoman(jumpBoostAmplifierPerLevel[1] + 1, false), jumpBoostDuration),
+                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green,
+                        integerToRoman(jumpBoostAmplifierPerLevel[1] + 1, false), jumpBoostDuration),
 
                 MessageFormat.format("{0}One shot per second, this bow is/n" +
                         "{0}automatically fully drawn and/n" +
-                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green, integerToRoman(jumpBoostAmplifierPerLevel[2] + 1, false), jumpBoostDuration),
+                        "{0}grants {1}Jump Boost {2} ({3}s)", gray, green,
+                        integerToRoman(jumpBoostAmplifierPerLevel[2] + 1, false), jumpBoostDuration),
         };
     }
 
