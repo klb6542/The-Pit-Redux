@@ -5,6 +5,7 @@ package me.keegan.utils;
  */
 
 import me.keegan.enums.cooldownEnums;
+import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -23,11 +24,12 @@ public abstract class enchantUtil implements Listener {
     private final HashMap<UUID, Integer> hitCounter  = new HashMap<>();
 
     public abstract Material[] getEnchantMaterial();
+    public abstract mysticEnums getEnchantType();
     public abstract String getName();
     public abstract String[] getEnchantDescription();
     public abstract Integer getMaxLevel();
     public abstract boolean isRareEnchant();
-    public abstract void executeEnchant(Object... args);
+    public abstract void executeEnchant(Object[] args);
 
     // below is included incase there is an enchantment to reduce/cancel healing or any other methods
     public void heal(LivingEntity entity, Double amount) {
@@ -42,6 +44,11 @@ public abstract class enchantUtil implements Listener {
     public void setJumpBoost(LivingEntity entity, Integer amplifier, Integer duration) {
         // times 20 because 20 ticks = 1 second
         entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration * 20, amplifier));
+    }
+
+    public void addPotionEffect(LivingEntity entity, PotionEffectType potionEffectType, Integer amplifier, Integer duration) {
+        // times 20 because 20 ticks = 1 second
+        entity.addPotionEffect(new PotionEffect(potionEffectType, duration * 20, amplifier));
     }
 
     /*
