@@ -1,5 +1,6 @@
 package me.keegan.enchantments;
 
+import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
@@ -25,6 +26,11 @@ public class Lifesteal extends enchantUtil {
     @Override
     public Material[] getEnchantMaterial() {
         return new Material[]{Material.GOLDEN_SWORD};
+    }
+
+    @Override
+    public mysticEnums getEnchantType() {
+        return mysticEnums.NORMAL;
     }
 
     @Override
