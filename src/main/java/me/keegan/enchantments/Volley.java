@@ -1,5 +1,6 @@
 package me.keegan.enchantments;
 
+import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
@@ -34,6 +35,11 @@ public class Volley extends enchantUtil {
     }
 
     @Override
+    public mysticEnums getEnchantType() {
+        return mysticEnums.NORMAL;
+    }
+
+    @Override
     public String getName() {
         return "Volley";
     }
@@ -58,7 +64,7 @@ public class Volley extends enchantUtil {
     }
 
     @Override
-    public void executeEnchant(Object... args) {
+    public void executeEnchant(Object[] args) {
         EntityShootBowEvent e = (EntityShootBowEvent) args[0];
         Arrow arrow = (Arrow) e.getProjectile();
 
@@ -79,7 +85,7 @@ public class Volley extends enchantUtil {
 
         volleyArrow.setVelocity(shooter.getEyeLocation().getDirection().multiply((double)
                 runnables.getOrDefault(shooter.getUniqueId(), new Object[]{
-                MegaLongbow.arrowSpeed,
+                0.0,
                 false
         })[0]));
 
@@ -116,13 +122,14 @@ public class Volley extends enchantUtil {
 
                 );
 
+                // proc other enchantments
                 ThePitRedux.getPlugin().getServer().getPluginManager().callEvent(volleyEvent);
             }
 
         }.runTaskTimer(ThePitRedux.getPlugin(), 2, 2);
     }
 
-    // runs before Mega longBow enchant
+    // executes before Mega longBow enchant
     @EventHandler(priority = EventPriority.LOW)
     public void bowShot(EntityShootBowEvent e) {
         if (!(e.getProjectile() instanceof Arrow)) { return; }
