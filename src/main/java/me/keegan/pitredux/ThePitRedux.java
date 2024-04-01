@@ -4,8 +4,11 @@ import me.keegan.enchantments.*;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
+import me.keegan.mysticwell.mysticWell;
+import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -29,6 +32,11 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Perun());
         mysticUtilInstance.registerEnchant(new MegaLongbow());
         mysticUtilInstance.registerEnchant(new Volley());
+        mysticUtilInstance.registerEnchant(new Wasp());
+    }
+
+    private void registerItems() {
+        itemUtil.registerItem(new mysticWell());
     }
 
     private void registerCommands() {
@@ -38,9 +46,9 @@ public final class ThePitRedux extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        getLogger().info("Hello, world");
 
         registerEnchants(); // also registers the event listeners
+        registerItems(); // also registers the event listeners
         registerListeners();
         registerCommands();
     }
