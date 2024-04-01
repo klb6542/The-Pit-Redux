@@ -44,6 +44,13 @@ public class playerDamageHandler implements Listener {
          * Multiplicative damage is not in The Hypixel Pit.
          */
 
+        /*
+         * Final damage is 0 if there is any absorption, however absorption is still calculated after all effects and armor
+         * So absorption is the final damage but negative if there is any absorption present
+         */
+
+        finalDamage += Math.abs(e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION));
+
         if (this.additiveDamage.getOrDefault(e, 0.0) == 0.0 && this.reductionDamage.getOrDefault(e, 0.0) == 0.0) { return finalDamage; }
 
         double enchantAdditivePercent
@@ -53,7 +60,7 @@ public class playerDamageHandler implements Listener {
         double enchantAdditive = Math.abs(enchantAdditivePercent) * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
 
         // new damage cannot be negative, so use Math.max
-        return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive) : finalDamage + enchantAdditive;
+        return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive)  : finalDamage + enchantAdditive;
     }
 
     public Double calculateTrueDamage(EntityDamageByEntityEvent e) {
@@ -114,7 +121,6 @@ public class playerDamageHandler implements Listener {
         e.setDamage(calculatedDamage);
         damaged.setHealth(Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), damaged.getHealth() - trueDamage)));
 
-        ThePitRedux.getPlugin().getLogger().info(" " + damaged.getHealth());
         playerDamageHandler.instance.resetDamageValues(e);
     }
 }
