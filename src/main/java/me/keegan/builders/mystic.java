@@ -1,5 +1,6 @@
 package me.keegan.builders;
 
+import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -24,6 +25,8 @@ import static me.keegan.utils.formatUtil.*;
  */
 
 public class mystic {
+     // do not include a lives builder because this is only supposed to build fresh
+
     public static List<String> defaultLore = new ArrayList<>(Arrays.asList(
             gray + "Kept on death",
             "",
@@ -92,7 +95,8 @@ public class mystic {
         ItemStack itemStack = new ItemStack(builder.material);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
-        itemMeta.getPersistentDataContainer().set(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING, "mystic");
+        itemMeta.getPersistentDataContainer().set(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"),
+                PersistentDataType.STRING, builder.type.toString().toLowerCase());
 
         // set itemMeta back to itemStack to make sure its fully updated
         itemStack.setItemMeta(itemMeta);
@@ -111,6 +115,7 @@ public class mystic {
 
     public static class Builder {
         private Material material;
+        private mysticEnums type;
 
         private Color color;
         private ChatColor chatColor;
@@ -121,6 +126,11 @@ public class mystic {
 
         public Builder material(Material material) {
             this.material = material;
+            return this;
+        }
+
+        public Builder type(mysticEnums mysticEnum) {
+            this.type = mysticEnum;
             return this;
         }
 
