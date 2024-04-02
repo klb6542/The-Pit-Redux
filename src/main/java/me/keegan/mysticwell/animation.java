@@ -57,8 +57,6 @@ public class animation {
                 this.runnableTasks.remove(this.runnableTasks.get(i));
             }
         }
-
-        this.setGlassPanesColor(Material.BLACK_STAINED_GLASS_PANE);
     }
 
     private void cooldown(int duration, CompletableFuture<Boolean> completableFuture) {
@@ -99,6 +97,7 @@ public class animation {
 
     protected void idleState() {
         this.cancelRunnableTasks();
+        this.setGlassPanesColor(Material.BLACK_STAINED_GLASS_PANE);
         this.isEnchantingComplete = false;
 
         ItemStack[] glassPanesArray = this.glassPanes.toArray(new ItemStack[0]);
@@ -141,9 +140,7 @@ public class animation {
             public void run() {
                 switch (stage) {
                     case 0:
-                        ThePitRedux.getPlugin().getLogger().info("0");
                     case 2:
-                        ThePitRedux.getPlugin().getLogger().info("1");
                         glassPanesList.forEach(glassPane -> glassPane.setType(Material.RED_STAINED_GLASS_PANE));
                         runnableInventory.setItem(20, new ItemStack(Material.RED_STAINED_GLASS_PANE));
                         break;
