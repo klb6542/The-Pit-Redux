@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public final class ThePitRedux extends JavaPlugin {
     private static ThePitRedux plugin;
+    private boolean NoteBlockAPI = true;
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
@@ -43,6 +44,13 @@ public final class ThePitRedux extends JavaPlugin {
         getCommand("hello").setExecutor(new mysticUtil());
     }
 
+    private void registerDependencies() {
+        if (!this.getServer().getPluginManager().isPluginEnabled("NoteBlockAPI")){
+            getLogger().severe("*** NoteBlockAPI is not installed or not enabled. ***");
+            NoteBlockAPI = false;
+        }
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -51,6 +59,7 @@ public final class ThePitRedux extends JavaPlugin {
         registerItems(); // also registers the event listeners
         registerListeners();
         registerCommands();
+        registerDependencies();
     }
 
     @Override
