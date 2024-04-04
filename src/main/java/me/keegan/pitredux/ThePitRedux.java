@@ -7,6 +7,7 @@ import me.keegan.handlers.playerDamageHandler;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
+import me.keegan.utils.setupUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -51,6 +52,14 @@ public final class ThePitRedux extends JavaPlugin {
         }
     }
 
+    private void startup() {
+       setupUtils.pluginEnabled(new Stereo());
+    }
+
+    private void shutdown() {
+        setupUtils.pluginDisabled(new Stereo());
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -60,11 +69,13 @@ public final class ThePitRedux extends JavaPlugin {
         registerListeners();
         registerCommands();
         registerDependencies();
+
+        startup();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        shutdown();
     }
 
     public static ThePitRedux getPlugin() {
