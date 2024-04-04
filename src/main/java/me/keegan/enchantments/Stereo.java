@@ -17,23 +17,22 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static me.keegan.utils.formatUtil.gray;
+import static me.keegan.utils.formatUtil.*;
+
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
 
 public class Stereo extends enchantUtil implements setupUtils {
     private static final HashMap<Player, BukkitRunnable> runnables = new HashMap<>();
     private static final List<Player> stereoPantsEquipped = new ArrayList<>();
 
+    private static Playlist stereoPlaylist;
+
     private final long timerPeriod = 5L;
-
-    private final File songsDirectory = new File("src/main/resources/songs");
-
-   // private final Playlist stereoPlaylist = new Playlist(
-     //       (Song) Arrays.stream(songsDirectory.listFiles()).iterator()
-   // );
 
     @Override
     public Material[] getEnchantMaterial() {
@@ -75,7 +74,7 @@ public class Stereo extends enchantUtil implements setupUtils {
 
         stereoPantsEquipped.add(player);
 
-
+        ThePitRedux.getPlugin().getLogger().info(stereoPlaylist.getCount() + " songs");
     }
 
     @EventHandler
@@ -106,21 +105,22 @@ public class Stereo extends enchantUtil implements setupUtils {
     public void playerLeft(PlayerQuitEvent e) {
         Player player = e.getPlayer();
 
-        if (stereoPantsEquipped.contains(player)) {
-            stereoPantsEquipped.remove(player);
-        }
+        stereoPantsEquipped.remove(player);
 
         runnables.get(player).cancel();
         runnables.remove(player);
     }
 
     @Override
-    public void pluginEnabled() {
+    public void enable() {
+        File songsFolder = new File(ThePitRedux.getPlugin().getDataFolder().getAbsolutePath(), "songs");
+        if (songsFolder.exists()) { return; }
 
+        songsFolder.mkdirs();
     }
 
     @Override
-    public void pluginDisabled() {
+    public void disable() {
 
     }
 }
