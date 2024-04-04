@@ -10,6 +10,10 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class animation {
     private final Inventory inventory;
     private final List<ItemStack> glassPanes;
