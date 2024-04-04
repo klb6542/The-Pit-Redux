@@ -400,6 +400,8 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
+        mysticUtil.getInstance().addEnchant(itemStack3, new Stereo(), 1);
+
         ItemStack itemStack4 = new mysticWell().createItem();
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4);
