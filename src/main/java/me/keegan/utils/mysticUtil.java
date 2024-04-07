@@ -328,6 +328,12 @@ public class mysticUtil implements CommandExecutor {
             lore.add(0, this.createLives());
         }
 
+        // if there are enchants but no lives yet, create lives
+        if (!lore.get(0).contains(this.createLives().split(" ")[0])) {
+            lore.add(0, this.createLives());
+            lore.add(1, "");
+        }
+
         // keep lines below to ensure new lore gets added to itemMeta
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setLore(lore);
@@ -375,7 +381,6 @@ public class mysticUtil implements CommandExecutor {
         // always add the max lives before the lives to avoid issues
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.LIVES);
-        mysticUtil.getInstance().removeLives(itemStack, 5, livesEnums.LIVES);
 
         this.addEnchant(itemStack, new Perun(), 3);
         this.addEnchant(itemStack, new SpeedyKill(), 3);
@@ -400,7 +405,10 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack3, new Stereo(), 1);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Solitude(), 3);
+
+        mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
+        mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.LIVES);
 
         ItemStack itemStack4 = new mysticWell().createItem();
 
