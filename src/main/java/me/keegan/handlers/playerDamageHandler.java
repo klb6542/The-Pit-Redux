@@ -45,26 +45,30 @@ public class playerDamageHandler implements Listener {
          */
 
         /*
-         * Final damage is 0 if there is any absorption, however absorption is still calculated after all effects and armor
-         * So absorption is the final damage but negative if there is any absorption present
+         * Final damage is 0 if there is any absorption,
+         * however absorption is still calculated after all effects and armor just like final damage.
+         *
+         * So absorption is the final damage but negative if there is any present
+         * if absorption is not present, it will be 0
          */
 
         finalDamage += Math.abs(e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION));
 
-        if (this.additiveDamage.getOrDefault(e, 0.0) == 0.0 && this.reductionDamage.getOrDefault(e, 0.0) == 0.0) { return finalDamage; }
+        if (this.additiveDamage.getOrDefault(e, 0.0) == 0.0
+                && this.reductionDamage.getOrDefault(e, 0.0) == 0.0) { return finalDamage; }
 
         double enchantAdditivePercent
-                = (this.additiveDamage.getOrDefault(e, 0.0) < this.reductionDamage.getOrDefault(e, 0.0))
-                ? (this.reductionDamage.getOrDefault(e, 0.0) - this.additiveDamage.getOrDefault(e, 0.0)) / 100
+                = (this.reductionDamage.getOrDefault(e, 0.0) > this.additiveDamage.getOrDefault(e, 0.0))
+                ? -((this.reductionDamage.getOrDefault(e, 0.0) - this.additiveDamage.getOrDefault(e, 0.0)) / 100)
                 : (this.additiveDamage.getOrDefault(e, 0.0) - this.reductionDamage.getOrDefault(e, 0.0)) / 100;
-        double enchantAdditive = Math.abs(enchantAdditivePercent) * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
+        double enchantAdditive = enchantAdditivePercent * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
 
-        // new damage cannot be negative, so use Math.max
-        return (enchantAdditivePercent <= 0.0) ? Math.max(0.0, finalDamage - enchantAdditive)  : finalDamage + enchantAdditive;
+        // new final damage cannot be negative, so use Math.max
+        return Math.max(0.0, enchantAdditive + finalDamage);
     }
 
     public Double calculateTrueDamage(EntityDamageByEntityEvent e) {
-        // implements mirrors later on
+        // implement mirrors later on
         return this.getTrueDamage(e);
     }
 
