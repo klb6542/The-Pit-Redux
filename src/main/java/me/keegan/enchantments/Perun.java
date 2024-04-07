@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 import java.util.UUID;
 
 import static me.keegan.utils.formatUtil.*;
-import static me.keegan.utils.wordUtil.integerToWord;
+import static me.keegan.utils.wordUtil.integerToOrdinal;
 import me.keegan.handlers.playerDamageHandler;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,19 +47,19 @@ public class Perun extends enchantUtil {
                 MessageFormat.format("{0}Each {1}{4}{0} hit strikes/n" +
                         "{1}lighting{0} for {2}{5}❤{0}./n" +
                         "{0}{3}Lighting deals true damage", gray, yellow, red, italic,
-                        integerToWord(hitsNeeded[0]), Math.floor((double) trueDamagePerLevel[0] / 2)),
+                        integerToOrdinal(hitsNeeded[0]), Math.floor((double) trueDamagePerLevel[0] / 2)),
 
                 MessageFormat.format("{0}Each {1}{4}{0} hit strikes/n" +
                                 "{1}lighting{0} for {2}{5}❤{0}./n" +
                                 "{0}{3}Lighting deals true damage", gray, yellow, red, italic,
-                        integerToWord(hitsNeeded[1]), Math.floor((double) trueDamagePerLevel[1] / 2)),
+                        integerToOrdinal(hitsNeeded[1]), Math.floor((double) trueDamagePerLevel[1] / 2)),
 
                 MessageFormat.format("{0}Each {1}{4}{0} hit strikes/n" +
                                 "{1}lighting{0} for {2}1❤ {0}+{2} {5}❤/n" +
                                 "{0}per {6}enchanted piece {0}on/n" +
                                 "{0}your victim./n" +
                                 "{0}{3}Lighting deals true damage", gray, yellow, red, italic,
-                        integerToWord(hitsNeeded[2]), Math.floor((double) trueDamagePerLevel[2] / 2), lightPurple),
+                        integerToOrdinal(hitsNeeded[2]), Math.floor((double) trueDamagePerLevel[2] / 2), lightPurple),
         };
     }
 
