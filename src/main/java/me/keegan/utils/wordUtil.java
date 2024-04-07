@@ -9,11 +9,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class wordUtil {
-    private static final List<String> words = new ArrayList<>(Arrays.asList(
+    private static final List<String> ordinalWords = new ArrayList<>(Arrays.asList(
             "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"
     ));
 
+    private static final List<String> numberWords = new ArrayList<>(Arrays.asList(
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
+    ));
+
+    public static String integerToOrdinal(int number) {
+        return (number >= 10 || number < 1) ? "zeroth" : ordinalWords.get(number - 1);
+    }
+
     public static String integerToWord(int number) {
-        return (number >= 10 || number < 1) ? "zero" : words.get(number - 1);
+        return (number >= 10 || number < 1) ? "zero" : numberWords.get(number - 1);
     }
 }
