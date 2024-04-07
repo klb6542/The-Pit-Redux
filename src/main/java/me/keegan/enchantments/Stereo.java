@@ -1,8 +1,6 @@
 package me.keegan.enchantments;
 
 import com.xxmicloxx.NoteBlockAPI.model.Playlist;
-import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
@@ -116,6 +114,7 @@ public class Stereo extends enchantUtil implements setupUtils {
         File songsFolder = new File(ThePitRedux.getPlugin().getDataFolder().getAbsolutePath(), "songs");
         if (songsFolder.exists()) { return; }
 
+        // create sound folder if it does not exist
         songsFolder.mkdirs();
     }
 
