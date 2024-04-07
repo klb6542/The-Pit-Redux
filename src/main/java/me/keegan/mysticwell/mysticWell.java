@@ -103,6 +103,8 @@ public class mysticWell extends itemUtil {
         Player player = (Player) e.getPlayer();
         UUID uuid = player.getUniqueId();
 
+        player.setCanPickupItems(false);
+
         // get cached inventory or create a new one
         Inventory inventory = inventories.getOrDefault(uuid,
                 ThePitRedux.getPlugin().getServer().createInventory(
@@ -157,6 +159,8 @@ public class mysticWell extends itemUtil {
         if (!inventoryView.getTitle()
             .equals(this.createItem().getItemMeta().getDisplayName().substring(2)))
             { return; }
+
+        player.setCanPickupItems(true);
 
         if (animations.get(uuid).isEnchanting) {
             inventory.setItem(20, animations.get(uuid).itemStack);
