@@ -4,6 +4,7 @@ import me.keegan.builders.mystic;
 import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
+import me.keegan.items.vile.vile;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Color;
@@ -406,13 +407,17 @@ public class mysticUtil implements CommandExecutor {
                 .build();
 
         mysticUtil.getInstance().addEnchant(itemStack3, new Solitude(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Hearts(), 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.LIVES);
 
         ItemStack itemStack4 = new mysticWell().createItem();
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4);
+        ItemStack itemStack5 = new vile().createItem();
+        itemStack5.setAmount(64);
+
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack5);
         return true;
     }
 }
