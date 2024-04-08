@@ -142,10 +142,12 @@ public abstract class enchantUtil implements Listener {
      * args[2] = enchant level - 1
      */
 
-    public void attemptEnchantExecution(Object[] args) {
-        if (!mysticUtil.getInstance().hasEnchant((ItemStack) args[1], (enchantUtil) args[2])) { return; }
+    public boolean attemptEnchantExecution(Object[] args) {
+        if (args[1] == null || !mysticUtil.getInstance().hasEnchant((ItemStack) args[1], (enchantUtil) args[2])) { return false; }
 
         args[2] = mysticUtil.getInstance().getEnchantLevel((ItemStack) args[1], (enchantUtil) args[2]) - 1;
         this.executeEnchant(args);
+
+        return true;
     }
 }
