@@ -61,11 +61,15 @@ public final class ThePitRedux extends JavaPlugin {
     }
 
     private void startup() {
-       setupUtils.pluginEnabled(new Stereo());
+        setupUtils.pluginEnabled(new Stereo());
+        setupUtils.pluginEnabled(new Hearts());
     }
 
     private void shutdown() {
+        // this gets fired on server reload as well as server shutdown
+
         setupUtils.pluginDisabled(new Stereo());
+        setupUtils.pluginDisabled(new Hearts());
     }
 
     @Override
