@@ -4,6 +4,9 @@ import me.keegan.enchantments.*;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
+import me.keegan.items.pants.dark_pants;
+import me.keegan.items.vile.vile;
+import me.keegan.items.vile.vile_block;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
@@ -36,10 +39,14 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Volley());
         mysticUtilInstance.registerEnchant(new Wasp());
         mysticUtilInstance.registerEnchant(new Solitude());
+        mysticUtilInstance.registerEnchant(new Hearts());
     }
 
     private void registerItems() {
         itemUtil.registerItem(new mysticWell());
+        itemUtil.registerItem(new vile());
+        itemUtil.registerItem(new vile_block());
+        itemUtil.registerItem(new dark_pants());
     }
 
     private void registerCommands() {
