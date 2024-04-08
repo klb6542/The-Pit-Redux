@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +45,11 @@ public class mysticHandler implements Listener {
     @EventHandler
     public void craftItem(CraftItemEvent e) {
         e.setCancelled(mysticUtil.getInstance().isMystic(e.getCurrentItem()) && containsDye(e.getInventory()));
+    }
+
+    @EventHandler
+    public void furnaceBurn(FurnaceBurnEvent e) {
+        e.setCancelled(propertiesUtil.hasProperty(propertiesUtil.notBurnable, e.getFuel().getItemMeta()));
     }
 
     @EventHandler
