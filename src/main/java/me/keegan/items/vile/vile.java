@@ -3,6 +3,7 @@ package me.keegan.items.vile;
 import me.keegan.builders.mystic;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
+import me.keegan.utils.propertiesUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,8 @@ public class vile extends itemUtil {
         lore.add(mystic.defaultLore.get(0));
         lore.add("");
         lore.add(red + "Heretic artifact");
+
+        propertiesUtil.setProperty(propertiesUtil.notBurnable, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
