@@ -28,12 +28,12 @@ import static me.keegan.utils.formatUtil.*;
 
 public class mysticWell extends itemUtil {
     // inventories represent all the mystic well inventories
-    private static HashMap<UUID, Inventory> inventories = new HashMap<>();
-    private static HashMap<UUID, animation> animations = new HashMap<>();
+    private static final HashMap<UUID, Inventory> inventories = new HashMap<>();
+    private static final HashMap<UUID, animation> animations = new HashMap<>();
 
     @Override
     public String getNamespaceName() {
-        return "Mystic_Well";
+        return "mystic_well";
     }
 
     @Override
