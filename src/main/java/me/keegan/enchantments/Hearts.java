@@ -3,6 +3,7 @@ package me.keegan.enchantments;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
+import me.keegan.utils.setupUtils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 import static me.keegan.utils.formatUtil.*;
 
-public class Hearts extends enchantUtil {
+public class Hearts extends enchantUtil implements setupUtils {
     private static final HashMap<UUID, BukkitTask> runnables = new HashMap<>();
     private static final HashMap<UUID, Integer> heartsPantsEquipped = new HashMap<>();
 
@@ -127,8 +128,22 @@ public class Hearts extends enchantUtil {
         UUID uuid = player.getUniqueId();
 
         this.removeExtraMaxHearts(player);
+        if (!runnables.containsKey(uuid)) { return; }
 
         runnables.get(uuid).cancel();
         runnables.remove(uuid);
+    }
+
+    @Override
+    public void enable() {
+
+    }
+
+    @Override
+    public void disable() {
+        // fixes infinite max hearts glitch
+        for (Player player : ThePitRedux.getPlugin().getServer().getOnlinePlayers()) {
+            this.removeExtraMaxHearts(player);
+        }
     }
 }
