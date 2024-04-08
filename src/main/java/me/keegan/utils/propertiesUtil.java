@@ -12,6 +12,10 @@ public class propertiesUtil {
             ThePitRedux.getPlugin(),
             "not_placeable");
 
+    public static final NamespacedKey notBurnable = new NamespacedKey(
+            ThePitRedux.getPlugin(),
+            "not_burnable");
+
     public static void setProperty(NamespacedKey key, ItemMeta itemMeta) {
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "");
     }
@@ -21,6 +25,6 @@ public class propertiesUtil {
     }
 
     public static boolean hasProperty(NamespacedKey key, ItemMeta itemMeta) {
-        return itemMeta.getPersistentDataContainer().has(key, PersistentDataType.STRING);
+        return itemMeta != null && itemMeta.getPersistentDataContainer().has(key, PersistentDataType.STRING);
     }
 }
