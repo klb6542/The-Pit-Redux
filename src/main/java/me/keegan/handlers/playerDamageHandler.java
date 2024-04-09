@@ -17,10 +17,10 @@ import java.util.HashMap;
 
 public class playerDamageHandler implements Listener {
     private static playerDamageHandler instance;
-    private final HashMap<EntityDamageEvent, Double> multiplicativeDamage = new HashMap<>();
-    private final HashMap<EntityDamageEvent, Double> additiveDamage = new HashMap<>();
-    private final HashMap<EntityDamageEvent, Double> reductionDamage = new HashMap<>();
-    private final HashMap<EntityDamageEvent, Double> trueDamage = new HashMap<>();
+    private final HashMap<EntityDamageByEntityEvent, Double> additiveDamage = new HashMap<>();
+    private final HashMap<EntityDamageByEntityEvent, Double> reductionDamage = new HashMap<>();
+    private final HashMap<EntityDamageByEntityEvent, Double> maxDamage = new HashMap<>();
+    private final HashMap<EntityDamageByEntityEvent, Double> trueDamage = new HashMap<>();
 
     public static playerDamageHandler getInstance() {
         if (instance == null) {
@@ -40,8 +40,6 @@ public class playerDamageHandler implements Listener {
          * Then, multiply the *absolute* enchant damage by the final damage
          * And subtract that number by the final damage if its negative,
          * If positive, add it to the final damage.
-         *
-         * Multiplicative damage is not in The Hypixel Pit.
          */
 
         /*
@@ -54,17 +52,19 @@ public class playerDamageHandler implements Listener {
 
         finalDamage += Math.abs(e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION));
 
-        if (this.additiveDamage.getOrDefault(e, 0.0) == 0.0
-                && this.reductionDamage.getOrDefault(e, 0.0) == 0.0) { return finalDamage; }
+        if (this.getDamage(e) == 0.0
+                && this.getReductionDamage(e) == 0.0
+                && this.getMaxDamage(e) == Math.E) { return finalDamage; }
 
         double enchantAdditivePercent
-                = (this.reductionDamage.getOrDefault(e, 0.0) > this.additiveDamage.getOrDefault(e, 0.0))
-                ? -((this.reductionDamage.getOrDefault(e, 0.0) - this.additiveDamage.getOrDefault(e, 0.0)) / 100)
-                : (this.additiveDamage.getOrDefault(e, 0.0) - this.reductionDamage.getOrDefault(e, 0.0)) / 100;
+                = (this.getReductionDamage(e) > this.getDamage(e))
+                ? -((this.getReductionDamage(e) - this.getDamage(e)) / 100)
+                : (this.getDamage(e) - this.getReductionDamage(e)) / 100;
         double enchantAdditive = enchantAdditivePercent * finalDamage; // -0.5% * 5 = -2.5 reduction | 0.5% * 5 = 2.5 damage
+        double newFinalDamage = Math.max(0.0, enchantAdditive + finalDamage);
 
-        // new final damage cannot be negative, so use Math.max
-        return Math.max(0.0, enchantAdditive + finalDamage);
+        // return the new final damage clamped with the max damage
+        return Math.max(0.0, Math.min(this.getMaxDamage(e), newFinalDamage));
     }
 
     public Double calculateTrueDamage(EntityDamageByEntityEvent e) {
@@ -73,14 +73,10 @@ public class playerDamageHandler implements Listener {
     }
 
     private void resetDamageValues(EntityDamageByEntityEvent e) {
-        this.multiplicativeDamage.remove(e);
-        this.multiplicativeDamage.remove(e);
-        this.multiplicativeDamage.remove(e);
+        this.additiveDamage.remove(e);
+        this.reductionDamage.remove(e);
+        this.maxDamage.remove(e);
         this.trueDamage.remove(e);
-    }
-
-    public Double getMultiplicativeDamage(EntityDamageByEntityEvent e) {
-        return this.multiplicativeDamage.getOrDefault(e, 1.0);
     }
 
     public Double getDamage(EntityDamageByEntityEvent e) {
@@ -95,8 +91,8 @@ public class playerDamageHandler implements Listener {
         return this.reductionDamage.getOrDefault(e, 0.0);
     }
 
-    public void addMultiplicativeDamage(EntityDamageByEntityEvent e, double damage) {
-        this.multiplicativeDamage.put(e, this.getMultiplicativeDamage(e) + damage);
+    public Double getMaxDamage(EntityDamageByEntityEvent e) {
+        return this.maxDamage.getOrDefault(e, Math.E);
     }
 
     public void addDamage(EntityDamageByEntityEvent e, double damage) {
@@ -109,6 +105,10 @@ public class playerDamageHandler implements Listener {
 
     public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
         this.reductionDamage.put(e, this.getReductionDamage(e) + damage);
+    }
+
+    public void setMaxDamage(EntityDamageByEntityEvent e, double damage) {
+        this.maxDamage.put(e, damage);
     }
 
     // executed last
