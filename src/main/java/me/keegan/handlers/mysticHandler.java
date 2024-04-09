@@ -27,7 +27,11 @@ public class mysticHandler implements Listener {
         AtomicBoolean isDye = new AtomicBoolean(false);
 
         // loop through each item in inventory, if it is a dye then set boolean to true and keep it true
-        craftingInventory.forEach(itemStack -> isDye.set(isDye.get() || dyes.contains(itemStack.getType())));
+        craftingInventory.forEach(itemStack -> {
+            if (itemStack != null) {
+                isDye.set(isDye.get() || dyes.contains(itemStack.getType()));
+            }
+        });
 
         return isDye.get();
     }
