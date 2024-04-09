@@ -247,6 +247,10 @@ public class mysticUtil implements CommandExecutor {
         return romanToInteger(splitLore[splitLore.length - 1]);
     }
 
+    public void addEnchantLevel(ItemStack itemstack, enchantUtil enchant) {
+        // Todo
+    }
+
     private String createLives() {
         return MessageFormat.format("{0}Lives: {1}0{0}/0", gray, red);
     }
@@ -406,18 +410,28 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack3, new Solitude(), 3);
-        mysticUtil.getInstance().addEnchant(itemStack3, new Hearts(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Singularity(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Sweaty(), 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.LIVES);
 
+        ItemStack itemStack5 = new mystic.Builder()
+                .material(LEATHER_LEGGINGS)
+                .type(mysticEnums.NORMAL)
+                .color(Color.RED)
+                .chatColor(red)
+                .build();
+
+        mysticUtil.getInstance().addEnchant(itemStack5, new Hearts(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack5, new Sweaty(), 1);
+
         ItemStack itemStack4 = new mysticWell().createItem();
 
-        ItemStack itemStack5 = new vile().createItem();
-        itemStack5.setAmount(64);
+        ItemStack itemStack6 = new vile().createItem();
+        itemStack6.setAmount(64);
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack5);
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5);
         return true;
     }
 }
