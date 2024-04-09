@@ -40,6 +40,8 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Wasp());
         mysticUtilInstance.registerEnchant(new Solitude());
         mysticUtilInstance.registerEnchant(new Hearts());
+        mysticUtilInstance.registerEnchant(new Singularity());
+        mysticUtilInstance.registerEnchant(new Sweaty());
     }
 
     private void registerItems() {
