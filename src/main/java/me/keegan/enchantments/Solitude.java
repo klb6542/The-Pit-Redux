@@ -4,11 +4,15 @@ import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.wordUtil.integerToWord;
@@ -71,8 +75,13 @@ public class Solitude extends enchantUtil {
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
         LivingEntity damaged = (LivingEntity) e.getEntity();
 
-        int entityCount = damaged.getNearbyEntities(solitudeBlockRadius, solitudeBlockRadius, solitudeBlockRadius).size();
-        if (entityCount > this.maxEntitiesPerLevel[enchantLevel]) { return; }
+        List<LivingEntity> nearbyLivingEntities = damaged.getNearbyEntities(solitudeBlockRadius, solitudeBlockRadius, solitudeBlockRadius)
+                .stream()
+                .filter(entity -> entity instanceof LivingEntity)
+                .map(entity -> (LivingEntity) entity)
+                .collect(Collectors.toList());
+
+        if (nearbyLivingEntities.size() > this.maxEntitiesPerLevel[enchantLevel]) { return; }
 
         playerDamageHandler.getInstance().reduceDamage(e, reducedDamagePerLevel[enchantLevel]);
     }
