@@ -387,9 +387,7 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.LIVES);
 
-        this.addEnchant(itemStack, new Perun(), 3);
-        this.addEnchant(itemStack, new SpeedyKill(), 3);
-        this.addEnchant(itemStack, new Guts(), 3);
+        this.addEnchant(itemStack, new Shark(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
