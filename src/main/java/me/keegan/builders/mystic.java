@@ -35,6 +35,7 @@ public class mystic {
 
     private static void setDefaultItemMeta(ItemMeta itemMeta) {
         itemMeta.setUnbreakable(true);
+
         itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemMeta.addItemFlags(ItemFlag.HIDE_DYE);
