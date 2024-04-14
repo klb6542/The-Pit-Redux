@@ -47,9 +47,9 @@ public abstract class enchantUtil implements Listener {
         entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration * 20, amplifier));
     }
 
-    public void addPotionEffect(LivingEntity entity, PotionEffectType potionEffectType, Integer amplifier, Integer duration) {
+    public void addPotionEffect(LivingEntity entity, PotionEffectType potionEffectType, Integer amplifier, Double duration) {
         // times 20 because 20 ticks = 1 second
-        entity.addPotionEffect(new PotionEffect(potionEffectType, duration * 20, amplifier));
+        entity.addPotionEffect(new PotionEffect(potionEffectType, (int) (duration * 20), amplifier));
     }
 
     /*
