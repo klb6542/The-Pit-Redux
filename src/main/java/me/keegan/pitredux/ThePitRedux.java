@@ -46,6 +46,10 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new XPReserve());
         mysticUtilInstance.registerEnchant(new Peroxide());
         mysticUtilInstance.registerEnchant(new Sharp());
+        mysticUtilInstance.registerEnchant(new PainFocus());
+        mysticUtilInstance.registerEnchant(new Crush());
+        mysticUtilInstance.registerEnchant(new Parasite());
+        mysticUtilInstance.registerEnchant(new SnowmenArmy());
     }
 
     private void registerItems() {
@@ -69,6 +73,7 @@ public final class ThePitRedux extends JavaPlugin {
     private void startup() {
         setupUtils.pluginEnabled(new Stereo());
         setupUtils.pluginEnabled(new Hearts());
+        setupUtils.pluginDisabled(new SnowmenArmy());
     }
 
     private void shutdown() {
@@ -76,6 +81,7 @@ public final class ThePitRedux extends JavaPlugin {
 
         setupUtils.pluginDisabled(new Stereo());
         setupUtils.pluginDisabled(new Hearts());
+        setupUtils.pluginDisabled(new SnowmenArmy());
     }
 
     @Override
