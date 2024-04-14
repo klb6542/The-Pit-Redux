@@ -118,9 +118,10 @@ public class playerDamageHandler implements Listener {
     // not used by other enchantments; aka they won't exist
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
-        if ((!(e.getEntity() instanceof LivingEntity)
-                || !(e.getDamager() instanceof LivingEntity))
-                && !entityUtil.damagerIsArrow(e)) { return; }
+        if (!((e.getEntity() instanceof LivingEntity)
+                || (e.getDamager() instanceof LivingEntity))
+                && (!(entityUtil.damagerIsArrow(e))
+                || !(entityUtil.damagerIsSnowball(e)))) { return; }
 
         LivingEntity damaged = (LivingEntity) e.getEntity();
 
