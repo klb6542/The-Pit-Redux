@@ -18,7 +18,7 @@ import java.util.Random;
 import static me.keegan.utils.formatUtil.*;
 
 public class Sweaty extends enchantUtil {
-    private final Integer[] expPointsPerLevel = new Integer[]{2, 3, 3};
+    private final Integer[] expPointsPerLevel = new Integer[]{2, 3, 4};
     private final Integer[] levelUpChancePerLevel = new Integer[]{0, 1, 1};
 
     private static final HashMap<EntityDeathEvent, Integer> xp = new HashMap<>();
