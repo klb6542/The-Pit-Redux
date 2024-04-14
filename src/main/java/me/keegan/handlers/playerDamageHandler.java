@@ -1,7 +1,9 @@
 package me.keegan.handlers;
 
 import me.keegan.pitredux.ThePitRedux;
+import me.keegan.utils.entityUtil;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -54,7 +56,7 @@ public class playerDamageHandler implements Listener {
 
         if (this.getDamage(e) == 0.0
                 && this.getReductionDamage(e) == 0.0
-                && this.getMaxDamage(e) == Math.E) { return finalDamage; }
+                && this.getMaxDamage(e) == Double.POSITIVE_INFINITY) { return finalDamage; }
 
         double enchantAdditivePercent
                 = (this.getReductionDamage(e) > this.getDamage(e))
@@ -92,7 +94,7 @@ public class playerDamageHandler implements Listener {
     }
 
     public Double getMaxDamage(EntityDamageByEntityEvent e) {
-        return this.maxDamage.getOrDefault(e, Math.E);
+        return this.maxDamage.getOrDefault(e, Double.POSITIVE_INFINITY);
     }
 
     public void addDamage(EntityDamageByEntityEvent e, double damage) {
@@ -116,7 +118,10 @@ public class playerDamageHandler implements Listener {
     // not used by other enchantments; aka they won't exist
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof LivingEntity)) { return; }
+        if ((!(e.getEntity() instanceof LivingEntity)
+                || !(e.getDamager() instanceof LivingEntity))
+                && !entityUtil.damagerIsArrow(e)) { return; }
+
         LivingEntity damaged = (LivingEntity) e.getEntity();
 
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
