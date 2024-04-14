@@ -426,9 +426,9 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack, 25, livesEnums.LIVES);
 
-        this.addEnchant(itemStack, new Shark(), 3);
+        this.addEnchant(itemStack, new PainFocus(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
-        this.addEnchant(itemStack, new Sharp(), 3);
+        this.addEnchant(itemStack, new Crush(), 3);
         this.addEnchant(itemStack, new Sweaty(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
@@ -440,8 +440,8 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
 
         this.addEnchant(itemStack2, new MegaLongbow(), 3);
-        this.addEnchant(itemStack2, new Volley(), 1);
-        this.addEnchantLevel(itemStack2, new Volley(), 2);
+        this.addEnchant(itemStack2, new Volley(), 2);
+        this.addEnchant(itemStack2, new Parasite(), 3);
 
         ItemStack itemStack3 = new mystic.Builder()
                 .material(LEATHER_LEGGINGS)
@@ -450,7 +450,7 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack3, new Peroxide(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new SnowmenArmy(), 1);
         mysticUtil.getInstance().addEnchant(itemStack3, new Sweaty(), 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
