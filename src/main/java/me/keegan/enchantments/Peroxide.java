@@ -81,7 +81,7 @@ public class Peroxide extends enchantUtil {
         this.addCooldown(damaged.getUniqueId(), (long) regenCooldownPerLevel[enchantLevel], cooldownEnums.NORMAL);
 
         this.addPotionEffect(damaged, PotionEffectType.REGENERATION,
-                regenAmplifierPerLevel[enchantLevel], regenDurationPerLevel[enchantLevel]);
+                regenAmplifierPerLevel[enchantLevel], (double) regenDurationPerLevel[enchantLevel]);
     }
 
     @EventHandler
