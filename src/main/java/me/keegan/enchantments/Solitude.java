@@ -3,6 +3,7 @@ package me.keegan.enchantments;
 import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.enchantUtil;
+import me.keegan.utils.entityUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -69,6 +70,11 @@ public class Solitude extends enchantUtil {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return true;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 
@@ -88,7 +94,9 @@ public class Solitude extends enchantUtil {
 
     @EventHandler
     public void entityDamaged(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof LivingEntity)) { return; }
+        if ((!(e.getEntity() instanceof LivingEntity)
+                || !(e.getDamager() instanceof LivingEntity))
+                && !entityUtil.damagerIsArrow(e)) { return; }
 
         LivingEntity damaged = (LivingEntity) e.getEntity();
 
