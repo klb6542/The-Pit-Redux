@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 import static me.keegan.utils.formatUtil.*;
 
 public class Sharp extends enchantUtil {
-    private final Integer[] damagePerLevel = new Integer[]{12, 16, 20};
+    private final Integer[] damagePerLevel = new Integer[]{10, 14, 16};
 
     @Override
     public Material[] getEnchantMaterial() {
