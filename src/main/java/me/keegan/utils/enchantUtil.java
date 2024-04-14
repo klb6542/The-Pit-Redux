@@ -29,6 +29,7 @@ public abstract class enchantUtil implements Listener {
     public abstract String[] getEnchantDescription();
     public abstract Integer getMaxLevel();
     public abstract boolean isRareEnchant();
+    public abstract boolean isMysticWellEnchant(); // can items be enchanted with it in the mystic well
     public abstract void executeEnchant(Object[] args);
 
     // below is included incase there is an enchantment to reduce/cancel healing or any other methods
