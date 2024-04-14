@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
@@ -45,6 +46,12 @@ public class mysticUtil implements CommandExecutor {
         if (itemMeta == null) { return null; }
 
         return (itemMeta.hasLore()) ? itemMeta.getLore() : new ArrayList<>();
+    }
+
+    private String createEnchantName(enchantUtil enchant, Integer enchantLevel) {
+        return (enchant.isRareEnchant())
+                ? MessageFormat.format("{0}RARE! {1}{2} {3}", lightPurple, blue, enchant.getName(), integerToRoman(enchantLevel, true))
+                : MessageFormat.format("{0}{1} {2}", blue, enchant.getName(), integerToRoman(enchantLevel, true));
     }
 
     private Integer getEnchantIndex(ItemStack itemStack, enchantUtil enchant, List<String> lore) {
@@ -80,6 +87,8 @@ public class mysticUtil implements CommandExecutor {
         for (int i = 0; i < enchant.getEnchantMaterial().length; i++) {
             // sort the enchants to make it easier for getEnchantCount method
             // don't break because enchants can have multiple materials
+            if (!enchant.isMysticWellEnchant()) { continue; }
+
             switch (enchant.getEnchantMaterial()[i]) {
                 case GOLDEN_SWORD:
                     swordEnchants.add(enchant);
@@ -183,9 +192,7 @@ public class mysticUtil implements CommandExecutor {
             lore.clear();
         }
 
-        String name = (enchant.isRareEnchant())
-                ? MessageFormat.format("{0}RARE! {1}{2} {3}", lightPurple, blue, enchant.getName(), integerToRoman(enchantLevel, true))
-                : MessageFormat.format("{0}{1} {2}", blue, enchant.getName(), integerToRoman(enchantLevel, true));
+        String name = this.createEnchantName(enchant, enchantLevel);
         String description = enchant.getEnchantDescription()[enchantLevel - 1];
 
         // do not change this it's okay
@@ -247,8 +254,40 @@ public class mysticUtil implements CommandExecutor {
         return romanToInteger(splitLore[splitLore.length - 1]);
     }
 
-    public void addEnchantLevel(ItemStack itemstack, enchantUtil enchant) {
-        // Todo
+    public void addEnchantLevel(ItemStack itemStack, enchantUtil enchant, Integer enchantLevels) {
+        List<String> lore = this.getItemLore(itemStack);
+        if (lore == null || lore.isEmpty() || !this.hasEnchant(itemStack, enchant)) { return; }
+
+        Integer enchantIndex = this.getEnchantIndex(itemStack, enchant, lore);
+        if (enchantIndex == -1) { return; }
+
+        List<String> splitLore = Arrays.asList(lore.get(enchantIndex).split(" "));
+
+        // clamp new enchant level
+        Integer newEnchantLevel = Math.max(1, Math.min(enchant.getMaxLevel(), romanToInteger(splitLore.get(splitLore.size() - 1)) + enchantLevels));
+
+        // last index of split lore is always the enchant level, even if its empty
+        splitLore.set(splitLore.size() - 1, integerToRoman(enchantIndex, true));
+
+        // remove old enchant description
+        while (enchantIndex + 1 < lore.size() && !lore.get(enchantIndex + 1).isEmpty()) {
+            lore.remove(enchantIndex + 1);
+        }
+
+        String[] splitEnchantDescription = enchant.getEnchantDescription()[newEnchantLevel - 1].split("/n");
+
+        // add new enchant description
+        for (int i = splitEnchantDescription.length - 1; i >= 0; i--) {
+            lore.add(enchantIndex + 1, splitEnchantDescription[i]);
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        // set new enchant name and description to lore
+        lore.set(enchantIndex, this.createEnchantName(enchant, newEnchantLevel));
+        itemMeta.setLore(lore);
+
+        itemStack.setItemMeta(itemMeta);
     }
 
     private String createLives() {
@@ -389,6 +428,8 @@ public class mysticUtil implements CommandExecutor {
 
         this.addEnchant(itemStack, new Shark(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
+        this.addEnchant(itemStack, new Sharp(), 3);
+        this.addEnchant(itemStack, new Sweaty(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
                 .material(Material.BOW)
@@ -399,7 +440,8 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
 
         this.addEnchant(itemStack2, new MegaLongbow(), 3);
-        this.addEnchant(itemStack2, new Volley(), 3);
+        this.addEnchant(itemStack2, new Volley(), 1);
+        this.addEnchantLevel(itemStack2, new Volley(), 2);
 
         ItemStack itemStack3 = new mystic.Builder()
                 .material(LEATHER_LEGGINGS)
@@ -408,7 +450,7 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack3, new Singularity(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Peroxide(), 3);
         mysticUtil.getInstance().addEnchant(itemStack3, new Sweaty(), 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
@@ -421,8 +463,9 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(red)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack5, new Hearts(), 3);
         mysticUtil.getInstance().addEnchant(itemStack5, new Sweaty(), 1);
+        mysticUtil.getInstance().addEnchant(itemStack5, new XPReserve(), 1);
+        mysticUtil.getInstance().addEnchantLevel(itemStack5, new XPReserve(), 2);
 
         ItemStack itemStack4 = new mysticWell().createItem();
 
