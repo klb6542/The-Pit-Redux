@@ -2,6 +2,7 @@ package me.keegan.utils;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.Nullable;
@@ -26,5 +27,12 @@ public class entityUtil {
                 && e.getDamager() instanceof Arrow
                 && e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE
                 && ((Arrow) e.getDamager()).getShooter() instanceof LivingEntity;
+    }
+
+    public static Boolean damagerIsSnowball(EntityDamageByEntityEvent e) {
+        return e.getEntity() instanceof LivingEntity
+                && e.getDamager() instanceof Snowball
+                && e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE
+                && ((Snowball) e.getDamager()).getShooter() instanceof LivingEntity;
     }
 }
