@@ -70,7 +70,8 @@ public class Wasp extends enchantUtil {
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
         LivingEntity livingEntity = (LivingEntity) e.getEntity();
 
-        this.addPotionEffect(livingEntity, PotionEffectType.WEAKNESS, weaknessAmplifierPerLevel[enchantLevel], weaknessDurationPerLevel[enchantLevel]);
+        this.addPotionEffect(livingEntity, PotionEffectType.WEAKNESS,
+                weaknessAmplifierPerLevel[enchantLevel], (double) weaknessDurationPerLevel[enchantLevel]);
     }
 
     @EventHandler
