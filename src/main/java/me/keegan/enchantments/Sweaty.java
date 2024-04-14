@@ -1,8 +1,10 @@
 package me.keegan.enchantments;
 
 import me.keegan.enums.mysticEnums;
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,7 +18,7 @@ import java.util.Random;
 import static me.keegan.utils.formatUtil.*;
 
 public class Sweaty extends enchantUtil {
-    private final Integer[] expPerLevel = new Integer[]{20, 30, 40};
+    private final Integer[] expPointsPerLevel = new Integer[]{2, 3, 3};
     private final Integer[] levelUpChancePerLevel = new Integer[]{0, 1, 1};
 
     private static final HashMap<EntityDeathEvent, Integer> xp = new HashMap<>();
@@ -43,16 +45,16 @@ public class Sweaty extends enchantUtil {
     @Override
     public String[] getEnchantDescription() {
         return new String[]{
-                MessageFormat.format("{0}Earn {1}+{2}% XP{0} from kills/n",
-                        gray, aqua, expPerLevel[0]),
+                MessageFormat.format("{0}Earn {1}+{2} XP points{0} from kills/n",
+                        gray, aqua, expPointsPerLevel[0]),
 
-                MessageFormat.format("{0}Earn {1}+{2}% XP{0} from kills with a/n" +
+                MessageFormat.format("{0}Earn {1}+{2} XP points{0} from kills with a/n" +
                                 "{1}{3}% chance{0} to level up",
-                        gray, aqua, expPerLevel[1], levelUpChancePerLevel[1]),
+                        gray, aqua, expPointsPerLevel[1], levelUpChancePerLevel[1]),
 
-                MessageFormat.format("{0}Earn {1}+{2}% XP{0} from kills with a/n" +
+                MessageFormat.format("{0}Earn {1}+{2} XP points{0} from kills with a/n" +
                                 "{1}{3}% chance{0} to level up",
-                        gray, aqua, expPerLevel[2], levelUpChancePerLevel[2]),
+                        gray, aqua, expPointsPerLevel[2], levelUpChancePerLevel[2]),
         };
     }
 
@@ -67,17 +69,24 @@ public class Sweaty extends enchantUtil {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return true;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
         EntityDeathEvent e = (EntityDeathEvent) args[0];
 
         // put xp in hashmap to calculate later
-        xp.put(e, xp.getOrDefault(e, 0) + expPerLevel[enchantLevel]);
+        xp.put(e, xp.getOrDefault(e, 0) + expPointsPerLevel[enchantLevel]);
 
         if (enchantLevel < 2
-                && new Random().nextInt(100)
+                || new Random().nextInt(100)
                 > levelUpChancePerLevel[enchantLevel]) { return; }
 
+        // volume, pitch
+        e.getEntity().getWorld().playSound(e.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         e.getEntity().getKiller().giveExpLevels(1);
     }
 
@@ -132,7 +141,7 @@ public class Sweaty extends enchantUtil {
     public void entityDied2(EntityDeathEvent e) {
         if (!xp.containsKey(e)) { return; }
 
-        e.setDroppedExp(e.getDroppedExp() * ((xp.get(e) / 100) + 1));
+        e.setDroppedExp(e.getDroppedExp() + xp.getOrDefault(e, 0));
         xp.remove(e);
     }
 }
