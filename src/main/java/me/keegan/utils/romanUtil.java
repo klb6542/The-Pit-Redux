@@ -9,7 +9,8 @@ public class romanUtil {
 
         String romanNumber = thousands[number / 1000] + hundreds[(number % 1000) / 100] + tens[(number % 100) / 10] + units[number % 10];
 
-        return (romanNumber.equals("I") && removeRomanOne) ? "" : romanNumber;
+        // the 'empty' string is an invisible character
+        return (romanNumber.equals("I") && removeRomanOne) ? " " : romanNumber;
     }
 
     public static Integer romanToInteger(String romanNumber) {
@@ -19,6 +20,10 @@ public class romanUtil {
                 return 2;
             case "III":
                 return 3;
+            case "IV":
+                return 4;
+            case "V":
+                return 5;
             default:
                 return 1;
         }
