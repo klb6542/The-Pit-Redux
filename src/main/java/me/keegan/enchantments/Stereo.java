@@ -66,6 +66,11 @@ public class Stereo extends enchantUtil implements setupUtils {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return false;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         PlayerJoinEvent e = (PlayerJoinEvent) args[0];
         Player player = e.getPlayer();

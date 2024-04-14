@@ -62,6 +62,11 @@ public class Hearts extends enchantUtil implements setupUtils {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return true;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 

@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 public class Perun extends enchantUtil {
     private final Integer[] hitsNeeded = new Integer[]{5, 4, 4};
     private final Integer[] trueDamagePerLevel = new Integer[]{3, 4, 2};
-    private Integer durationUntilHitsReset = 15;
+    private final Integer durationUntilHitsReset = 15;
 
     @Override
     public Material[] getEnchantMaterial() {
@@ -70,6 +70,11 @@ public class Perun extends enchantUtil {
 
     @Override
     public boolean isRareEnchant() {
+        return true;
+    }
+
+    @Override
+    public boolean isMysticWellEnchant() {
         return true;
     }
 

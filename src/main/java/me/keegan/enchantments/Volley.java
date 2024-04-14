@@ -19,6 +19,11 @@ import java.util.UUID;
 import static me.keegan.utils.formatUtil.gray;
 import static me.keegan.utils.formatUtil.white;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
+
 public class Volley extends enchantUtil {
     private final Integer[] arrowsPerLevel = new Integer[]{3, 4, 5};
     private static final HashMap<UUID, Integer> arrowCounter = new HashMap<>();
@@ -60,6 +65,11 @@ public class Volley extends enchantUtil {
 
     @Override
     public boolean isRareEnchant() {
+        return true;
+    }
+
+    @Override
+    public boolean isMysticWellEnchant() {
         return true;
     }
 

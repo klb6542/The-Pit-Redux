@@ -63,6 +63,11 @@ public class Lifesteal extends enchantUtil {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return true;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 

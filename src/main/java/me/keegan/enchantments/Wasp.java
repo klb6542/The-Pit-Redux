@@ -2,12 +2,12 @@ package me.keegan.enchantments;
 
 import me.keegan.enums.mysticEnums;
 import me.keegan.utils.enchantUtil;
+import me.keegan.utils.entityUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import java.text.MessageFormat;
@@ -59,6 +59,11 @@ public class Wasp extends enchantUtil {
     }
 
     @Override
+    public boolean isMysticWellEnchant() {
+        return true;
+    }
+
+    @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
 
@@ -70,10 +75,7 @@ public class Wasp extends enchantUtil {
 
     @EventHandler
     public void arrowDamaged(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof LivingEntity)
-                || !(e.getDamager() instanceof Arrow)
-                || !(e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
-                || !(((Arrow) e.getDamager()).getShooter() instanceof LivingEntity)) { return; }
+        if (!entityUtil.damagerIsArrow(e)) { return; }
 
         Arrow arrow = (Arrow) e.getDamager();
         LivingEntity shooter = (LivingEntity) arrow.getShooter();
