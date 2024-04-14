@@ -1,5 +1,6 @@
 package me.keegan.utils;
 
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -18,5 +19,12 @@ public class entityUtil {
         EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) e;
 
         return (event.getDamager() instanceof LivingEntity) ? ((LivingEntity) event.getEntity()) : null;
+    }
+
+    public static Boolean damagerIsArrow(EntityDamageByEntityEvent e) {
+        return e.getEntity() instanceof LivingEntity
+                && e.getDamager() instanceof Arrow
+                && e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE
+                && ((Arrow) e.getDamager()).getShooter() instanceof LivingEntity;
     }
 }
