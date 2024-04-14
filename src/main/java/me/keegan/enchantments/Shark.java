@@ -14,10 +14,14 @@ import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
 
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
+
 public class Shark extends enchantUtil {
     private final Integer[] damagePerLevel = new Integer[]{3, 5, 7};
 
-    private final Integer healthMaxToProc = 12;
+    private final Integer healthMaxToProc = 10;
     private final Integer sharkBlockRadius = 12;
 
     @Override
@@ -63,6 +67,11 @@ public class Shark extends enchantUtil {
     @Override
     public boolean isRareEnchant() {
         return false;
+    }
+
+    @Override
+    public boolean isMysticWellEnchant() {
+        return true;
     }
 
     @Override
