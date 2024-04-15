@@ -5,6 +5,7 @@ import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.items.pants.dark_pants;
+import me.keegan.items.special.gem;
 import me.keegan.items.vile.vile;
 import me.keegan.items.vile.vile_block;
 import me.keegan.mysticwell.mysticWell;
@@ -12,7 +13,6 @@ import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.setupUtils;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -50,6 +50,7 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Crush());
         mysticUtilInstance.registerEnchant(new Parasite());
         mysticUtilInstance.registerEnchant(new SnowmenArmy());
+        mysticUtilInstance.registerEnchant(new Explosive());
     }
 
     private void registerItems() {
@@ -57,6 +58,7 @@ public final class ThePitRedux extends JavaPlugin {
         itemUtil.registerItem(new vile());
         itemUtil.registerItem(new vile_block());
         itemUtil.registerItem(new dark_pants());
+        itemUtil.registerItem(new gem());
     }
 
     private void registerCommands() {
