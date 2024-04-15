@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -34,5 +35,10 @@ public class entityUtil {
                 && e.getDamager() instanceof Snowball
                 && e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE
                 && ((Snowball) e.getDamager()).getShooter() instanceof LivingEntity;
+    }
+
+    public static Boolean projectileIsArrow(ProjectileHitEvent e) {
+        return e.getEntity() instanceof Arrow
+                && e.getEntity().getShooter() instanceof LivingEntity;
     }
 }
