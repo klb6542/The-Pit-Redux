@@ -150,7 +150,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
 
     @Override
     public boolean isMysticWellEnchant() {
-        return false;
+        return true;
     }
 
     @Override
