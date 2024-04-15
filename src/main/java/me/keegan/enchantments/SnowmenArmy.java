@@ -27,7 +27,7 @@ import java.util.List;
 import static me.keegan.utils.formatUtil.*;
 
 public class SnowmenArmy extends enchantUtil implements setupUtils {
-    private static final List<Snowman> currentSnowman = new ArrayList<>();
+    private static final List<Snowman> currentSnowmen = new ArrayList<>();
 
     private final Integer[] snowmanDurationTime = new Integer[]{45, 75, 125};
     private final Integer scoopConsumableAmount = 3;
@@ -76,7 +76,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
         snowman.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(snowmanHealth);
         snowman.setHealth(snowmanHealth);
 
-        currentSnowman.add(snowman);
+        currentSnowmen.add(snowman);
         return snowman;
     }
 
@@ -168,7 +168,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
                     snowman.remove();
                 }
 
-                currentSnowman.remove(snowman);
+                currentSnowmen.remove(snowman);
             }
 
         }.runTaskLater(ThePitRedux.getPlugin(), this.getSnowmanDuration((ItemStack) args[1]) * 20);
@@ -240,8 +240,8 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
 
     @Override
     public void disable() {
-        currentSnowman.forEach(snowman -> {
-            currentSnowman.remove(snowman);
+        currentSnowmen.forEach(snowman -> {
+            currentSnowmen.remove(snowman);
             snowman.remove();
         });
     }
