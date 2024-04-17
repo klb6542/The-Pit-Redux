@@ -36,6 +36,17 @@ public class mysticHandler implements Listener {
         return isDye.get();
     }
 
+    private boolean containsNotCraftable(CraftingInventory craftingInventory) {
+        AtomicBoolean containsNotCraftable = new AtomicBoolean(false);
+
+        craftingInventory.forEach(itemStack ->
+                containsNotCraftable.set(
+                        containsNotCraftable.get()
+                        || propertiesUtil.hasProperty(propertiesUtil.notCraftable, itemStack.getItemMeta())));
+
+        return containsNotCraftable.get();
+    }
+
     @EventHandler
     public void prepareAnvil(PrepareAnvilEvent e) {
         if (mysticUtil.getInstance().isMystic(e.getResult())) { e.setResult(new ItemStack(Material.AIR)); }
@@ -48,7 +59,8 @@ public class mysticHandler implements Listener {
 
     @EventHandler
     public void craftItem(CraftItemEvent e) {
-        e.setCancelled(mysticUtil.getInstance().isMystic(e.getCurrentItem()) && containsDye(e.getInventory()));
+        e.setCancelled((mysticUtil.getInstance().isMystic(e.getCurrentItem()) && containsDye(e.getInventory()))
+                || containsNotCraftable(e.getInventory()));
     }
 
     @EventHandler
