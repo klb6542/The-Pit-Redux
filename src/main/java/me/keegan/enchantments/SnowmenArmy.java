@@ -202,6 +202,8 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
 
         e.setDroppedExp(0);
         e.getDrops().clear();
+
+        currentSnowmen.removeIf(currentSnowmen::contains);
     }
 
     @EventHandler
