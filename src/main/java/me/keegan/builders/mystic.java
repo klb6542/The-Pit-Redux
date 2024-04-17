@@ -1,7 +1,9 @@
 package me.keegan.builders;
 
+import me.keegan.classes.Tier;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
+import me.keegan.utils.tierUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,6 +150,70 @@ public class mystic {
 
         public ItemStack build() {
             return buildMystic(this);
+        }
+    }
+
+    // other classes
+
+    public static class sword implements tierUtil {
+        @Override
+        public @Nullable ChatColor getColorFromTier(int tier) {
+            return normalColorTiers.get(tier);
+        }
+
+        @Override
+        public @Nullable Material getColorPaneFromTier(int tier) {
+            return normalPaneColorTiers.get(tier);
+        }
+    }
+
+    public static class bow implements tierUtil {
+        @Override
+        public @Nullable ChatColor getColorFromTier(int tier) {
+            return normalColorTiers.get(tier);
+        }
+
+        @Override
+        public @Nullable Material getColorPaneFromTier(int tier) {
+            return normalPaneColorTiers.get(tier);
+        }
+    }
+
+    public static class pants {
+        private static ItemStack pants;
+
+        public pants(ItemStack itemStack) {
+            pants = (itemStack.getItemMeta() != null && itemStack.getItemMeta().getDisplayName().length() - 1 > 2)
+                    ? itemStack
+                    : null;
+        }
+
+        public static class normal implements tierUtil {
+            @Override
+            public @Nullable ChatColor getColorFromTier(int tier) {
+                return (pants != null)
+                        ? ChatColor.getByChar(pants.getItemMeta().getDisplayName().substring(1, 2))
+                        : null;
+            }
+
+            @Override
+            public @Nullable Material getColorPaneFromTier(int tier) {
+                return normalPaneColorTiers.get(tier);
+            }
+        }
+
+        public static class dark implements tierUtil {
+            @Override
+            public @Nullable ChatColor getColorFromTier(int tier) {
+                return (pants != null)
+                        ? ChatColor.getByChar(pants.getItemMeta().getDisplayName().substring(1, 2))
+                        : null;
+            }
+
+            @Override
+            public @Nullable Material getColorPaneFromTier(int tier) {
+                return darkPaneColorTiers.get(tier);
+            }
         }
     }
 }
