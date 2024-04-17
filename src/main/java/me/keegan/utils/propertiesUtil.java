@@ -16,6 +16,10 @@ public class propertiesUtil {
             ThePitRedux.getPlugin(),
             "not_burnable");
 
+    public static final NamespacedKey notCraftable = new NamespacedKey(
+            ThePitRedux.getPlugin(),
+            "not_craftable");
+
     public static void setProperty(NamespacedKey key, ItemMeta itemMeta) {
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "");
     }
