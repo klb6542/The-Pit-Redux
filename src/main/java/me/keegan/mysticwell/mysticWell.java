@@ -3,6 +3,7 @@ package me.keegan.mysticwell;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -110,7 +111,7 @@ public class mysticWell extends itemUtil {
                 ThePitRedux.getPlugin().getServer().createInventory(
                     player,
                     45,
-                    inventoryView.getTitle().substring(2)));
+                    ChatColor.stripColor(inventoryView.getTitle())));
 
         // create new inventory contents if there is no cache
         if (!inventories.containsKey(uuid)
@@ -157,7 +158,7 @@ public class mysticWell extends itemUtil {
         UUID uuid = player.getUniqueId();
 
         if (!inventoryView.getTitle()
-            .equals(this.createItem().getItemMeta().getDisplayName().substring(2)))
+            .equals(ChatColor.stripColor(this.createItem().getItemMeta().getDisplayName())))
             { return; }
 
         player.setCanPickupItems(true);
@@ -205,7 +206,7 @@ public class mysticWell extends itemUtil {
 
         // check if they opened the mystic well
         if (!inventoryView.getTitle()
-            .equals(this.createItem().getItemMeta().getDisplayName().substring(2)))
+            .equals(ChatColor.stripColor(this.createItem().getItemMeta().getDisplayName())))
             { return; }
 
         Player player = (Player) e.getWhoClicked();
