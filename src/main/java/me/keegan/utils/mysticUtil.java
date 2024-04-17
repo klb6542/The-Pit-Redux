@@ -4,16 +4,19 @@ import me.keegan.builders.mystic;
 import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
-import me.keegan.items.vile.vile;
+import me.keegan.items.special.gem;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.pitredux.ThePitRedux;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -290,6 +293,25 @@ public class mysticUtil implements CommandExecutor {
         itemStack.setItemMeta(itemMeta);
     }
 
+    public Integer getTier(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) { return null; }
+
+        String displayName = itemMeta.getDisplayName();
+        String[] splitDisplayName = displayName.split(" ");
+
+        String[] filteredDisplayName = Arrays.stream(splitDisplayName)
+                .filter(string -> ChatColor.stripColor(string).equals("Tier"))
+                .toArray(String[]::new);
+
+
+        Integer tier = (filteredDisplayName.length > 0) ? romanToInteger(filteredDisplayName[0]) : 0;
+
+        return (tier > 0 && this.getEnchantCount(itemStack) > 0)
+                ? tier
+                : 0;
+    }
+
     private String createLives() {
         return MessageFormat.format("{0}Lives: {1}0{0}/0", gray, red);
     }
@@ -415,6 +437,19 @@ public class mysticUtil implements CommandExecutor {
         itemStack.setAmount(0);
     }
 
+    public List<ItemStack> getPlayerMystics(Player player, Boolean ignoreFresh, Boolean isImmutable) {
+        PlayerInventory playerInventory = player.getInventory();
+        List<ItemStack> mystics = new ArrayList<>();
+
+        for (ItemStack itemStack : playerInventory) {
+            if (!this.isMystic(itemStack) || (ignoreFresh && this.getEnchantCount(itemStack) < 1)) { continue; }
+
+            mystics.add((isImmutable) ? itemStack.clone() : itemStack);
+        }
+
+        return mystics;
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ItemStack itemStack = new mystic.Builder()
@@ -429,7 +464,7 @@ public class mysticUtil implements CommandExecutor {
         this.addEnchant(itemStack, new PainFocus(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
         this.addEnchant(itemStack, new Crush(), 3);
-        this.addEnchant(itemStack, new Sweaty(), 3);
+        this.addEnchant(itemStack, new Perun(), 3);
 
         ItemStack itemStack2 = new mystic.Builder()
                 .material(Material.BOW)
@@ -450,8 +485,10 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(green)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack3, new SnowmenArmy(), 1);
-        mysticUtil.getInstance().addEnchant(itemStack3, new Sweaty(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new SnowmenArmy(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Singularity(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Hearts(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Peroxide(), 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.LIVES);
@@ -463,14 +500,10 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(red)
                 .build();
 
-        mysticUtil.getInstance().addEnchant(itemStack5, new Sweaty(), 1);
-        mysticUtil.getInstance().addEnchant(itemStack5, new XPReserve(), 1);
-        mysticUtil.getInstance().addEnchantLevel(itemStack5, new XPReserve(), 2);
-
         ItemStack itemStack4 = new mysticWell().createItem();
 
-        ItemStack itemStack6 = new vile().createItem();
-        itemStack6.setAmount(64);
+        ItemStack itemStack6 = new gem().createItem();
+        itemStack6.setAmount(1);
 
         ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5);
         return true;
