@@ -25,6 +25,8 @@ public class gem extends itemUtil {
     private final String inventoryName = "Totally Legit Selector";
     private final Boolean mysticMustBeTier3 = true;
 
+    public static final String gemIndicator = "♦";
+
     @Override
     public String getNamespaceName() {
         return "gem";
@@ -61,6 +63,18 @@ public class gem extends itemUtil {
 
     }
 
+    private String getFooter(ItemStack itemStack) {
+        if (mysticUtil.getInstance().getTier(itemStack) < 3) {
+            return red + "Item needs to be Tier III!";
+        }
+
+        if (mysticUtil.getInstance().isGemmed(itemStack)) {
+            return red + "Item has already been upgraded!";
+        }
+
+        return yellow + "Click to upgrade!";
+    }
+
     @EventHandler
     public void playerInteracted(PlayerInteractEvent e) {
         if ((e.getAction() != Action.RIGHT_CLICK_AIR
@@ -78,15 +92,7 @@ public class gem extends itemUtil {
         List<ItemStack> mystics = mysticUtil.getInstance().getPlayerMystics(player, true, true);
 
         for (ItemStack itemStack : mystics) {
-            String loreFooter = "";
-
-            if (mysticUtil.getInstance().getTier(itemStack) < 3) {
-                loreFooter = red + "Item needs to be Tier III!";
-            }
-
-            if (loreFooter.isEmpty()) {
-                loreFooter = yellow + "Click to upgrade!";
-            }
+            String loreFooter = this.getFooter(itemStack);
 
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> lore = itemMeta.getLore();
@@ -112,6 +118,7 @@ public class gem extends itemUtil {
         Inventory clickedInventory = e.getClickedInventory();
 
         if (!currentInventory.equals(clickedInventory)) { return; }
+        ItemStack itemStack = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
         player.closeInventory();
 
@@ -120,6 +127,9 @@ public class gem extends itemUtil {
                 player,
                 36,
                 ChatColor.stripColor(this.createItem().getItemMeta().getDisplayName()));
+
+         int enchantCount = mysticUtil.getInstance().getEnchantCount(itemStack);
+
 
     }
 }
