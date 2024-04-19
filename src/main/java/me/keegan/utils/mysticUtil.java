@@ -312,6 +312,12 @@ public class mysticUtil implements CommandExecutor {
                 : 0;
     }
 
+    public Boolean isGemmed(ItemStack itemStack) {
+        List<String> lore = this.getItemLore(itemStack);
+
+        return lore != null && !lore.isEmpty() && lore.get(0).contains(gem.gemIndicator);
+    }
+
     private String createLives() {
         return MessageFormat.format("{0}Lives: {1}0{0}/0", gray, red);
     }
