@@ -8,6 +8,7 @@ import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,9 +42,10 @@ public class gem extends itemUtil {
     private final String inventoryName = "Totally Legit Selector";
     private final String gemName = green + "Totally Legit Gem";
     private final String gemCost = ChatColor.getByChar(gemName.substring(1, 2)) + "1 " + gemName;
+    private final String gemUpgradeFooter = yellow + "Click to upgrade!";
 
     private final Boolean gemRareEnchants = true;
-    private final Boolean mysticMustBeTier3 = true;
+    private final Boolean mysticMustBeTier3 = false;
 
     public static final String gemIndicator = green + "♦";
 
@@ -84,15 +86,9 @@ public class gem extends itemUtil {
     }
 
     private String getFooter(ItemStack itemStack) {
-        if (mysticUtil.getInstance().isGemmed(itemStack)) {
-            return red + "Item has already been upgraded!";
-        }
-
-        if (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) < 3) {
-            return red + "Item needs to be Tier III!";
-        }
-
-        return yellow + "Click to upgrade!";
+        return (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) != 3)
+                ? red + "Item needs to be Tier III!"
+                : this.gemUpgradeFooter;
     }
 
     private void removeLoreFooter(ItemStack itemStack) {
@@ -170,7 +166,11 @@ public class gem extends itemUtil {
                 36,
                 inventoryName);
 
-        List<ItemStack> mystics = mysticUtil.getInstance().getPlayerMystics(player, true, true);
+        // filter gemmed mystics
+        List<ItemStack> mystics = mysticUtil.getInstance().getPlayerMystics(player, true, true)
+                .stream()
+                .filter(itemStack -> !mysticUtil.getInstance().isGemmed(itemStack))
+                .collect(Collectors.toList());
 
         for (ItemStack itemStack : mystics) {
             String loreFooter = this.getFooter(itemStack);
@@ -207,11 +207,9 @@ public class gem extends itemUtil {
         Inventory clickedInventory = e.getClickedInventory();
         ItemStack itemStack = e.getCurrentItem();
 
-        if (!currentInventory.equals(clickedInventory) || itemStack == null) { return; }
-
-        // TODO
-        // add checks for tier 3 and if its already gemmed
-
+        if (!currentInventory.equals(clickedInventory)
+                || itemStack == null
+                || (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) != 3)) { return; }
         itemStack = itemStack.clone(); // immutable
 
         Player player = (Player) e.getWhoClicked();
@@ -278,6 +276,8 @@ public class gem extends itemUtil {
 
             mysticUtil.getInstance().addEnchantLevel(currentMystic, enchant, 1);
             mysticUtil.getInstance().gem(currentMystic);
+
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.1f, 9f);
 
             this.removeLoreFooter(currentMystic);
             playerInventory.addItem(currentMystic);
