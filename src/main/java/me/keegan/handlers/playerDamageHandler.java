@@ -1,9 +1,8 @@
 package me.keegan.handlers;
 
-import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.entityUtil;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -123,13 +122,19 @@ public class playerDamageHandler implements Listener {
                 && (!(entityUtil.damagerIsArrow(e))
                 || !(entityUtil.damagerIsSnowball(e)))) { return; }
 
-        LivingEntity damaged = (LivingEntity) e.getEntity();
+        Entity damaged = e.getEntity();
 
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
         double trueDamage = playerDamageHandler.instance.calculateTrueDamage(e);
 
         e.setDamage(calculatedDamage);
-        damaged.setHealth(Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), damaged.getHealth() - trueDamage)));
+
+        if (damaged instanceof LivingEntity) {
+            LivingEntity livingDamaged = (LivingEntity) damaged;
+
+            livingDamaged.setHealth(Math.max(0, Math.min(livingDamaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+                    livingDamaged.getHealth() - trueDamage)));
+        }
 
         playerDamageHandler.instance.resetDamageValues(e);
     }
