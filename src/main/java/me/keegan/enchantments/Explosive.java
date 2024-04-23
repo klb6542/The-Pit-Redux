@@ -4,7 +4,6 @@ import me.keegan.enums.mysticEnums;
 import me.keegan.utils.enchantUtil;
 import me.keegan.utils.entityUtil;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
