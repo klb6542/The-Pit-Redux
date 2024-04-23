@@ -68,16 +68,16 @@ public class mysticUtil implements CommandExecutor {
         return -1;
     }
 
-    private Boolean containsEnchant(List<String> lore, Integer loreIndex, Iterator iterator) {
+    private @Nullable enchantUtil containsEnchant(List<String> lore, Integer loreIndex, Iterator iterator) {
         // used only for getEnchantCount method & getTokens method
         while (iterator.hasNext()) {
             enchantUtil enchant = (enchantUtil) iterator.next();
             if (!lore.get(loreIndex).contains(blue + enchant.getName())) { continue; }
 
-            return true;
+            return enchant;
         }
 
-        return false;
+        return null;
     }
 
     public void registerEnchant(enchantUtil enchant) {
@@ -88,7 +88,7 @@ public class mysticUtil implements CommandExecutor {
         enchants.add(enchant);
 
         for (int i = 0; i < enchant.getEnchantMaterial().length; i++) {
-            // sort the enchants to make it easier for getEnchantCount method
+            // sort the enchants to make it easier for mystic well
             // don't break because enchants can have multiple materials
             if (!enchant.isMysticWellEnchant()) { continue; }
 
@@ -115,19 +115,7 @@ public class mysticUtil implements CommandExecutor {
         if (lore == null || lore.isEmpty()) { return count; }
 
         for (int i = 0; i < lore.size(); i++) {
-
-            switch (itemStack.getType()) {
-                case GOLDEN_SWORD:
-                    count += (this.containsEnchant(lore, i, swordEnchants.iterator())) ? 1 : 0;
-                    break;
-                case BOW:
-                    count += (this.containsEnchant(lore, i, bowEnchants.iterator())) ? 1 : 0;
-                    break;
-                case LEATHER_LEGGINGS:
-                    count += (this.containsEnchant(lore, i, pantsEnchants.iterator())) ? 1 : 0;
-                    break;
-            }
-
+            count += (this.containsEnchant(lore, i, enchants.iterator()) != null) ? 1 : 0;
         }
 
         return count;
@@ -137,7 +125,7 @@ public class mysticUtil implements CommandExecutor {
         // used only for getTokens method
         String[] splitLore = lore.get(enchantIndex).split(" ");
 
-        return romanToInteger(splitLore[splitLore.length - 1]);
+        return (enchantIndex != -1) ? romanToInteger(splitLore[splitLore.length - 1]) : 0;
     }
 
     public Integer getEnchantTokens(ItemStack itemStack) {
@@ -147,24 +135,19 @@ public class mysticUtil implements CommandExecutor {
         if (lore == null || lore.isEmpty()) { return tokens; }
 
         for (int i = 0; i < lore.size(); i++) {
+            if (this.containsEnchant(lore, i, enchants.iterator()) == null) { continue; }
 
-            switch (itemStack.getType()) {
-                case GOLDEN_SWORD:
-                    if (!this.containsEnchant(lore, i, swordEnchants.iterator())) { break; }
-                    tokens += this.retrieveEnchantTokens(lore, i);
-                    break;
-                case BOW:
-                    if (!this.containsEnchant(lore, i, bowEnchants.iterator())) { break; }
-                    tokens += this.retrieveEnchantTokens(lore, i);
-                    break;
-                case LEATHER_LEGGINGS:
-                    if (!this.containsEnchant(lore, i, pantsEnchants.iterator())) { break; }
-                    tokens += this.retrieveEnchantTokens(lore, i);
-                    break;
-            }
+            tokens += this.retrieveEnchantTokens(lore, i);
         }
 
         return tokens;
+    }
+
+    public Integer getEnchantTokens(ItemStack itemStack, enchantUtil enchant) {
+        List<String> lore = this.getItemLore(itemStack);
+        if (lore == null || lore.isEmpty() || !this.hasEnchant(itemStack, enchant)) { return 0; }
+
+        return this.retrieveEnchantTokens(lore, this.getEnchantIndex(itemStack, enchant, lore));
     }
 
     public Boolean isMystic(ItemStack itemStack) {
@@ -172,6 +155,21 @@ public class mysticUtil implements CommandExecutor {
                 && itemStack.hasItemMeta()
                 && itemStack.getItemMeta().getPersistentDataContainer()
                 .has(new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING));
+    }
+
+    public List<enchantUtil> getEnchants(ItemStack itemStack) {
+        List<String> lore = this.getItemLore(itemStack);
+        List<enchantUtil> currentEnchants = new ArrayList<>();
+        if (lore == null || lore.isEmpty()) { return currentEnchants; }
+
+        for (int i = 0; i < lore.size(); i++) {
+            enchantUtil enchant = this.containsEnchant(lore, i, enchants.iterator());
+            if (enchant == null) { continue; }
+
+            currentEnchants.add(enchant);
+        }
+
+        return currentEnchants;
     }
 
     public Boolean hasEnchant(ItemStack itemStack, enchantUtil enchant) {
@@ -295,27 +293,53 @@ public class mysticUtil implements CommandExecutor {
 
     public Integer getTier(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) { return null; }
+        if (itemMeta == null) { return 0; }
+
+        String displayName = ChatColor.stripColor(itemMeta.getDisplayName());
+        Integer tierWordIndex = displayName.indexOf("Tier");
+        if (tierWordIndex == -1) { return 0; }
+
+        return romanToInteger(displayName.split(" ")[tierWordIndex + 1]);
+    }
+
+    public void addTier(ItemStack itemStack, Integer tiers) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) { return; }
 
         String displayName = itemMeta.getDisplayName();
         String[] splitDisplayName = displayName.split(" ");
 
-        String[] filteredDisplayName = Arrays.stream(splitDisplayName)
-                .filter(string -> ChatColor.stripColor(string).equals("Tier"))
-                .toArray(String[]::new);
+        Integer tierWordIndex = displayName.indexOf("Tier");
+        if (tierWordIndex == -1) { return; }
 
+        Integer newTier = Math.max(1, Math.min(romanToInteger(splitDisplayName[tiers + 1]) + tiers, 3));
+        splitDisplayName[tiers + 1] = integerToRoman(newTier, false);
 
-        Integer tier = (filteredDisplayName.length > 0) ? romanToInteger(filteredDisplayName[0]) : 0;
-
-        return (tier > 0 && this.getEnchantCount(itemStack) > 0)
-                ? tier
-                : 0;
+        itemMeta.setDisplayName(Arrays.toString(splitDisplayName));
+        itemStack.setItemMeta(itemMeta);
     }
 
     public Boolean isGemmed(ItemStack itemStack) {
         List<String> lore = this.getItemLore(itemStack);
 
         return lore != null && !lore.isEmpty() && lore.get(0).contains(gem.gemIndicator);
+    }
+
+    public void gem(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = this.getItemLore(itemStack);
+        if (lore == null || lore.isEmpty()) { return; }
+
+        String[] splitLore = lore.get(0).split(" ");
+        splitLore[splitLore.length - 1] += " " + gem.gemIndicator;
+
+        lore.set(0, Arrays.toString(splitLore)
+                .replace("[", "")
+                .replace("]", "")
+                .replace(",", ""));
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 
     private String createLives() {
@@ -480,7 +504,7 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
 
-        this.addEnchant(itemStack2, new MegaLongbow(), 3);
+        this.addEnchant(itemStack2, new MegaLongbow(), 1);
         this.addEnchant(itemStack2, new Volley(), 2);
         this.addEnchant(itemStack2, new Parasite(), 3);
 
