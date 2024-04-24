@@ -36,16 +36,13 @@ public class gem extends itemUtil {
     // itemstack is immutable
     private static final HashMap<UUID, ItemStack> mystics = new HashMap<>();
 
-    // mystics in the selector inventory, itemstack is mystic while integer is inventory slot of player
-    private static final HashMap<UUID, HashMap<ItemStack, Integer>> playerMystics = new HashMap<>();
-
     private final String inventoryName = "Totally Legit Selector";
     private final String gemName = green + "Totally Legit Gem";
     private final String gemCost = ChatColor.getByChar(gemName.substring(1, 2)) + "1 " + gemName;
     private final String gemUpgradeFooter = yellow + "Click to upgrade!";
 
-    private final Boolean gemRareEnchants = true;
-    private final Boolean mysticMustBeTier3 = false;
+    private final Boolean gemRareEnchants = false;
+    private final Boolean mysticMustBeTier3 = true;
 
     public static final String gemIndicator = green + "♦";
 
@@ -151,6 +148,35 @@ public class gem extends itemUtil {
                 : -1;
     }
 
+    private void removeOldMystic(Player player) {
+        ItemStack currentMystic = mystics.get(player.getUniqueId()).clone(); // immutable
+        PlayerInventory playerInventory = player.getInventory();
+
+        this.removeLoreFooter(currentMystic);
+
+        for (ItemStack itemStack : playerInventory) {
+            if (itemStack == null || !itemStack.isSimilar(currentMystic)) { continue; }
+
+            itemStack.setAmount(0);
+            break;
+        }
+    }
+
+    private void removeGem(Player player) {
+        PlayerInventory playerInventory = player.getInventory();
+        ItemStack mainHandItemStack = playerInventory.getItemInMainHand();
+        ItemStack offHandItemStack = playerInventory.getItemInOffHand();
+
+        if (mainHandItemStack.isSimilar(this.createItem())) {
+            mainHandItemStack.setAmount(mainHandItemStack.getAmount() - 1);
+            return;
+        }
+
+        if (offHandItemStack.isSimilar(this.createItem())) {
+            offHandItemStack.setAmount(offHandItemStack.getAmount() - 1);
+        }
+    }
+
     @EventHandler
     public void playerInteracted(PlayerInteractEvent e) {
         if ((e.getAction() != Action.RIGHT_CLICK_AIR
@@ -185,13 +211,6 @@ public class gem extends itemUtil {
         }
 
         inventory.addItem(mystics.toArray(new ItemStack[0]));
-
-        // set default slot to 0, update it in next method
-        mystics.forEach(itemStack -> {
-            playerMystics.put(uuid, playerMystics.getOrDefault(uuid, new HashMap<>()));
-            playerMystics.get(uuid).put(itemStack, 0);
-        });
-
         player.openInventory(inventory);
     }
 
@@ -235,9 +254,6 @@ public class gem extends itemUtil {
         }
 
         mystics.put(uuid, e.getCurrentItem());
-
-        // update playerMystics inventory slot
-        playerMystics.get(uuid).put(e.getCurrentItem(), e.getSlot());
         player.openInventory(inventory);
     }
 
@@ -271,8 +287,14 @@ public class gem extends itemUtil {
         PlayerInventory playerInventory = player.getInventory();
 
         for (enchantUtil enchant : currentsEnchants) {
+            // continue when enchant name is not found in upgrade string or when player has item equipped
             if (!lore.get(this.getUpgradeIndex(lore)).contains(blue + enchant.getName())) { continue; }
-            playerInventory.getItem(playerMystics.get(uuid).get(currentMystic)).setAmount(0);
+
+            // removes old, ungemmed mystic
+            this.removeOldMystic(player);
+
+            // remove one gem from player's inventory
+            this.removeGem(player);
 
             mysticUtil.getInstance().addEnchantLevel(currentMystic, enchant, 1);
             mysticUtil.getInstance().gem(currentMystic);
