@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
@@ -39,6 +38,22 @@ public class mysticUtil implements CommandExecutor {
     private static final List<enchantUtil> swordEnchants = new ArrayList<>();
     private static final List<enchantUtil> bowEnchants = new ArrayList<>();
     private static final List<enchantUtil> pantsEnchants = new ArrayList<>();
+
+    public final List<Color> defaultPantsColors = new ArrayList<>(Arrays.asList(
+            Color.RED,
+            Color.ORANGE,
+            Color.YELLOW,
+            Color.LIME,
+            Color.BLUE
+    ));
+
+    public final List<ChatColor> defaultPantsChatColors = new ArrayList<>(Arrays.asList(
+            red,
+            gold,
+            yellow,
+            green,
+            blue
+    ));
 
     public static mysticUtil getInstance() {
         return new mysticUtil();
