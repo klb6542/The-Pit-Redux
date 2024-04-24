@@ -1,10 +1,12 @@
 package me.keegan.handlers;
 
+import me.keegan.builders.mystic;
+import me.keegan.enums.mysticEnums;
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,8 +18,10 @@ import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static me.keegan.utils.itemUtil.dyes;
@@ -82,28 +86,113 @@ public class mysticHandler implements Listener {
 
     // FRESH MYSTIC DROP HANDLER
     public static class mysticDrops implements Listener {
-        private static final HashMap<EntityDeathEvent, Float> mysticDropChances = new HashMap<>();
-        // amount * 10 * 5
-        private final float defaultMysticDropChance = 1/2500f;
+        private static mysticDrops instance;
+        private final HashMap<EntityDeathEvent, Integer> mysticDropChances = new HashMap<>();
+        private final Integer defaultMysticDropChance = 500; // 1 out of 1000 (0.005%)
 
-        public static void addChance(EntityDeathEvent e, Float chanceAmount) {
-            mysticDropChances.put(e, chanceAmount + mysticDropChances.getOrDefault(e, 0f));
+        public static mysticDrops getInstance() {
+            if (instance == null) {
+                instance = new mysticDrops();
+            }
+
+            return instance;
         }
 
-        private Boolean shouldDropMystic() {
+        public void addChance(EntityDeathEvent e, Integer chanceAmount) {
+            mysticDropChances.put(e, chanceAmount + mysticDropChances.getOrDefault(e, 1));
+        }
 
+        private Boolean shouldDropMystic(EntityDeathEvent e) {
+            Integer mysticDropChance = mysticDropChances.getOrDefault(e, 1);
+
+            for (int i = 0; i < mysticDropChance; i++) {
+                if (new Random().nextInt(defaultMysticDropChance) != 0) { continue; }
+
+                return true;
+            }
 
             return false;
+        }
+
+        private ItemStack createMysticDrop() {
+            switch (new Random().nextInt(3)) {
+                case 0:
+                    return new mystic.Builder()
+                            .material(Material.GOLDEN_SWORD)
+                            .type(mysticEnums.NORMAL)
+                            .build();
+                case 1:
+                    return new mystic.Builder()
+                            .material(Material.BOW)
+                            .type(mysticEnums.NORMAL)
+                            .build();
+                case 2:
+                    int randomInteger = new Random().nextInt(mysticUtil.getInstance().defaultPantsColors.size());
+
+                    Color pantsColor = mysticUtil.getInstance().defaultPantsColors.get(randomInteger);
+                    ChatColor pantsChatColor = mysticUtil.getInstance().defaultPantsChatColors.get(randomInteger);
+
+                    return new mystic.Builder()
+                            .material(Material.LEATHER_LEGGINGS)
+                            .type(mysticEnums.NORMAL)
+                            .color(pantsColor)
+                            .chatColor(pantsChatColor)
+                            .build();
+                default:
+                    return new ItemStack(Material.AIR);
+            }
+        }
+
+        private void playMainSound(LivingEntity killed) {
+            new BukkitRunnable() {
+                int count = 0;
+                float soundPitch = 1.5f;
+
+                @Override
+                public void run() {
+                    killed.getWorld().playSound(killed.getKiller().getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 5f, soundPitch);
+                    soundPitch += 0.5f;
+                    count++;
+
+                    if (count != 5) { return; }
+                    killed.getWorld().playSound(killed.getKiller().getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 5f, soundPitch);
+                    this.cancel();
+                }
+
+            }.runTaskTimer(ThePitRedux.getPlugin(), 0, 3);
+        }
+
+        private void playBackgroundSound(LivingEntity killed) {
+            new BukkitRunnable() {
+                int count = 0;
+                float soundPitch = 0.1f;
+
+                @Override
+                public void run() {
+                    killed.getWorld().playSound(killed.getKiller().getLocation(), Sound.ENTITY_ITEM_PICKUP, 2f, soundPitch);
+                    soundPitch += 0.2f;
+                    count++;
+
+                    if (count != 15) { return; }
+                    this.cancel();
+                }
+
+            }.runTaskTimer(ThePitRedux.getPlugin(), 1, 0);
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)
         public void entityDied(EntityDeathEvent e) {
             LivingEntity killed = e.getEntity();
-            if (killed.getKiller() == null) { return; }
+            if (killed.getKiller() == null || !this.shouldDropMystic(e)) { return; }
 
-            Player killer = (Player) killed.getKiller();
+            Location location = killed.getLocation();
+            location.add(0, 1, 0);
 
+            killed.getWorld().dropItem(location, this.createMysticDrop());
+            killed.getWorld().spawnParticle(Particle.WATER_SPLASH, location, 300, 0.14, 0.275, 0.14); // i = amount
 
+            this.playMainSound(killed);
+            this.playBackgroundSound(killed);
         }
     }
 }
