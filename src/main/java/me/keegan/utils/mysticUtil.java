@@ -291,6 +291,19 @@ public class mysticUtil implements CommandExecutor {
         itemStack.setItemMeta(itemMeta);
     }
 
+    public ChatColor getItemStackTierColor(ItemStack itemStack, int tier) {
+        switch (itemStack.getType()) {
+            case GOLDEN_SWORD:
+                return new mystic.sword().getColorFromTier(tier);
+            case BOW:
+                return new mystic.bow().getColorFromTier(tier);
+            case LEATHER_LEGGINGS:
+                return new mystic.pants(itemStack).getColorFromTier(tier);
+            default:
+                return gray;
+        }
+    }
+
     public Integer getTier(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) { return 0; }
@@ -309,13 +322,38 @@ public class mysticUtil implements CommandExecutor {
         String displayName = itemMeta.getDisplayName();
         String[] splitDisplayName = displayName.split(" ");
 
-        Integer tierWordIndex = displayName.indexOf("Tier");
-        if (tierWordIndex == -1) { return; }
+        Integer newTiers;
 
-        Integer newTier = Math.max(1, Math.min(romanToInteger(splitDisplayName[tiers + 1]) + tiers, 3));
-        splitDisplayName[tiers + 1] = integerToRoman(newTier, false);
+        // fresh mystic
+        if (!displayName.contains("Tier")) {
+            // clamp tiers
+            tiers = Math.max(1, Math.min(tiers, 3));
 
-        itemMeta.setDisplayName(Arrays.toString(splitDisplayName));
+            ChatColor displayNameColor = ChatColor.getByChar(splitDisplayName[0].split("")[splitDisplayName[0].indexOf("§") + 1]);
+            splitDisplayName[0] = displayNameColor + "Tier " + integerToRoman(tiers, false);
+
+            newTiers = tiers;
+        }else{
+            Integer newTier = Math.max(1, Math.min(romanToInteger(splitDisplayName[tiers + 1]) + tiers, 3));
+            splitDisplayName[displayName.indexOf("Tiers") + 1] = integerToRoman(newTier, false);
+
+            newTiers = newTier;
+        }
+
+        itemMeta.setDisplayName(Arrays.toString(splitDisplayName)
+                .replace("[", "")
+                .replace("]", "")
+                .replace(",", ""));
+
+        // get new color to put on display name
+        ChatColor tierColor = this.getItemStackTierColor(itemStack, newTiers);
+
+        // remove old colors from display name
+        ChatColor.stripColor(itemMeta.getDisplayName());
+
+        // set new color on display name
+        itemMeta.setDisplayName(tierColor + itemMeta.getDisplayName());
+
         itemStack.setItemMeta(itemMeta);
     }
 
@@ -517,8 +555,10 @@ public class mysticUtil implements CommandExecutor {
 
         mysticUtil.getInstance().addEnchant(itemStack3, new SnowmenArmy(), 3);
         mysticUtil.getInstance().addEnchant(itemStack3, new Singularity(), 3);
-        mysticUtil.getInstance().addEnchant(itemStack3, new Hearts(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack3, new Hearts(), 1);
         mysticUtil.getInstance().addEnchant(itemStack3, new Peroxide(), 3);
+
+        mysticUtil.getInstance().addTier(itemStack3, 3);
 
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack3, 500, livesEnums.LIVES);
@@ -529,6 +569,9 @@ public class mysticUtil implements CommandExecutor {
                 .color(Color.RED)
                 .chatColor(red)
                 .build();
+
+        mysticUtil.getInstance().addTier(itemStack5, 2);
+        ThePitRedux.getPlugin().getLogger().info("Tier of itemstack - " + mysticUtil.getInstance().getTier(itemStack5));
 
         ItemStack itemStack4 = new mysticWell().createItem();
 
