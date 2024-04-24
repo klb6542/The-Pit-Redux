@@ -3,16 +3,21 @@ package me.keegan.handlers;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static me.keegan.utils.itemUtil.dyes;
@@ -73,5 +78,32 @@ public class mysticHandler implements Listener {
         if (e.getItemInHand().getItemMeta() == null) { return; }
 
         e.setCancelled(propertiesUtil.hasProperty(propertiesUtil.notPlaceable, e.getItemInHand().getItemMeta()));
+    }
+
+    // FRESH MYSTIC DROP HANDLER
+    public static class mysticDrops implements Listener {
+        private static final HashMap<EntityDeathEvent, Float> mysticDropChances = new HashMap<>();
+        // amount * 10 * 5
+        private final float defaultMysticDropChance = 1/2500f;
+
+        public static void addChance(EntityDeathEvent e, Float chanceAmount) {
+            mysticDropChances.put(e, chanceAmount + mysticDropChances.getOrDefault(e, 0f));
+        }
+
+        private Boolean shouldDropMystic() {
+
+
+            return false;
+        }
+
+        @EventHandler(priority = EventPriority.HIGHEST)
+        public void entityDied(EntityDeathEvent e) {
+            LivingEntity killed = e.getEntity();
+            if (killed.getKiller() == null) { return; }
+
+            Player killer = (Player) killed.getKiller();
+
+
+        }
     }
 }
