@@ -26,6 +26,7 @@ public final class ThePitRedux extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new entityDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new mysticHandler(), this);
+        getServer().getPluginManager().registerEvents(new mysticHandler.mysticDrops(), this);
     }
 
     private void registerEnchants() {
