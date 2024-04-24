@@ -86,6 +86,9 @@ public class mystic {
         itemMeta.setDisplayName(aqua + "Mystic Bow");
         itemMeta.setLore(defaultLore);
 
+        // glow effect
+        itemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -179,24 +182,24 @@ public class mystic {
     public static class sword implements tierUtil {
         @Override
         public @Nullable ChatColor getColorFromTier(int tier) {
-            return normalColorTiers.get(tier);
+            return normalColorTiers.get(tier - 1);
         }
 
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
-            return normalPaneColorTiers.get(tier);
+            return normalPaneColorTiers.get(tier - 1);
         }
     }
 
     public static class bow implements tierUtil {
         @Override
         public @Nullable ChatColor getColorFromTier(int tier) {
-            return normalColorTiers.get(tier);
+            return normalColorTiers.get(tier - 1);
         }
 
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
-            return normalPaneColorTiers.get(tier);
+            return normalPaneColorTiers.get(tier - 1);
         }
     }
 
@@ -219,11 +222,11 @@ public class mystic {
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
             if (getMysticType(pants) == mysticEnums.NORMAL) {
-                return normalPaneColorTiers.get(tier);
+                return normalPaneColorTiers.get(tier - 1);
             }
 
             if (getMysticType(pants) == mysticEnums.DARK) {
-                return darkPaneColorTiers.get(tier);
+                return darkPaneColorTiers.get(tier - 1);
             }
 
             return null;
