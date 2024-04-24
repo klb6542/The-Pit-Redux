@@ -65,6 +65,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
 
     private Integer getSnowmanDuration(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) { return -1; }
         List<String> lore = itemMeta.getLore();
 
         return Integer.valueOf(lore.get(lore.size() - 1).split(" ")[3]);
