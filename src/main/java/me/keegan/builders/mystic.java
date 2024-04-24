@@ -36,6 +36,27 @@ public class mystic {
             gray + "Used in the mystic well"
     ));
 
+    @Nullable
+    public static mysticEnums getMysticType(ItemStack itemStack) {
+        return itemStack.getItemMeta() != null
+                && itemStack.getItemMeta().getPersistentDataContainer().has(
+                        new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING)
+                ? getMysticEnumFromString(itemStack.getItemMeta().getPersistentDataContainer().get(
+                        new NamespacedKey(ThePitRedux.getPlugin(), "mystic"), PersistentDataType.STRING))
+                : null;
+    }
+
+    @Nullable
+    private static mysticEnums getMysticEnumFromString(String stringMysticEnum) {
+        for (mysticEnums type : mysticEnums.values()) {
+            if (!type.toString().toLowerCase().equals(stringMysticEnum)) { continue; }
+
+            return type;
+        }
+
+        return null;
+    }
+
     private static void setDefaultItemMeta(ItemMeta itemMeta) {
         itemMeta.setUnbreakable(true);
 
@@ -179,7 +200,7 @@ public class mystic {
         }
     }
 
-    public static class pants {
+    public static class pants implements tierUtil {
         private static ItemStack pants;
 
         public pants(ItemStack itemStack) {
@@ -188,32 +209,24 @@ public class mystic {
                     : null;
         }
 
-        public static class normal implements tierUtil {
-            @Override
-            public @Nullable ChatColor getColorFromTier(int tier) {
-                return (pants != null)
-                        ? ChatColor.getByChar(pants.getItemMeta().getDisplayName().substring(1, 2))
-                        : null;
-            }
-
-            @Override
-            public @Nullable Material getColorPaneFromTier(int tier) {
-                return normalPaneColorTiers.get(tier);
-            }
+        @Override
+        public @Nullable ChatColor getColorFromTier(int tier) {
+            return (pants != null)
+                    ? ChatColor.getByChar(pants.getItemMeta().getDisplayName().substring(1, 2))
+                    : null;
         }
 
-        public static class dark implements tierUtil {
-            @Override
-            public @Nullable ChatColor getColorFromTier(int tier) {
-                return (pants != null)
-                        ? ChatColor.getByChar(pants.getItemMeta().getDisplayName().substring(1, 2))
-                        : null;
+        @Override
+        public @Nullable Material getColorPaneFromTier(int tier) {
+            if (getMysticType(pants) == mysticEnums.NORMAL) {
+                return normalPaneColorTiers.get(tier);
             }
 
-            @Override
-            public @Nullable Material getColorPaneFromTier(int tier) {
+            if (getMysticType(pants) == mysticEnums.DARK) {
                 return darkPaneColorTiers.get(tier);
             }
+
+            return null;
         }
     }
 }
