@@ -334,8 +334,10 @@ public class mysticUtil implements CommandExecutor {
 
             newTiers = tiers;
         }else{
-            Integer newTier = Math.max(1, Math.min(romanToInteger(splitDisplayName[tiers + 1]) + tiers, 3));
-            splitDisplayName[displayName.indexOf("Tiers") + 1] = integerToRoman(newTier, false);
+            Integer tierIndex = stringUtil.findKeywordIndex(splitDisplayName, "Tier");
+
+            Integer newTier = Math.max(1, Math.min(romanToInteger(splitDisplayName[tierIndex + 1]) + tiers, 3));
+            splitDisplayName[tierIndex + 1] = integerToRoman(newTier, false);
 
             newTiers = newTier;
         }
@@ -349,7 +351,7 @@ public class mysticUtil implements CommandExecutor {
         ChatColor tierColor = this.getItemStackTierColor(itemStack, newTiers);
 
         // remove old colors from display name
-        ChatColor.stripColor(itemMeta.getDisplayName());
+        itemMeta.setDisplayName(ChatColor.stripColor(itemMeta.getDisplayName()));
 
         // set new color on display name
         itemMeta.setDisplayName(tierColor + itemMeta.getDisplayName());
@@ -534,6 +536,8 @@ public class mysticUtil implements CommandExecutor {
         this.addEnchant(itemStack, new Crush(), 3);
         this.addEnchant(itemStack, new Perun(), 3);
 
+        mysticUtil.getInstance().addTier(itemStack, 3);
+
         ItemStack itemStack2 = new mystic.Builder()
                 .material(Material.BOW)
                 .type(mysticEnums.NORMAL)
@@ -541,6 +545,8 @@ public class mysticUtil implements CommandExecutor {
 
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack2, 4, livesEnums.LIVES);
+        mysticUtil.getInstance().addTier(itemStack2, 2);
+        mysticUtil.getInstance().addTier(itemStack2, -1);
 
         this.addEnchant(itemStack2, new MegaLongbow(), 1);
         this.addEnchant(itemStack2, new Volley(), 2);
@@ -571,7 +577,6 @@ public class mysticUtil implements CommandExecutor {
                 .build();
 
         mysticUtil.getInstance().addTier(itemStack5, 2);
-        ThePitRedux.getPlugin().getLogger().info("Tier of itemstack - " + mysticUtil.getInstance().getTier(itemStack5));
 
         ItemStack itemStack4 = new mysticWell().createItem();
 
