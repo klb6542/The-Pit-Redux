@@ -1,5 +1,6 @@
 package me.keegan.handlers;
 
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.entityUtil;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
