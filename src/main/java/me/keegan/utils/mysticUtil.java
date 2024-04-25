@@ -5,6 +5,7 @@ import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
 import me.keegan.items.special.gem;
+import me.keegan.items.special.philosophers_cactus;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.ChatColor;
@@ -591,6 +592,12 @@ public class mysticUtil implements CommandExecutor {
                 .chatColor(red)
                 .build();
 
+        mysticUtil.getInstance().addLives(itemStack5, 14, livesEnums.MAX_LIVES);
+        mysticUtil.getInstance().addLives(itemStack5, 14, livesEnums.LIVES);
+
+        mysticUtil.getInstance().addEnchant(itemStack5, new PantsRadar(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack5, new PurpleCaffeine(), 3);
+
         mysticUtil.getInstance().addTier(itemStack5, 2);
 
         ItemStack itemStack4 = new mysticWell().createItem();
@@ -598,7 +605,10 @@ public class mysticUtil implements CommandExecutor {
         ItemStack itemStack6 = new gem().createItem();
         itemStack6.setAmount(1);
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5);
+        ItemStack itemStack7 = new philosophers_cactus().createItem();
+        itemStack7.setAmount(3);
+
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7);
         return true;
     }
 }
