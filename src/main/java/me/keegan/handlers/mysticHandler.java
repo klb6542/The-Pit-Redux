@@ -88,7 +88,7 @@ public class mysticHandler implements Listener {
     public static class mysticDrops implements Listener {
         private static mysticDrops instance;
         private final HashMap<EntityDeathEvent, Integer> mysticDropChances = new HashMap<>();
-        private final Integer defaultMysticDropChance = 500; // 1 out of 1000 (0.005%)
+        private final Integer defaultMysticDropChance = 750; // 1 out of 750 (0.00133333%)
 
         public static mysticDrops getInstance() {
             if (instance == null) {
@@ -99,11 +99,15 @@ public class mysticHandler implements Listener {
         }
 
         public void addChance(EntityDeathEvent e, Integer chanceAmount) {
-            mysticDropChances.put(e, chanceAmount + mysticDropChances.getOrDefault(e, 1));
+            this.mysticDropChances.put(e, chanceAmount + this.mysticDropChances.getOrDefault(e, 1));
+        }
+
+        public void resetChance(EntityDeathEvent e) {
+            this.mysticDropChances.remove(e);
         }
 
         private Boolean shouldDropMystic(EntityDeathEvent e) {
-            Integer mysticDropChance = mysticDropChances.getOrDefault(e, 1);
+            Integer mysticDropChance = instance.mysticDropChances.getOrDefault(e, 1);
 
             for (int i = 0; i < mysticDropChance; i++) {
                 if (new Random().nextInt(defaultMysticDropChance) != 0) { continue; }
@@ -183,16 +187,19 @@ public class mysticHandler implements Listener {
         @EventHandler(priority = EventPriority.HIGHEST)
         public void entityDied(EntityDeathEvent e) {
             LivingEntity killed = e.getEntity();
-            if (killed.getKiller() == null || !this.shouldDropMystic(e)) { return; }
 
-            Location location = killed.getLocation();
-            location.add(0, 1, 0);
+            if (killed.getKiller() != null && mysticDrops.getInstance().shouldDropMystic(e)) {
+                Location location = killed.getLocation();
+                location.add(0, 1, 0);
 
-            killed.getWorld().dropItem(location, this.createMysticDrop());
-            killed.getWorld().spawnParticle(Particle.WATER_SPLASH, location, 300, 0.14, 0.275, 0.14); // i = amount
+                killed.getWorld().dropItem(location, instance.createMysticDrop());
+                killed.getWorld().spawnParticle(Particle.WATER_SPLASH, location, 200, 0.14, 0.275, 0.14); // i = amount
 
-            this.playMainSound(killed);
-            this.playBackgroundSound(killed);
+                instance.playMainSound(killed);
+                instance.playBackgroundSound(killed);
+            }
+
+            mysticDrops.getInstance().resetChance(e);
         }
     }
 }
