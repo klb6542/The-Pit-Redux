@@ -1,17 +1,9 @@
 package me.keegan.items.special;
 
-import me.keegan.builders.mystic;
-import me.keegan.items.vile.vile_block;
-import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.propertiesUtil;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
