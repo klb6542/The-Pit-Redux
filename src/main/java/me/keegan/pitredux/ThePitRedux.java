@@ -1,6 +1,7 @@
 package me.keegan.pitredux;
 
 import me.keegan.enchantments.*;
+import me.keegan.events.nightquest.nightQuestHandler;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
@@ -27,6 +28,7 @@ public final class ThePitRedux extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new entityDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new mysticHandler(), this);
         getServer().getPluginManager().registerEvents(new mysticHandler.mysticDrops(), this);
+        getServer().getPluginManager().registerEvents(new nightQuestHandler(), this);
     }
 
     private void registerEnchants() {
@@ -78,7 +80,8 @@ public final class ThePitRedux extends JavaPlugin {
     private void startup() {
         setupUtils.pluginEnabled(new Stereo());
         setupUtils.pluginEnabled(new Hearts());
-        setupUtils.pluginDisabled(new SnowmenArmy());
+        setupUtils.pluginEnabled(new SnowmenArmy());
+        setupUtils.pluginEnabled(new nightQuestHandler());
     }
 
     private void shutdown() {
@@ -87,6 +90,7 @@ public final class ThePitRedux extends JavaPlugin {
         setupUtils.pluginDisabled(new Stereo());
         setupUtils.pluginDisabled(new Hearts());
         setupUtils.pluginDisabled(new SnowmenArmy());
+        setupUtils.pluginDisabled(new nightQuestHandler());
     }
 
     @Override
