@@ -159,7 +159,6 @@ public class mysticHandler implements Listener {
                     count++;
 
                     if (count != 5) { return; }
-                    killed.getWorld().playSound(killed.getKiller().getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 5f, soundPitch);
                     this.cancel();
                 }
 
