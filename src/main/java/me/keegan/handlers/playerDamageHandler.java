@@ -1,6 +1,5 @@
 package me.keegan.handlers;
 
-import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.entityUtil;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -122,7 +121,6 @@ public class playerDamageHandler implements Listener {
                 || (e.getDamager() instanceof LivingEntity))
                 && (!(entityUtil.damagerIsArrow(e))
                 || !(entityUtil.damagerIsSnowball(e)))) { return; }
-
         Entity damaged = e.getEntity();
 
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
