@@ -1,7 +1,6 @@
 package me.keegan.enchantments;
 
 import me.keegan.enums.mysticEnums;
-import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
