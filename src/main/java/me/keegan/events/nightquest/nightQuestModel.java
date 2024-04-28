@@ -22,13 +22,14 @@ public class nightQuestModel {
     private final nightQuestEnums nightQuestType;
     private final int requiredProgress;
     private final Player player;
-    private int progress;
+    private int progress = 0;
+    private final Object target;
 
-    nightQuestModel(Player player, nightQuestEnums nightQuestType, int requiredProgress) {
+    nightQuestModel(Player player, nightQuestEnums nightQuestType, Object target, int requiredProgress) {
         this.requiredProgress = requiredProgress;
         this.nightQuestType = nightQuestType;
         this.player = player;
-        this.progress = 0;
+        this.target = target;
     }
 
     int getProgress() {
@@ -43,6 +44,10 @@ public class nightQuestModel {
         return this.player;
     }
 
+    Object getTarget() {
+        return this.target;
+    }
+
     nightQuestEnums getNightQuestType() {
         return this.nightQuestType;
     }
@@ -52,7 +57,7 @@ public class nightQuestModel {
     }
 
     void nightQuestComplete() {
-        PlayerInventory playerInventory = this.player.getInventory();
+        PlayerInventory playerInventory = this.getPlayer().getInventory();
         ItemStack vile = new vile().createItem();
 
         // inv full
