@@ -7,6 +7,7 @@ import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.items.pants.dark_pants;
 import me.keegan.items.special.gem;
+import me.keegan.items.special.philosophers_cactus;
 import me.keegan.items.vile.vile;
 import me.keegan.items.vile.vile_block;
 import me.keegan.mysticwell.mysticWell;
@@ -64,6 +65,7 @@ public final class ThePitRedux extends JavaPlugin {
         itemUtil.registerItem(new vile_block());
         itemUtil.registerItem(new dark_pants());
         itemUtil.registerItem(new gem());
+        itemUtil.registerItem(new philosophers_cactus());
     }
 
     private void registerCommands() {
