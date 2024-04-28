@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 import static me.keegan.utils.formatUtil.*;
+import static me.keegan.utils.stringUtil.*;
 
 public class nightQuestHandler implements Listener, setupUtils {
     private static final HashMap<UUID, nightQuestModel> activeNightQuests = new HashMap<>();
@@ -96,7 +97,7 @@ public class nightQuestHandler implements Listener, setupUtils {
         player.sendMessage(
                 bold + "" + blue + "NIGHT QUEST! "
                         + gray + stringUtil.upperCaseFirstLetter(nightQuest.getNightQuestType().toString())
-                        + " " + (stringUtil.upperCaseFirstLetter(nightQuest.getTarget().toString()))
+                        + " " + (upperCaseFirstLetter(getPluralWord(nightQuest.getTarget().toString())))
                         + red + " " + nightQuest.getRequiredProgress() + gray + " times!"
         );
 
