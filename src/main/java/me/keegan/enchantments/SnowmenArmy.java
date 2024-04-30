@@ -231,7 +231,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
                 || !(((Snowball) e.getDamager()).getShooter() instanceof Snowman)
                 || !((e.getEntity()) instanceof LivingEntity)) { return; }
 
-        // the playerDamageHandler will pick this up and 3.0 will be the final damage
+        // the playerDamageHandler will pick this up and 3.0 will be the final damage,
         // so it can be calculated with mystics
         e.setDamage(snowmanDamage);
     }
