@@ -12,6 +12,14 @@ public class Tier<T> {
     }
 
     public T get(int index) {
-        return (index < this.values.length && index >= 0) ? this.values[index] : null;
+        return (this.contains(index)) ? this.values[index] : null;
+    }
+
+    public T getOrDefault(int index, T defaultObject) {
+        return (this.get(index) != null) ? this.get(index) : defaultObject;
+    }
+
+    public boolean contains(int index) {
+        return index < this.values.length && index >= 0;
     }
 }
