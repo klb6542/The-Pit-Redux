@@ -187,7 +187,7 @@ public class mystic {
 
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
-            return normalPaneColorTiers.get(tier - 1);
+            return normalPaneColorTiers.getOrDefault(tier - 1, Material.PINK_STAINED_GLASS_PANE);
         }
     }
 
@@ -199,7 +199,7 @@ public class mystic {
 
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
-            return normalPaneColorTiers.get(tier - 1);
+            return normalPaneColorTiers.getOrDefault(tier - 1, Material.PINK_STAINED_GLASS_PANE);
         }
     }
 
@@ -222,11 +222,11 @@ public class mystic {
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
             if (getMysticType(pants) == mysticEnums.NORMAL) {
-                return normalPaneColorTiers.get(tier - 1);
+                return normalPaneColorTiers.getOrDefault(tier - 1, Material.PINK_STAINED_GLASS_PANE);
             }
 
             if (getMysticType(pants) == mysticEnums.DARK) {
-                return darkPaneColorTiers.get(tier - 1);
+                return darkPaneColorTiers.getOrDefault(tier - 1, Material.PURPLE_STAINED_GLASS_PANE);
             }
 
             return null;
