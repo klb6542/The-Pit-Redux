@@ -104,6 +104,13 @@ public class playerDamageHandler implements Listener {
         this.trueDamage.put(e, this.getTrueDamage(e) + damage);
     }
 
+    public void doTrueDamage(LivingEntity livingEntity, double damage) {
+        // ignores mirrors
+
+        livingEntity.setHealth(Math.max(0, Math.min(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+                livingEntity.getHealth() - damage)));
+    }
+
     public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
         this.reductionDamage.put(e, this.getReductionDamage(e) + damage);
     }
