@@ -282,7 +282,7 @@ public class gem extends itemUtil {
         if (!lore.get(lore.size() - 1).contains(gemCost)
                 || this.getUpgradeIndex(lore) == -1) { return; }
 
-        ItemStack currentMystic = mystics.get(player.getUniqueId()); // immutable
+        ItemStack currentMystic = mystics.get(uuid); // immutable
         List<enchantUtil> currentsEnchants = mysticUtil.getInstance().getEnchants(currentMystic);
         PlayerInventory playerInventory = player.getInventory();
 
