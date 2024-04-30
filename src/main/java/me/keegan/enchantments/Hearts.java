@@ -141,7 +141,14 @@ public class Hearts extends enchantUtil implements setupUtils {
 
     @Override
     public void enable() {
+        for (Player player : ThePitRedux.getPlugin().getServer().getOnlinePlayers()) {
+            PlayerJoinEvent e = new PlayerJoinEvent(
+                    player,
+                    null
+            );
 
+            ThePitRedux.getPlugin().getServer().getPluginManager().callEvent(e);
+        }
     }
 
     @Override
