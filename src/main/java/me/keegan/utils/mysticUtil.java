@@ -5,7 +5,6 @@ import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
 import me.keegan.items.special.gem;
-import me.keegan.items.special.philosophers_cactus;
 import me.keegan.mysticwell.mysticWell;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.ChatColor;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.*;
@@ -39,6 +39,26 @@ public class mysticUtil implements CommandExecutor {
     private static final List<enchantUtil> swordEnchants = new ArrayList<>();
     private static final List<enchantUtil> bowEnchants = new ArrayList<>();
     private static final List<enchantUtil> pantsEnchants = new ArrayList<>();
+
+    private static final List<Material> mysticMaterials = new ArrayList<Material>(){{
+        add(LEATHER_LEGGINGS);
+        add(GOLDEN_SWORD);
+        add(BOW);
+    }};
+
+    // https://www.youtube.com/watch?v=lv8LaC_6UM0
+    // BiFunction is similar to Function, but accepts in 2 arguments
+    private static final HashMap<Material, BiFunction<ItemStack, Integer, ChatColor>> materialChatColors = new HashMap<Material, BiFunction<ItemStack, Integer, ChatColor>>(){{
+        put(mysticMaterials.get(0), (itemStack, tier) -> new mystic.pants(itemStack).getColorFromTier(tier));
+        put(mysticMaterials.get(1), (itemStack, tier) -> new mystic.sword().getColorFromTier(tier));
+        put(mysticMaterials.get(2), (itemStack, tier) -> new mystic.bow().getColorFromTier(tier));
+    }};
+
+    private static final HashMap<Material, BiFunction<ItemStack, Integer, Material>> materialGlassPanes = new HashMap<Material, BiFunction<ItemStack, Integer, Material>>(){{
+        put(mysticMaterials.get(0), (itemStack, tier) -> new mystic.pants(itemStack).getColorPaneFromTier(tier));
+        put(mysticMaterials.get(1), (itemStack, tier) -> new mystic.sword().getColorPaneFromTier(tier));
+        put(mysticMaterials.get(2), (itemStack, tier) -> new mystic.bow().getColorPaneFromTier(tier));
+    }};
 
     public final List<Color> defaultPantsColors = new ArrayList<>(Arrays.asList(
             Color.RED,
@@ -108,6 +128,10 @@ public class mysticUtil implements CommandExecutor {
             // don't break because enchants can have multiple materials
             if (!enchant.isMysticWellEnchant()) { continue; }
 
+            for (Material material : enchant.getEnchantMaterial()) {
+
+            }
+
             switch (enchant.getEnchantMaterial()[i]) {
                 case GOLDEN_SWORD:
                     swordEnchants.add(enchant);
@@ -116,7 +140,6 @@ public class mysticUtil implements CommandExecutor {
                 case LEATHER_LEGGINGS:
                     pantsEnchants.add(enchant);
             }
-
         }
     }
 
@@ -308,16 +331,15 @@ public class mysticUtil implements CommandExecutor {
     }
 
     public ChatColor getItemStackTierColor(ItemStack itemStack, int tier) {
-        switch (itemStack.getType()) {
-            case GOLDEN_SWORD:
-                return new mystic.sword().getColorFromTier(tier);
-            case BOW:
-                return new mystic.bow().getColorFromTier(tier);
-            case LEATHER_LEGGINGS:
-                return new mystic.pants(itemStack).getColorFromTier(tier);
-            default:
-                return gray;
-        }
+        return (itemStack != null && mysticMaterials.contains(itemStack.getType()))
+                ? materialChatColors.get(itemStack.getType()).apply(itemStack, tier)
+                : lightPurple;
+    }
+
+    public Material getItemStackTierGlassPane(ItemStack itemStack, int tier) {
+        return (itemStack != null && mysticMaterials.contains(itemStack.getType()))
+                ? materialGlassPanes.get(itemStack.getType()).apply(itemStack, tier)
+                : PINK_STAINED_GLASS_PANE;
     }
 
     public Integer getTier(ItemStack itemStack) {
@@ -550,7 +572,7 @@ public class mysticUtil implements CommandExecutor {
         this.addEnchant(itemStack, new PainFocus(), 3);
         this.addEnchant(itemStack, new Lifesteal(), 3);
         this.addEnchant(itemStack, new Crush(), 3);
-        this.addEnchant(itemStack, new Perun(), 3);
+        this.addEnchant(itemStack, new Sweaty(), 3);
 
         mysticUtil.getInstance().addTier(itemStack, 3);
 
@@ -595,20 +617,37 @@ public class mysticUtil implements CommandExecutor {
         mysticUtil.getInstance().addLives(itemStack5, 14, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(itemStack5, 14, livesEnums.LIVES);
 
-        mysticUtil.getInstance().addEnchant(itemStack5, new PantsRadar(), 3);
-        mysticUtil.getInstance().addEnchant(itemStack5, new PurpleCaffeine(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack5, new XPDuplex(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack5, new Sweaty(), 3);
+        mysticUtil.getInstance().addEnchant(itemStack5, new GottaGoFast(), 3);
 
-        mysticUtil.getInstance().addTier(itemStack5, 2);
+        mysticUtil.getInstance().addTier(itemStack5, 1);
 
-        ItemStack itemStack4 = new mysticWell().createItem();
+        ItemStack itemStack4 = new mystic.Builder()
+                .material(LEATHER_LEGGINGS)
+                .type(mysticEnums.NORMAL)
+                .color(Color.BLUE)
+                .chatColor(blue)
+                .build();
 
         ItemStack itemStack6 = new gem().createItem();
         itemStack6.setAmount(1);
 
-        ItemStack itemStack7 = new philosophers_cactus().createItem();
-        itemStack7.setAmount(3);
+        ItemStack itemStack7 = new mystic.Builder()
+                .material(LEATHER_LEGGINGS)
+                .type(mysticEnums.NORMAL)
+                .color(Color.ORANGE)
+                .chatColor(gold)
+                .build();
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7);
+        mysticUtil.getInstance().addLives(itemStack7, 1, livesEnums.MAX_LIVES);
+        mysticUtil.getInstance().addLives(itemStack7, 1, livesEnums.LIVES);
+        mysticUtil.getInstance().addEnchant(itemStack7, new XPDuplex(), 3);
+        mysticUtil.getInstance().addTier(itemStack7, 2);
+
+        ItemStack itemStack8 = new mysticWell().createItem();
+
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8);
         return true;
     }
 }
