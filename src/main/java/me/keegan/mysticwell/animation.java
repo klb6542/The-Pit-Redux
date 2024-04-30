@@ -1,7 +1,9 @@
 package me.keegan.mysticwell;
 
 import me.keegan.pitredux.ThePitRedux;
+import me.keegan.utils.mysticUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,12 +26,16 @@ public class animation {
 
     // itemstack is mystic currently being enchanted
     protected ItemStack itemStack = new ItemStack(Material.AIR);
+    protected Material glassPaneMaterial = Material.PINK_STAINED_GLASS_PANE;
     protected boolean isEnchanting = false;
     protected boolean isEnchantingComplete = false;
+    protected boolean isAllowedToEnchant = false;
+    protected Player player;
 
-    animation(Inventory inventory, List<ItemStack> glassPanes) {
+    animation(Inventory inventory, List<ItemStack> glassPanes, Player player) {
         this.inventory = inventory;
         this.glassPanes = glassPanes;
+        this.player = player;
 
         this.idleState();
     }
@@ -71,23 +77,35 @@ public class animation {
     // creates scrambled dyes in the mystic slot
     private void scrambleState(int delay, int period) {
         Inventory runnableInventory = this.inventory;
+        final animation thisAnimation = this;
 
         this.runnableTasks.add(new BukkitRunnable() {
 
             @Override
             public void run() {
                 runnableInventory.setItem(20, new ItemStack(dyes.get(new Random().nextInt(dyes.size()))));
+                mysticWell.playCustomPitchSound(thisAnimation.player, (new Random().nextInt(11 - 9) / 10f) + 1f);
             }
 
         }.runTaskTimer(ThePitRedux.getPlugin(), delay, period));
+    }
+
+    private void idleTierThreeState(ItemStack[] glassPanesArray) {
+        this.isAllowedToEnchant = false;
+
+        Arrays.stream(glassPanesArray)
+                .forEach(glassPane -> glassPane.setType(Material.RED_STAINED_GLASS_PANE));
     }
 
     protected void idleState() {
         this.cancelRunnableTasks();
         this.setGlassPanesColor(Material.BLACK_STAINED_GLASS_PANE);
         this.isEnchantingComplete = false;
+        this.isAllowedToEnchant = true;
 
         ItemStack[] glassPanesArray = this.glassPanes.toArray(new ItemStack[0]);
+
+        final Player thisPlayer = this.player;
 
         this.runnableTasks.add(new BukkitRunnable() {
             // j represents the index that was before i
@@ -96,8 +114,16 @@ public class animation {
 
             @Override
             public void run() {
+                animation animation = mysticWell.animations.get(thisPlayer.getUniqueId());
+
+                if (mysticUtil.getInstance().getTier(animation.itemStack) >= 3) {
+                    animation.idleTierThreeState(glassPanesArray);
+                    animation.cancelRunnableTasks();
+                    return;
+                }
+
                 glassPanesArray[j].setType(Material.BLACK_STAINED_GLASS_PANE);
-                glassPanesArray[i].setType(Material.PINK_STAINED_GLASS_PANE);
+                glassPanesArray[i].setType(animation.glassPaneMaterial);
 
                 j = i;
                 i = (i == glassPanesArray.length - 1) ? 0 : i + 1;
@@ -110,11 +136,17 @@ public class animation {
         this.cancelRunnableTasks();
         this.isEnchanting = true;
 
-        final List<ItemStack> glassPanesList = this.glassPanes;
-
         // mystic can not be null/empty because it has been checked beforehand
         Inventory runnableInventory = this.inventory;
-        itemStack = this.inventory.getItem(20).clone();
+        this.itemStack = this.inventory.getItem(20).clone();
+
+        this.glassPaneMaterial = mysticUtil.getInstance().getItemStackTierGlassPane(
+                this.itemStack,
+                mysticUtil.getInstance().getTier(this.itemStack) + 1
+        );
+
+        final List<ItemStack> glassPanesList = this.glassPanes;
+        final animation thisAnimation = this;
 
         // https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html
         CompletableFuture<Boolean> phaseOneCompletable = new CompletableFuture<>();
@@ -127,9 +159,15 @@ public class animation {
             public void run() {
                 switch (stage) {
                     case 0:
+                        mysticWell.playLowPitchSound(player);
                     case 2:
-                        glassPanesList.forEach(glassPane -> glassPane.setType(Material.RED_STAINED_GLASS_PANE));
-                        runnableInventory.setItem(20, new ItemStack(Material.RED_STAINED_GLASS_PANE));
+                        glassPanesList.forEach(glassPane -> glassPane.setType(thisAnimation.glassPaneMaterial));
+                        runnableInventory.setItem(20, new ItemStack(thisAnimation.glassPaneMaterial));
+
+                        if (stage == 2) {
+                            mysticWell.playHighPitchSound(player);
+                        }
+
                         break;
                     case 1:
                         glassPanesList.forEach(glassPane -> glassPane.setType(Material.BLACK_STAINED_GLASS_PANE));
@@ -138,10 +176,13 @@ public class animation {
                     case 3:
                         glassPanesList.forEach(glassPane -> glassPane.setType(Material.BLACK_STAINED_GLASS_PANE));
                         runnableInventory.setItem(20, new ItemStack(Material.AIR));
+                        break;
+                    case 4: // make it last longer
+                        break;
                 }
 
                 stage++;
-                if (stage < 4) { return; }
+                if (stage < 5) { return; }
 
                 phaseOneCompletable.complete(true);
                 this.cancel();
@@ -157,12 +198,14 @@ public class animation {
 
         phaseTwoCompletable.thenRun(() -> {
             this.cancelRunnableTasks();
-            this.setGlassPanesColor(Material.RED_STAINED_GLASS_PANE);
+            this.setGlassPanesColor(this.glassPaneMaterial);
 
             this.isEnchanting = false;
             this.isEnchantingComplete = true;
 
-            this.inventory.setItem(20, itemStack);
+            this.inventory.setItem(20, this.itemStack);
+
+            mysticWell.toggleEnchantCostDisplay(this.player, this.inventory, true);
         });
     }
 }
