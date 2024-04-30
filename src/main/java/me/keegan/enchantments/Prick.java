@@ -4,6 +4,7 @@ import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -65,9 +66,13 @@ public class Prick extends enchantUtil {
     @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
-        EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
 
-        playerDamageHandler.getInstance().addTrueDamage(e, trueDamagePerLevel[enchantLevel]);
+        EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
+        LivingEntity damaged = (LivingEntity) e.getEntity();
+        LivingEntity damager = (LivingEntity) e.getDamager();
+
+        damager.getWorld().playSound(damaged.getLocation(), Sound.ENCHANT_THORNS_HIT, 1f, 1.25f);
+        playerDamageHandler.getInstance().doTrueDamage(damager, trueDamagePerLevel[enchantLevel]);
     }
 
     @EventHandler
