@@ -39,21 +39,21 @@ public class nightQuestHandler implements Listener, setupUtils {
          */
 
         nightQuestArgs.put(nightQuestEnums.KILL, new HashMap<Object, Integer[]>(){{
-            put(EntityType.ZOMBIE, new Integer[]{30, 51});
-            put(EntityType.SKELETON, new Integer[]{30, 41});
-            put(EntityType.CREEPER, new Integer[]{20, 31});
-            put(EntityType.SPIDER, new Integer[]{20, 41});
-            put(EntityType.ENDERMAN, new Integer[]{5, 11});
+            put(EntityType.ZOMBIE, new Integer[]{15, 21});
+            put(EntityType.SKELETON, new Integer[]{15, 21});
+            put(EntityType.CREEPER, new Integer[]{10, 16});
+            put(EntityType.SPIDER, new Integer[]{10, 16});
+            put(EntityType.ENDERMAN, new Integer[]{3, 6});
         }});
 
         nightQuestArgs.put(nightQuestEnums.MINE, new HashMap<Object, Integer[]>(){{
-            put(Material.STONE, new Integer[]{200, 3001});
-            put(Material.DIRT, new Integer[]{300, 359});
-            put(Material.SAND, new Integer[]{200, 301});
+            put(Material.STONE, new Integer[]{100, 201});
+            put(Material.DIRT, new Integer[]{100, 201});
+            put(Material.SAND, new Integer[]{100, 201});
         }});
 
         nightQuestArgs.put(nightQuestEnums.FISH, new HashMap<Object, Integer[]>(){{
-            put(Material.COD, new Integer[]{15, 21});
+            put(Material.COD, new Integer[]{10, 16});
             put(Material.SALMON, new Integer[]{10, 16});
             put(Material.TROPICAL_FISH, new Integer[]{5, 11});
             put(Material.PUFFERFISH, new Integer[]{3, 6});
@@ -62,6 +62,10 @@ public class nightQuestHandler implements Listener, setupUtils {
 
     private Boolean receivedNightQuest(UUID uuid) {
         return completedNightQuests.contains(uuid) || activeNightQuests.containsKey(uuid);
+    }
+
+    private Boolean isInOverWorld(World world) {
+        return world.getEnvironment() == World.Environment.NORMAL;
     }
 
     private nightQuestEnums getRandomNightQuestType() {
@@ -76,7 +80,10 @@ public class nightQuestHandler implements Listener, setupUtils {
         Object[] keyArgsArray = args.keySet().toArray();
 
         Object target = keyArgsArray[new Random().nextInt(keyArgsArray.length)];
-        Integer requiredProgress = new Random().nextInt(args.get(target)[0], args.get(target)[1]);
+        Integer minRandom = args.get(target)[0];
+        Integer maxRandom = args.get(target)[1];
+
+        Integer requiredProgress = new Random().nextInt(maxRandom - minRandom) + minRandom;
 
         return new nightQuestModel(player, nightQuestType, target, requiredProgress);
     }
@@ -95,10 +102,10 @@ public class nightQuestHandler implements Listener, setupUtils {
         if (nightQuest == null) { return; }
 
         player.sendMessage(
-                bold + "" + blue + "NIGHT QUEST! "
+                blue + "" + bold + "NIGHT QUEST! "
                         + gray + stringUtil.upperCaseFirstLetter(nightQuest.getNightQuestType().toString())
-                        + " " + (upperCaseFirstLetter(getPluralWord(nightQuest.getTarget().toString())))
-                        + red + " " + nightQuest.getRequiredProgress() + gray + " times!"
+                        + red + " " + nightQuest.getRequiredProgress()
+                        + gray + " " + getPluralWord(nightQuest.getTargetName()).toLowerCase()
         );
 
         activeNightQuests.put(player.getUniqueId(), nightQuest);
@@ -113,7 +120,8 @@ public class nightQuestHandler implements Listener, setupUtils {
         UUID uuid = (killer != null) ? killer.getUniqueId() : null;
         if (killed == null
                 || !activeNightQuests.containsKey(uuid)
-                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.KILL) { return; }
+                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.KILL
+                || !isInOverWorld(killer.getWorld())) { return; }
 
         nightQuestModel nightQuest = activeNightQuests.get(uuid);
         EntityType target = (EntityType) nightQuest.getTarget();
@@ -128,7 +136,8 @@ public class nightQuestHandler implements Listener, setupUtils {
         Block block = e.getBlock();
         UUID uuid = player.getUniqueId();
         if (!activeNightQuests.containsKey(uuid)
-                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.MINE) { return; }
+                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.MINE
+                || !isInOverWorld(player.getWorld())) { return; }
 
         nightQuestModel nightQuest = activeNightQuests.get(uuid);
         Material target = (Material) nightQuest.getTarget();
@@ -144,10 +153,11 @@ public class nightQuestHandler implements Listener, setupUtils {
         if (e.getCaught() == null
                 || e.getState() != PlayerFishEvent.State.CAUGHT_FISH
                 || !activeNightQuests.containsKey(uuid)
-                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.KILL) { return; }
+                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.KILL
+                || !isInOverWorld(player.getWorld())) { return; }
 
         Item item = (Item) e.getCaught();
-        ItemStack itemStack = (ItemStack) item.getItemStack();
+        ItemStack itemStack = item.getItemStack();
 
         nightQuestModel nightQuest = activeNightQuests.get(uuid);
         Material target = (Material) nightQuest.getTarget();
@@ -170,15 +180,22 @@ public class nightQuestHandler implements Listener, setupUtils {
                     World world = player.getWorld();
                     UUID uuid = player.getUniqueId();
 
-                    if (world.getEnvironment() != World.Environment.NORMAL
-                            || receivedNightQuest(uuid)) { return; }
-
                     boolean isDayTime = world.getTime() < 13000 || world.getTime() > 23000;
 
-                    if (isDayTime) {
+                    if (world.getEnvironment() == World.Environment.NORMAL && isDayTime) {
                         completedNightQuests.removeIf(completedNightQuests::contains);
+                        if (!activeNightQuests.containsKey(uuid)) { return; }
+
+                        nightQuestModel nightQuest = activeNightQuests.get(uuid);
+
+                        player.sendMessage(blue + "" + bold + "NIGHT QUEST! " + gray + "Ran out of time! " + blue +  "("
+                                + nightQuest.getProgress() + "/" + nightQuest.getRequiredProgress() + ")");
+                        activeNightQuests.remove(uuid);
                         return;
                     }
+
+                    if (world.getEnvironment() != World.Environment.NORMAL
+                            || receivedNightQuest(uuid)) { return; }
 
                     new nightQuestHandler().giveNightQuest(player);
                 }
