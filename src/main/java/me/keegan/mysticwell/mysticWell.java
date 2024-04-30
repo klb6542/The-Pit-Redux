@@ -1,11 +1,13 @@
 package me.keegan.mysticwell;
 
+import me.keegan.classes.Tier;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -22,15 +24,18 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import static me.keegan.utils.formatUtil.*;
+import static me.keegan.utils.romanUtil.integerToRoman;
 
 /*
  * Copyright (c) 2024. Created by klb.
  */
 
 public class mysticWell extends itemUtil {
+    private static final Tier<Integer> xpLevelsEnchantCostPerTier = new Tier<>(1, 2, 3);
+
     // inventories represent all the mystic well inventories
-    private static final HashMap<UUID, Inventory> inventories = new HashMap<>();
-    private static final HashMap<UUID, animation> animations = new HashMap<>();
+    static final HashMap<UUID, Inventory> inventories = new HashMap<>();
+    static final HashMap<UUID, animation> animations = new HashMap<>();
 
     @Override
     public String getNamespaceName() {
@@ -75,6 +80,49 @@ public class mysticWell extends itemUtil {
         recipe.setIngredient('B', Material.BOOK);
 
         ThePitRedux.getPlugin().getServer().addRecipe(recipe);
+    }
+
+    static void playHighPitchSound(Player player) {
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1.3f);
+    }
+
+    static void playLowPitchSound(Player player) {
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 0.6f);
+    }
+
+    static void playCustomPitchSound(Player player, float pitch) {
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, pitch);
+    }
+
+    // toggles and updates mystic well lore
+    static void toggleEnchantCostDisplay(Player player, Inventory inventory, Boolean visibility) {
+        // mystic well itemstack
+        ItemStack itemStack = inventory.getItem(25);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (!visibility) {
+
+            itemMeta.setLore(new mysticWell().createItem().getItemMeta().getLore());
+            itemStack.setItemMeta(itemMeta);
+            return;
+        }
+
+        animation animation = animations.get(player.getUniqueId());
+
+        Integer mysticTier = mysticUtil.getInstance().getTier(animation.itemStack);
+        ChatColor chatColor = mysticUtil.getInstance().getItemStackTierColor(
+                new ItemStack(Material.GOLDEN_SWORD), // used to get the correct chat color
+                mysticTier + 1
+        );
+
+        List<String> lore = new ArrayList<>();
+        lore.add(gray + "Upgrade: " + chatColor + "Tier " + integerToRoman((mysticTier + 1), false));
+        lore.add(gray + "Cost: " + aqua + xpLevelsEnchantCostPerTier.get(mysticTier) + " XP levels");
+        lore.add("");
+        lore.add(yellow + "Click to upgrade!");
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 
     // events
@@ -140,12 +188,13 @@ public class mysticWell extends itemUtil {
                     inventory.getItem(28),
                     inventory.getItem(19)));
 
-            animation animation = new animation(inventory, glassPanes);
+            animation animation = new animation(inventory, glassPanes, player);
             animation.idleState();
 
             animations.put(uuid, animation);
         }
 
+        playHighPitchSound(player);
         player.openInventory(inventory);
     }
 
@@ -162,14 +211,15 @@ public class mysticWell extends itemUtil {
             { return; }
 
         player.setCanPickupItems(true);
+        animation animation = animations.get(uuid);
 
-        if (animations.get(uuid).isEnchanting) {
-            inventory.setItem(20, animations.get(uuid).itemStack);
+        if (animation.isEnchanting) {
+            inventory.setItem(20, animation.itemStack);
 
-            animations.get(uuid).cancelRunnableTasks();
+            animation.cancelRunnableTasks();
             animations.remove(uuid);
-        } else if (animations.get(uuid).isEnchantingComplete) { // use else if to avoid error if animation is removed from hashmap
-            animations.get(uuid).idleState();
+        } else if (animation.isEnchantingComplete) { // use else if to avoid error if animation is removed from hashmap
+            animation.idleState();
         }
 
         if (inventory.getItem(20) == null) {
@@ -184,7 +234,16 @@ public class mysticWell extends itemUtil {
             player.getInventory().addItem(inventory.getItem(20));
         }
 
+        playLowPitchSound(player);
         inventory.setItem(20, new ItemStack(Material.AIR));
+
+        // set glass pane back to default
+        animation.glassPaneMaterial = mysticUtil.getInstance().getItemStackTierGlassPane(
+                animation.itemStack,
+                -1
+        );
+
+        toggleEnchantCostDisplay(player, inventory, false);
 
         // cache only when mystic is removed from slot so there are no duplicates
         inventories.put(uuid, inventory);
@@ -213,8 +272,10 @@ public class mysticWell extends itemUtil {
         UUID uuid = player.getUniqueId();
         e.setCancelled(true);
 
-        // return if animation is playing the enchanting state
-        if (animations.get(uuid).isEnchanting) { return; }
+        animation animation = animations.get(uuid);
+
+        // return if animation is playing the enchanting state, or they are not allowed to enchant
+        if (animation.isEnchanting || !animation.isAllowedToEnchant) { return; }
 
         // place mystic in mystic well slot
         if (!inventory.equals(inventoryClicked)) {
@@ -222,6 +283,15 @@ public class mysticWell extends itemUtil {
                     || !mysticUtil.getInstance().isMystic(currentItemStack)) { return; }
 
             e.setCancelled(true);
+
+            animation.itemStack = currentItemStack;
+            animation.glassPaneMaterial = mysticUtil.getInstance().getItemStackTierGlassPane(
+                    animation.itemStack,
+                    mysticUtil.getInstance().getTier(animation.itemStack)
+            );
+
+            toggleEnchantCostDisplay(player, inventory, true);
+            playHighPitchSound(player);
 
             inventory.setItem(20, currentItemStack);
             currentItemStack.setAmount(0);
@@ -235,11 +305,20 @@ public class mysticWell extends itemUtil {
             && inventory.getItem(inventorySlot) != null
             && player.getInventory().firstEmpty() != -1) {
 
-            if (animations.get(uuid).isEnchantingComplete) {
-                animations.get(uuid).idleState();
+            if (animation.isEnchantingComplete) {
+                animation.idleState();
             }
 
+            animation.itemStack = new ItemStack(Material.AIR);
+            animation.glassPaneMaterial = mysticUtil.getInstance().getItemStackTierGlassPane(
+                    animation.itemStack,
+                    mysticUtil.getInstance().getTier(animation.itemStack)
+            );
+
             inventory.setItem(inventorySlot, null);
+
+            toggleEnchantCostDisplay(player, inventory, false);
+            playLowPitchSound(player);
 
             player.getInventory().addItem(currentItemStack);
             player.updateInventory();
@@ -247,7 +326,14 @@ public class mysticWell extends itemUtil {
 
         // clicked mystic well to enchant
         if (inventorySlot == 25 && inventory.getItem(20) != null) {
-            animations.get(uuid).enchantingState();
+            // mystic well itemstack
+            ItemStack itemStack = inventory.getItem(25);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+
+            itemMeta.setLore(new ArrayList<>());
+            itemStack.setItemMeta(itemMeta);
+
+            animation.enchantingState();
         }
     }
 }
