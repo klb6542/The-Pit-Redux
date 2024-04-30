@@ -9,6 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Random;
+
+import static me.keegan.utils.formatUtil.*;
+
 public class nightQuestModel {
 
     /*
@@ -32,9 +36,7 @@ public class nightQuestModel {
         this.target = target;
     }
 
-    int getProgress() {
-        return this.progress;
-    }
+    int getProgress() { return this.progress; }
 
     int getRequiredProgress() {
         return this.requiredProgress;
@@ -48,17 +50,33 @@ public class nightQuestModel {
         return this.target;
     }
 
+    String getTargetName() {
+        return target.toString().replace("_", " ");
+    }
+
     nightQuestEnums getNightQuestType() {
         return this.nightQuestType;
     }
 
     void addProgress(int progressAmount) {
         this.progress += progressAmount;
+
+        if (Math.floor((double) this.getRequiredProgress() / 2) != (double) this.progress) { return; }
+
+        this.player.sendMessage(blue + "" + bold + "NIGHT QUEST! "
+                + gray + "Half way complete! " + blue +  "(" + this.progress + "/" + this.requiredProgress + ")");
     }
 
     void nightQuestComplete() {
         PlayerInventory playerInventory = this.getPlayer().getInventory();
         ItemStack vile = new vile().createItem();
+
+        Integer xpLevelGain = new Random().nextInt(2) + 1;
+        String levelWord = (xpLevelGain.equals(1)) ? "level" : "levels";
+
+        this.player.sendMessage(blue + "" + bold + "NIGHT QUEST! "
+                + gray + "Done! " + aqua + "+" + xpLevelGain + " XP " + levelWord + "!"
+                + darkPurple + " +1 " + vile.getItemMeta().getDisplayName());
 
         // inv full
         if (playerInventory.firstEmpty() == -1) {
