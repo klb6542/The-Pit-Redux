@@ -36,9 +36,9 @@ public class Guts extends enchantUtil {
     @Override
     public String[] getEnchantDescription() {
         return new String[]{
-                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, Math.floor(healingPerLevel[0] / 2)),
-                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, Math.floor(healingPerLevel[1] / 2)),
-                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, Math.floor(healingPerLevel[2] / 2))
+                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, healingPerLevel[0] / 2),
+                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, healingPerLevel[1] / 2),
+                MessageFormat.format("{0}Heal {1}{2}❤{0} on kill", gray, red, healingPerLevel[2] / 2)
         };
     }
 
