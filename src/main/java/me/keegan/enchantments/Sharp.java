@@ -62,7 +62,7 @@ public class Sharp extends enchantUtil {
         playerDamageHandler.getInstance().addDamage(e, (double) damagePerLevel[enchantLevel]);
     }
 
-    @EventHandler()
+    @EventHandler
     public void entityDamaged(EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof LivingEntity)) { return; }
 
