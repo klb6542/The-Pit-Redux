@@ -40,6 +40,7 @@ public class gem extends itemUtil {
     private final String gemName = green + "Totally Legit Gem";
     private final String gemCost = ChatColor.getByChar(gemName.substring(1, 2)) + "1 " + gemName;
     private final String gemUpgradeFooter = yellow + "Click to upgrade!";
+    private final Integer maxEnchantTokens = 8;
 
     private final Boolean gemRareEnchants = false;
     private final Boolean mysticMustBeTier3 = true;
@@ -83,9 +84,15 @@ public class gem extends itemUtil {
     }
 
     private String getFooter(ItemStack itemStack) {
-        return (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) != 3)
-                ? red + "Item needs to be Tier III!"
-                : this.gemUpgradeFooter;
+        if (mysticUtil.getInstance().getEnchantTokens(itemStack) >= maxEnchantTokens) {
+            return red + "Item has " + maxEnchantTokens + " enchant tokens!";
+        }
+
+        if (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) != 3) {
+            return red + "Item needs to be Tier III!";
+        }
+
+        return this.gemUpgradeFooter;
     }
 
     private void removeLoreFooter(ItemStack itemStack) {
@@ -184,7 +191,6 @@ public class gem extends itemUtil {
                 || e.getItem() == null
                 || !e.getItem().isSimilar(this.createItem())) { return; }
         Player player = e.getPlayer();
-        UUID uuid = player.getUniqueId();
 
         // create gem selector inventory
         Inventory inventory = ThePitRedux.getPlugin().getServer().createInventory(
@@ -228,7 +234,7 @@ public class gem extends itemUtil {
 
         if (!currentInventory.equals(clickedInventory)
                 || itemStack == null
-                || (this.mysticMustBeTier3 && mysticUtil.getInstance().getTier(itemStack) != 3)) { return; }
+                || !this.getFooter(itemStack).equals(gemUpgradeFooter)) { return; }
         itemStack = itemStack.clone(); // immutable
 
         Player player = (Player) e.getWhoClicked();
