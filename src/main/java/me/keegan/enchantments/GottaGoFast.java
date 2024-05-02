@@ -107,7 +107,7 @@ public class GottaGoFast extends enchantUtil implements setupUtils {
 
         final GottaGoFast thisGGF = this;
 
-        runnables.put(player.getUniqueId(), new BukkitRunnable() {
+        runnables.put(uuid, new BukkitRunnable() {
 
             @Override
             public void run() {
