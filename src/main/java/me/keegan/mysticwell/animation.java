@@ -6,12 +6,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static me.keegan.utils.formatUtil.red;
 import static me.keegan.utils.itemUtil.dyes;
 
 /*
@@ -90,16 +92,30 @@ public class animation {
         }.runTaskTimer(ThePitRedux.getPlugin(), delay, period));
     }
 
-    private void idleTierThreeState(ItemStack[] glassPanesArray) {
+    private void idleMaxState() {
+        if (this.isEnchanting) { return; }
         this.isAllowedToEnchant = false;
 
-        Arrays.stream(glassPanesArray)
-                .forEach(glassPane -> glassPane.setType(Material.RED_STAINED_GLASS_PANE));
+        ItemStack redConcrete = new ItemStack(Material.RED_CONCRETE);
+        ItemMeta itemMeta = redConcrete.getItemMeta();
+
+        itemMeta.setDisplayName(red + "Maxed out!");
+        redConcrete.setItemMeta(itemMeta);
+
+        this.inventory.setItem(25, redConcrete);
+    }
+
+    protected void resetIdleMaxState() {
+        this.isAllowedToEnchant = true;
+        this.itemStack = new ItemStack(Material.AIR);
+
+        this.inventory.setItem(25, new mysticWell().createItem());
     }
 
     protected void idleState() {
         this.cancelRunnableTasks();
         this.setGlassPanesColor(Material.BLACK_STAINED_GLASS_PANE);
+
         this.isEnchantingComplete = false;
         this.isAllowedToEnchant = true;
 
@@ -108,7 +124,7 @@ public class animation {
         final Player thisPlayer = this.player;
 
         this.runnableTasks.add(new BukkitRunnable() {
-            // j represents the index that was before i
+            // j represents the index that is before i
             int i = 0;
             int j = 0;
 
@@ -117,9 +133,7 @@ public class animation {
                 animation animation = mysticWell.animations.get(thisPlayer.getUniqueId());
 
                 if (mysticUtil.getInstance().getTier(animation.itemStack) >= 3) {
-                    animation.idleTierThreeState(glassPanesArray);
-                    animation.cancelRunnableTasks();
-                    return;
+                    animation.idleMaxState();
                 }
 
                 glassPanesArray[j].setType(Material.BLACK_STAINED_GLASS_PANE);
@@ -144,6 +158,10 @@ public class animation {
                 this.itemStack,
                 mysticUtil.getInstance().getTier(this.itemStack) + 1
         );
+
+        // finish enchanting before animation plays
+        algorithm algorithm = new algorithm(this.player, this.itemStack);
+        algorithm.run();
 
         final List<ItemStack> glassPanesList = this.glassPanes;
         final animation thisAnimation = this;
@@ -175,7 +193,7 @@ public class animation {
                         break;
                     case 3:
                         glassPanesList.forEach(glassPane -> glassPane.setType(Material.BLACK_STAINED_GLASS_PANE));
-                        runnableInventory.setItem(20, new ItemStack(Material.AIR));
+                        runnableInventory.setItem(20, null);
                         break;
                     case 4: // make it last longer
                         break;
@@ -204,6 +222,15 @@ public class animation {
             this.isEnchantingComplete = true;
 
             this.inventory.setItem(20, this.itemStack);
+
+            if (mysticUtil.getInstance().getTier(this.itemStack) == 2) {
+                mysticWell.displayPantsSlot(this.inventory);
+            }
+
+            if (mysticUtil.getInstance().getTier(this.itemStack) >= 3) {
+                this.idleMaxState();
+                return;
+            }
 
             mysticWell.toggleEnchantCostDisplay(this.player, this.inventory, true);
         });
