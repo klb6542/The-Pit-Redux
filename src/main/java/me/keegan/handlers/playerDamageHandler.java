@@ -1,5 +1,6 @@
 package me.keegan.handlers;
 
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.entityUtil;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -105,8 +106,7 @@ public class playerDamageHandler implements Listener {
     }
 
     public void doTrueDamage(LivingEntity livingEntity, double damage) {
-        // ignores mirrors
-
+        livingEntity.damage(0);
         livingEntity.setHealth(Math.max(0, Math.min(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
                 livingEntity.getHealth() - damage)));
     }
@@ -133,6 +133,8 @@ public class playerDamageHandler implements Listener {
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
         double trueDamage = playerDamageHandler.instance.calculateTrueDamage(e);
 
+
+        ThePitRedux.getPlugin().getLogger().info(calculatedDamage + " d");
         e.setDamage(calculatedDamage);
 
         if (damaged instanceof LivingEntity) {
