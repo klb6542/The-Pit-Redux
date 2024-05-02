@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static me.keegan.utils.formatUtil.*;
 
@@ -25,7 +26,7 @@ import static me.keegan.utils.formatUtil.*;
  */
 
 public class Stereo extends enchantUtil implements setupUtils {
-    private static final HashMap<Player, BukkitRunnable> runnables = new HashMap<>();
+    private static final HashMap<UUID, BukkitRunnable> runnables = new HashMap<>();
     private static final List<Player> stereoPantsEquipped = new ArrayList<>();
 
     private static Playlist stereoPlaylist;
@@ -84,7 +85,7 @@ public class Stereo extends enchantUtil implements setupUtils {
     public void playerJoined(PlayerJoinEvent e) {
         Player player = e.getPlayer();
 
-        runnables.put(player, new BukkitRunnable() {
+        runnables.put(player.getUniqueId(), new BukkitRunnable() {
 
             @Override
             public void run() {
