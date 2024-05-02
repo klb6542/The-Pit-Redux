@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.text.MessageFormat;
@@ -75,7 +76,7 @@ public class Prick extends enchantUtil {
         playerDamageHandler.getInstance().doTrueDamage(damager, trueDamagePerLevel[enchantLevel]);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void entityDamaged(EntityDamageByEntityEvent e) {
         if ((!(e.getEntity() instanceof LivingEntity)
                 || !(e.getDamager() instanceof LivingEntity))) { return; }
