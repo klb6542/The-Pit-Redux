@@ -102,7 +102,7 @@ public class Hearts extends enchantUtil implements setupUtils {
 
         final Hearts thisHearts = this;
 
-        runnables.put(player.getUniqueId(), new BukkitRunnable() {
+        runnables.put(uuid, new BukkitRunnable() {
 
             @Override
             public void run() {
