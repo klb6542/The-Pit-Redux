@@ -6,6 +6,7 @@ import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -82,7 +83,9 @@ public class Crush extends enchantUtil {
         if (this.isOnCooldown(damager.getUniqueId())) { return; }
         this.addCooldown(damager.getUniqueId(), weaknessCooldown.longValue(), cooldownEnums.NORMAL);
 
-        damager.getWorld().playSound(damager.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.25f, 0.65f);
+        if (damager instanceof Player) {
+            ((Player) damager).playSound(damager.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.25f, 0.65f);
+        }
 
         this.addPotionEffect(damaged, PotionEffectType.WEAKNESS,
                 weaknessAmplifierPerLevel[enchantLevel], weaknessDurationPerLevel[enchantLevel]);
