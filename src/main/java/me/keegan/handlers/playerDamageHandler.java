@@ -133,8 +133,6 @@ public class playerDamageHandler implements Listener {
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
         double trueDamage = playerDamageHandler.instance.calculateTrueDamage(e);
 
-
-        ThePitRedux.getPlugin().getLogger().info(calculatedDamage + " d");
         e.setDamage(calculatedDamage);
 
         if (damaged instanceof LivingEntity) {
