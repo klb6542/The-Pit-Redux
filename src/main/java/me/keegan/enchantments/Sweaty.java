@@ -5,6 +5,7 @@ import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -75,7 +76,9 @@ public class Sweaty extends enchantUtil {
     @Override
     public void executeEnchant(Object[] args) {
         int enchantLevel = (int) args[2];
+
         EntityDeathEvent e = (EntityDeathEvent) args[0];
+        LivingEntity killed = e.getEntity();
 
         // put xp in hashmap to calculate later
         xp.put(e, xp.getOrDefault(e, 0) + expPointsPerLevel[enchantLevel]);
@@ -85,7 +88,10 @@ public class Sweaty extends enchantUtil {
                 > levelUpChancePerLevel[enchantLevel]) { return; }
 
         // volume, pitch
-        e.getEntity().getWorld().playSound(e.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+        if (killed instanceof Player) {
+            ((Player) killed).playSound(e.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+        }
+
         e.getEntity().getKiller().giveExpLevels(1);
     }
 

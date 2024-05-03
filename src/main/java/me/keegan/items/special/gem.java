@@ -305,7 +305,7 @@ public class gem extends itemUtil {
             mysticUtil.getInstance().addEnchantLevel(currentMystic, enchant, 1);
             mysticUtil.getInstance().gem(currentMystic);
 
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.1f, 9f);
+            player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.1f, 9f);
 
             this.removeLoreFooter(currentMystic);
             playerInventory.addItem(currentMystic);

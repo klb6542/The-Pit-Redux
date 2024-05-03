@@ -6,6 +6,7 @@ import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -72,7 +73,10 @@ public class Prick extends enchantUtil {
         LivingEntity damaged = (LivingEntity) e.getEntity();
         LivingEntity damager = (LivingEntity) e.getDamager();
 
-        damager.getWorld().playSound(damaged.getLocation(), Sound.ENCHANT_THORNS_HIT, 1f, 1.25f);
+        if (damager instanceof Player) {
+            ((Player) damager).playSound(damaged.getLocation(), Sound.ENCHANT_THORNS_HIT, 1f, 1.25f);
+        }
+
         playerDamageHandler.getInstance().doTrueDamage(damager, trueDamagePerLevel[enchantLevel]);
     }
 
