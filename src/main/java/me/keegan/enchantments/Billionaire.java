@@ -4,6 +4,7 @@ import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -80,6 +81,7 @@ public class Billionaire extends enchantUtil {
 
         if (damager instanceof Player) {
             ((Player) damager).setLevel(((Player) damager).getLevel() - xpLevelsCostPerLevel[enchantLevel]);
+            ((Player) damager).playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.5f, 0.74f);
         }
 
         playerDamageHandler.getInstance().addDamage(e, (double) damagePerLevel[enchantLevel]);
