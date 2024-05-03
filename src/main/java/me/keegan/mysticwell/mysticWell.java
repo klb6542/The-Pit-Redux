@@ -91,15 +91,15 @@ public class mysticWell extends itemUtil {
     }
 
     static void playHighPitchSound(Player player) {
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1.3f);
+        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1.3f);
     }
 
     static void playLowPitchSound(Player player) {
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 0.6f);
+        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 0.6f);
     }
 
     static void playCustomPitchSound(Player player, float pitch) {
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, pitch);
+        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, pitch);
     }
 
     // toggles and updates mystic well lore
@@ -320,9 +320,9 @@ public class mysticWell extends itemUtil {
         if (animation.isEnchanting) { return; }
 
         // place mystic in mystic well slot
-        if (!inventory.equals(inventoryClicked) && mysticUtil.getInstance().isMystic(currentItemStack)) {
-            e.setCancelled(true);
-            if (!animation.isAllowedToEnchant) { return; }
+        if (!inventory.equals(inventoryClicked)
+                && mysticUtil.getInstance().isMystic(currentItemStack)
+                && animation.isAllowedToEnchant) {
 
             // 1st mystic in mystic well
             if (inventory.getItem(20) == null) {
@@ -343,6 +343,7 @@ public class mysticWell extends itemUtil {
                 currentItemStack.setAmount(0);
 
                 player.updateInventory();
+                return;
             }else{
                 ItemStack itemStack = inventory.getItem(20);
 
@@ -355,6 +356,7 @@ public class mysticWell extends itemUtil {
 
                 playHighPitchSound(player);
                 player.updateInventory();
+                return;
             }
         }
 
