@@ -63,6 +63,7 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Steaks());
         mysticUtilInstance.registerEnchant(new Billionaire());
         mysticUtilInstance.registerEnchant(new Supine());
+        mysticUtilInstance.registerEnchant(new BooBoo());
     }
 
     private void registerItems() {
@@ -92,6 +93,7 @@ public final class ThePitRedux extends JavaPlugin {
         setupUtils.pluginEnabled(new nightQuestHandler());
         setupUtils.pluginEnabled(new GottaGoFast());
         setupUtils.pluginEnabled(new Supine());
+        setupUtils.pluginEnabled(new BooBoo());
     }
 
     private void shutdown() {
@@ -103,6 +105,7 @@ public final class ThePitRedux extends JavaPlugin {
         setupUtils.pluginDisabled(new nightQuestHandler());
         setupUtils.pluginDisabled(new GottaGoFast());
         setupUtils.pluginDisabled(new Supine());
+        setupUtils.pluginDisabled(new BooBoo());
     }
 
     @Override
