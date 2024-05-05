@@ -67,7 +67,7 @@ public class Parasite extends enchantUtil {
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
         LivingEntity shooter = (LivingEntity) ((Arrow) e.getDamager()).getShooter();
 
-        this.heal(shooter, healingAmountPerLevel[enchantLevel]);
+        this.heal(shooter, healingAmountPerLevel[enchantLevel] * 2);
     }
 
     @EventHandler
