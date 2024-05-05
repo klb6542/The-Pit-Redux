@@ -142,10 +142,14 @@ public class algorithm {
                         .filter(enchantUtil -> !mysticUtil.getInstance().getEnchantTokens(this.itemStack, enchantUtil).equals(enchantUtil.getMaxLevel()))
                         .collect(Collectors.toList());
 
-                mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 1);
-
-                if (RNGTwo == 0) {
+                if (itemStackEnchants.isEmpty()) {
+                    mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), 1, true);
+                }else {
                     mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 1);
+
+                    if (RNGTwo == 0) {
+                        mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 1);
+                    }
                 }
             }else{
                 int RNGTwo = new Random().nextInt(4);
@@ -155,10 +159,14 @@ public class algorithm {
                         .filter(enchantUtil -> !mysticUtil.getInstance().getEnchantTokens(this.itemStack, enchantUtil).equals(enchantUtil.getMaxLevel()))
                         .collect(Collectors.toList());
 
-                mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 2);
+                if (itemStackEnchants.isEmpty()) {
+                    mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                }else{
+                    mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 2);
 
-                if (RNGTwo == 0) {
-                    mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), new Random().nextInt(2) + 1);
+                    if (RNGTwo == 0) {
+                        mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), new Random().nextInt(2) + 1);
+                    }
                 }
             }
         }else{
@@ -166,7 +174,8 @@ public class algorithm {
                 int RNGTwo = new Random().nextInt(4);
                 mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
 
-                if (RNGTwo == 0) {
+                if (RNGTwo == 0 && mysticUtil.getInstance().getTier(this.itemStack) != 8) {
+                    // don't need to check if itemStackEnchants is empty because there is already a new enchant
                     List<enchantUtil> itemStackEnchants = mysticUtil.getInstance().getEnchants(this.itemStack)
                             .stream()
                             .filter(enchantUtil -> !mysticUtil.getInstance().getEnchantTokens(this.itemStack, enchantUtil).equals(enchantUtil.getMaxLevel()))
@@ -187,10 +196,14 @@ public class algorithm {
                             .filter(enchantUtil -> !mysticUtil.getInstance().getEnchantTokens(this.itemStack, enchantUtil).equals(enchantUtil.getMaxLevel()))
                             .collect(Collectors.toList());
 
-                    mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), new Random().nextInt(2) + 1);
-
-                    if (RNGTwo == 0) {
+                    if (itemStackEnchants.isEmpty()) {
+                        mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                    }else{
                         mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), new Random().nextInt(2) + 1);
+
+                        if (RNGTwo == 0) {
+                            mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), new Random().nextInt(2) + 1);
+                        }
                     }
                 }
             }
