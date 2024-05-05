@@ -37,6 +37,8 @@ public class mysticWell extends itemUtil {
     static final HashMap<UUID, Inventory> inventories = new HashMap<>();
     static final HashMap<UUID, animation> animations = new HashMap<>();
 
+    private final boolean requirePantsToTierThree = true;
+
     @Override
     public String getNamespaceName() {
         return "mystic_well";
@@ -421,7 +423,8 @@ public class mysticWell extends itemUtil {
             // if item is tier 2 and the pants slot is empty return
             if (mysticUtil.getInstance().getTier(inventory.getItem(20)) == 2
                     && inventory.getItem(23) != null
-                    && !mysticUtil.getInstance().isMystic(inventory.getItem(23))) {
+                    && !mysticUtil.getInstance().isMystic(inventory.getItem(23))
+                    && requirePantsToTierThree) {
                 return;
             }
 
