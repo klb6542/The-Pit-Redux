@@ -77,7 +77,7 @@ public class Prick extends enchantUtil {
             ((Player) damager).playSound(damaged.getLocation(), Sound.ENCHANT_THORNS_HIT, 1f, 1.25f);
         }
 
-        playerDamageHandler.getInstance().doTrueDamage(damager, trueDamagePerLevel[enchantLevel]);
+        playerDamageHandler.getInstance().doTrueDamage(damager, trueDamagePerLevel[enchantLevel] * 2);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
