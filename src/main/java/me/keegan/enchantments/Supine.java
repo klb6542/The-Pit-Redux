@@ -56,18 +56,18 @@ public class Supine extends enchantUtil implements setupUtils {
     @Override
     public String[] getEnchantDescription() {
         return new String[]{
-                MessageFormat.format("{0}Gain {2}Haste {4}{0} when you are above {1}{3}❤{0}",
+                MessageFormat.format("{0}Gain {2}Haste {4}{0} when above {1}{3}❤{0}",
                         gray, red, yellow, heartsMinimumPerLevel[0],
                         integerToRoman(hasteAmplifierPerLevel[0] + 1, false)),
 
                 MessageFormat.format("{0}Gain {2}Haste {5}{0} and {3}Speed {6}{0} when/n"
-                                + "{0}you are above {1}{4}❤{0}",
+                                + "{0} above {1}{4}❤{0}",
                         gray, red, yellow, blue, heartsMinimumPerLevel[1],
                         integerToRoman(hasteAmplifierPerLevel[1] + 1, false),
                         integerToRoman(speedAmplifierPerLevel[1] + 1, false)),
 
                 MessageFormat.format("{0}Gain {4}Luck {8}{0}, {2}Haste {6}{0}, and/n"
-                                + "{3}Speed {7}{0} when you are above {1}{5}❤{0}",
+                                + "{3}Speed {7}{0} when above {1}{5}❤{0}",
                         gray, red, yellow, blue, green, heartsMinimumPerLevel[2],
                         integerToRoman(hasteAmplifierPerLevel[2] + 1, false),
                         integerToRoman(speedAmplifierPerLevel[2] + 1, false),
@@ -92,6 +92,7 @@ public class Supine extends enchantUtil implements setupUtils {
 
     @Override
     public void executeEnchant(Object[] args) {
+        if (args.length == 4) { return; }
         int enchantLevel = (int) args[2];
 
         PlayerJoinEvent e = (PlayerJoinEvent) args[0];
@@ -125,7 +126,6 @@ public class Supine extends enchantUtil implements setupUtils {
                 e,
                 (damager.getEquipment() != null) ? damager.getEquipment().getLeggings() : null,
                 this,
-                true
         };
 
         this.attemptEnchantExecution(args);
@@ -150,7 +150,8 @@ public class Supine extends enchantUtil implements setupUtils {
                 Object[] args = new Object[]{
                         e,
                         player.getEquipment().getLeggings(),
-                        thisSupine
+                        thisSupine,
+                        true
                 };
 
                 boolean success = attemptEnchantExecution(args);
