@@ -61,7 +61,7 @@ public class Supine extends enchantUtil implements setupUtils {
                         integerToRoman(hasteAmplifierPerLevel[0] + 1, false)),
 
                 MessageFormat.format("{0}Gain {2}Haste {5}{0} and {3}Speed {6}{0} when/n"
-                                + "{0} above {1}{4}❤{0}",
+                                + "{0}above {1}{4}❤{0}",
                         gray, red, yellow, blue, heartsMinimumPerLevel[1],
                         integerToRoman(hasteAmplifierPerLevel[1] + 1, false),
                         integerToRoman(speedAmplifierPerLevel[1] + 1, false)),
@@ -82,7 +82,7 @@ public class Supine extends enchantUtil implements setupUtils {
 
     @Override
     public boolean isRareEnchant() {
-        return true;
+        return false;
     }
 
     @Override
@@ -92,7 +92,6 @@ public class Supine extends enchantUtil implements setupUtils {
 
     @Override
     public void executeEnchant(Object[] args) {
-        if (args.length == 4) { return; }
         int enchantLevel = (int) args[2];
 
         PlayerJoinEvent e = (PlayerJoinEvent) args[0];
@@ -117,21 +116,6 @@ public class Supine extends enchantUtil implements setupUtils {
     }
 
     @EventHandler
-    public void entityDamaged(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof LivingEntity) || !(e.getDamager() instanceof Player)) { return; }
-
-        LivingEntity damager = (LivingEntity) e.getDamager();
-
-        Object[] args = new Object[]{
-                e,
-                (damager.getEquipment() != null) ? damager.getEquipment().getLeggings() : null,
-                this,
-        };
-
-        this.attemptEnchantExecution(args);
-    }
-
-    @EventHandler
     public void playerJoined(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
@@ -151,7 +135,6 @@ public class Supine extends enchantUtil implements setupUtils {
                         e,
                         player.getEquipment().getLeggings(),
                         thisSupine,
-                        true
                 };
 
                 boolean success = attemptEnchantExecution(args);
