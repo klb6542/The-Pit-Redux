@@ -622,6 +622,8 @@ public class mysticUtil implements CommandExecutor {
 
         this.addEnchant(itemStack4, new Supine(), 2, false);
 
+        ItemStack itemStack10 = new philosophers_cactus().createItem();
+
         ItemStack itemStack6 = new gem().createItem();
         itemStack6.setAmount(64);
 
@@ -632,7 +634,7 @@ public class mysticUtil implements CommandExecutor {
 
         ItemStack itemStack8 = new mysticWell().createItem();
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8);
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
         return true;
     }
 }
