@@ -37,7 +37,7 @@ public class mysticWell extends itemUtil {
     static final HashMap<UUID, Inventory> inventories = new HashMap<>();
     static final HashMap<UUID, animation> animations = new HashMap<>();
 
-    private final boolean requirePantsToTierThree = true;
+    private final boolean requirePantsToTierThree = false;
 
     @Override
     public String getNamespaceName() {
