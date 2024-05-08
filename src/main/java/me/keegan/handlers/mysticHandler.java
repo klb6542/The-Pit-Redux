@@ -48,10 +48,13 @@ public class mysticHandler implements Listener {
     private boolean containsNotCraftable(CraftingInventory craftingInventory) {
         AtomicBoolean containsNotCraftable = new AtomicBoolean(false);
 
-        craftingInventory.forEach(itemStack ->
+        craftingInventory.forEach(itemStack -> {
+            if (itemStack != null) {
                 containsNotCraftable.set(
                         containsNotCraftable.get()
-                        || propertiesUtil.hasProperty(propertiesUtil.notCraftable, itemStack.getItemMeta())));
+                                || propertiesUtil.hasProperty(propertiesUtil.notCraftable, itemStack.getItemMeta()));
+            }
+        });
 
         return containsNotCraftable.get();
     }
