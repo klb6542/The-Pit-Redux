@@ -7,7 +7,6 @@ import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +159,20 @@ public class philosophers_cactus extends itemUtil {
         }else if (offHandItemStack.isSimilar(this.createItem())) {
             offHandItemStack.setAmount(offHandItemStack.getAmount() - 1);
         }
+
+        new BukkitRunnable() {
+
+            int count = 0;
+
+            @Override
+            public void run() {
+                if (count == 6) { this.cancel(); }
+
+                count++;
+                player.playSound(player.getLocation(), Sound.ENTITY_SILVERFISH_AMBIENT, 1f, 1f);
+            }
+
+        }.runTaskTimer(ThePitRedux.getPlugin(), 0, 2);
 
         player.closeInventory();
     }
