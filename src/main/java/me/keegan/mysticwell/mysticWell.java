@@ -1,6 +1,7 @@
 package me.keegan.mysticwell;
 
 import me.keegan.classes.Tier;
+import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static me.keegan.builders.mystic.getMysticType;
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.romanUtil.integerToRoman;
 
@@ -38,6 +40,11 @@ public class mysticWell extends itemUtil {
     static final HashMap<UUID, animation> animations = new HashMap<>();
 
     private final boolean requirePantsToTierThree = false;
+
+    private final List<mysticEnums> allowedMysticsToEnchant = new ArrayList<>(Arrays.asList(
+            mysticEnums.NORMAL,
+            mysticEnums.DARK
+    ));
 
     @Override
     public String getNamespaceName() {
@@ -318,13 +325,14 @@ public class mysticWell extends itemUtil {
 
         animation animation = animations.get(uuid);
 
-        // return if animation is playing the enchanting state
+        // return if animation is playing the enchanting state return
         if (animation.isEnchanting) { return; }
 
         // place mystic in mystic well slot
         if (!inventory.equals(inventoryClicked)
                 && mysticUtil.getInstance().isMystic(currentItemStack)
-                && animation.isAllowedToEnchant) {
+                && animation.isAllowedToEnchant
+                && allowedMysticsToEnchant.contains(getMysticType(currentItemStack))) {
 
             // 1st mystic in mystic well
             if (inventory.getItem(20) == null) {
@@ -346,7 +354,7 @@ public class mysticWell extends itemUtil {
 
                 player.updateInventory();
                 return;
-            }else{
+            }else{ // in sacrifice slot
                 ItemStack itemStack = inventory.getItem(20);
 
                 if (mysticUtil.getInstance().getTier(itemStack) != 2
