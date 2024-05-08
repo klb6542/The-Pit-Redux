@@ -4,6 +4,7 @@ import me.keegan.builders.mystic;
 import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
+import me.keegan.items.hats.kings_helmet;
 import me.keegan.items.special.gem;
 import me.keegan.items.special.philosophers_cactus;
 import me.keegan.mysticwell.mysticWell;
@@ -634,7 +635,9 @@ public class mysticUtil implements CommandExecutor {
 
         ItemStack itemStack8 = new mysticWell().createItem();
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
+        ItemStack itemStack11 = new kings_helmet().createItem();
+
+        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack11, itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
         return true;
     }
 }
