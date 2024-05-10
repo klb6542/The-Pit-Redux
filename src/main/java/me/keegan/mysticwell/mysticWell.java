@@ -42,8 +42,8 @@ public class mysticWell extends itemUtil {
     private final boolean requirePantsToTierThree = false;
 
     private final List<mysticEnums> allowedMysticsToEnchant = new ArrayList<>(Arrays.asList(
-            mysticEnums.NORMAL,
-            mysticEnums.DARK
+            mysticEnums.NORMAL
+            //mysticEnums.DARK
     ));
 
     @Override
