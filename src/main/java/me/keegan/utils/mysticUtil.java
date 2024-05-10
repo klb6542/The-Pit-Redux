@@ -586,6 +586,9 @@ public class mysticUtil implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if (!(commandSender instanceof Player)) { return false; }
+        Player player = (Player) commandSender;
+
         ItemStack itemStack = new mystic.Builder()
                             .material(GOLDEN_SWORD)
                             .type(mysticEnums.NORMAL)
@@ -637,7 +640,7 @@ public class mysticUtil implements CommandExecutor {
 
         ItemStack itemStack11 = new kings_helmet().createItem();
 
-        ThePitRedux.getPlugin().getServer().getPlayer("qsmh").getInventory().addItem(itemStack11, itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
+        player.getInventory().addItem(itemStack11, itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
         return true;
     }
 }
