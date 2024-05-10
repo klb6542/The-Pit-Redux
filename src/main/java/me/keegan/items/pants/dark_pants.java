@@ -30,7 +30,7 @@ public class dark_pants extends itemUtil {
                 .material(Material.LEATHER_LEGGINGS)
                 .chatColor(darkPurple)
                 .color(Color.BLACK)
-                .type(mysticEnums.DARK)
+                .type(mysticEnums.NORMAL)
                 .build();
 
         ItemMeta itemMeta = itemStack.getItemMeta();
