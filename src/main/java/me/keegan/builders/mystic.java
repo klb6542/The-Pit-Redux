@@ -225,9 +225,11 @@ public class mystic {
                 return normalPaneColorTiers.getOrDefault(tier - 1, Material.PINK_STAINED_GLASS_PANE);
             }
 
+            /*
             if (getMysticType(pants) == mysticEnums.DARK) {
                 return darkPaneColorTiers.getOrDefault(tier - 1, Material.PURPLE_STAINED_GLASS_PANE);
             }
+             */
 
             return null;
         }
