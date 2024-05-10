@@ -6,7 +6,9 @@ import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
 import me.keegan.items.hats.kings_helmet;
+import me.keegan.items.lame.cherry;
 import me.keegan.items.lame.mini_cake;
+import me.keegan.items.lame.pants_bundle;
 import me.keegan.items.pants.dark_pants;
 import me.keegan.items.special.gem;
 import me.keegan.items.special.philosophers_cactus;
@@ -78,6 +80,8 @@ public final class ThePitRedux extends JavaPlugin {
         itemUtil.registerItem(new philosophers_cactus());
         itemUtil.registerItem(new kings_helmet());
         itemUtil.registerItem(new mini_cake());
+        itemUtil.registerItem(new cherry());
+        itemUtil.registerItem(new pants_bundle());
     }
 
     private void registerCommands() {
