@@ -50,7 +50,7 @@ public class mini_cake extends itemUtil {
 
         ShapedRecipe recipe = new ShapedRecipe(key, this.createItem());
         RecipeChoice milk_bucket = new RecipeChoice.MaterialChoice(Material.MILK_BUCKET);
-        RecipeChoice cookie = new RecipeChoice.MaterialChoice(Material.COOKIE);
+        RecipeChoice cherry = new RecipeChoice.ExactChoice(new cherry().createItem());
         RecipeChoice sugar = new RecipeChoice.MaterialChoice(Material.SUGAR);
         RecipeChoice egg = new RecipeChoice.MaterialChoice(Material.EGG);
         RecipeChoice wheat = new RecipeChoice.MaterialChoice(Material.WHEAT);
@@ -58,7 +58,7 @@ public class mini_cake extends itemUtil {
         // top - middle - bottom
         recipe.shape("CMC", "SES", "WWW");
         recipe.setIngredient('M', milk_bucket);
-        recipe.setIngredient('C', cookie);
+        recipe.setIngredient('C', cherry);
         recipe.setIngredient('S', sugar);
         recipe.setIngredient('E', egg);
         recipe.setIngredient('W', wheat);
