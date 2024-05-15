@@ -90,12 +90,12 @@ public class Volley extends enchantUtil {
         volleyArrow.setCritical((boolean)
                 runnables.getOrDefault(shooter.getUniqueId(), new Object[]{
                 0.0,
-                false
+                arrow.isCritical()
         })[1]);
 
         volleyArrow.setVelocity(shooter.getEyeLocation().getDirection().multiply((double)
                 runnables.getOrDefault(shooter.getUniqueId(), new Object[]{
-                0.0,
+                arrow.getVelocity().length(),
                 false
         })[0]));
 
@@ -139,8 +139,8 @@ public class Volley extends enchantUtil {
         }.runTaskTimer(ThePitRedux.getPlugin(), 2, 2);
     }
 
-    // executes before Mega longBow enchant
-    @EventHandler(priority = EventPriority.LOW)
+    // executes after Mega longBow enchant
+    @EventHandler(priority = EventPriority.HIGH)
     public void bowShot(EntityShootBowEvent e) {
         if (!(e.getProjectile() instanceof Arrow)) { return; }
 
