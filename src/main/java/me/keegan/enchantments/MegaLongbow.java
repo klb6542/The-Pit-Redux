@@ -89,7 +89,7 @@ public class MegaLongbow extends enchantUtil {
         arrow.setCritical(true);
         arrow.setVelocity(shooter.getEyeLocation().getDirection().multiply(arrowSpeed));
 
-        this.setJumpBoost(shooter, jumpBoostAmplifierPerLevel[enchantLevel], jumpBoostDuration);
+        this.setJumpBoost(shooter, jumpBoostAmplifierPerLevel[enchantLevel], (double) jumpBoostDuration);
     }
 
     @EventHandler
