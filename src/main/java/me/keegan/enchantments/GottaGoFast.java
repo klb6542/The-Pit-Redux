@@ -78,7 +78,7 @@ public class GottaGoFast extends enchantUtil implements setupUtils {
 
         if (ggfPantsEquipped.containsKey(uuid)) {
             // https://www.spigotmc.org/threads/comprehensive-particle-spawning-guide-1-13-1-19.343001/
-            player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 2, 0, 0.2, 0, 0.075);
+            player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 1, 0, 0.2, 0, 0.075);
             return;
         }
 
@@ -104,6 +104,7 @@ public class GottaGoFast extends enchantUtil implements setupUtils {
     public void playerJoined(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
+        if (runnables.containsKey(uuid)) { return; }
 
         final GottaGoFast thisGGF = this;
 
