@@ -2,6 +2,7 @@ package me.keegan.pitredux;
 
 import me.keegan.enchantments.*;
 import me.keegan.events.nightquest.nightQuestHandler;
+import me.keegan.global.citizens;
 import me.keegan.handlers.entityDamageHandler;
 import me.keegan.handlers.mysticHandler;
 import me.keegan.handlers.playerDamageHandler;
@@ -19,6 +20,7 @@ import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.setupUtils;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -26,7 +28,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ThePitRedux extends JavaPlugin {
     private static ThePitRedux plugin;
-    private boolean NoteBlockAPI = true;
+
+    public boolean NoteBlockAPI = true;
+    public boolean Citizens = true;
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
@@ -69,6 +73,20 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Supine());
         mysticUtilInstance.registerEnchant(new BooBoo());
         mysticUtilInstance.registerEnchant(new Royalty());
+        mysticUtilInstance.registerEnchant(new DevilChicks());
+        mysticUtilInstance.registerEnchant(new Chipping());
+        mysticUtilInstance.registerEnchant(new Fletching());
+        mysticUtilInstance.registerEnchant(new MixedCombat());
+        mysticUtilInstance.registerEnchant(new ComboStun());
+        mysticUtilInstance.registerEnchant(new Providence());
+        mysticUtilInstance.registerEnchant(new WolfPack());
+        mysticUtilInstance.registerEnchant(new ComboDamage());
+        mysticUtilInstance.registerEnchant(new KingBuster());
+        mysticUtilInstance.registerEnchant(new Punisher());
+        mysticUtilInstance.registerEnchant(new SprintDrain());
+        mysticUtilInstance.registerEnchant(new Protection());
+        mysticUtilInstance.registerEnchant(new McSwimmer());
+        mysticUtilInstance.registerEnchant(new Grasshopper());
     }
 
     private void registerItems() {
@@ -93,16 +111,32 @@ public final class ThePitRedux extends JavaPlugin {
             getLogger().severe("*** NoteBlockAPI is not installed or not enabled. ***");
             NoteBlockAPI = false;
         }
+
+        if (!this.getServer().getPluginManager().isPluginEnabled("Citizens")){
+            getLogger().severe("*** Citizens is not installed or not enabled. ***");
+            Citizens = false;
+        }
     }
 
     private void startup() {
-        setupUtils.pluginEnabled(new Stereo());
-        setupUtils.pluginEnabled(new Hearts());
-        setupUtils.pluginEnabled(new SnowmenArmy());
-        setupUtils.pluginEnabled(new nightQuestHandler());
-        setupUtils.pluginEnabled(new GottaGoFast());
-        setupUtils.pluginEnabled(new Supine());
-        setupUtils.pluginEnabled(new BooBoo());
+        // makes sure everything is loaded
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                setupUtils.pluginEnabled(new Stereo());
+                setupUtils.pluginEnabled(new Hearts());
+                setupUtils.pluginEnabled(new SnowmenArmy());
+                setupUtils.pluginEnabled(new nightQuestHandler());
+                setupUtils.pluginEnabled(new GottaGoFast());
+                setupUtils.pluginEnabled(new Supine());
+                setupUtils.pluginEnabled(new BooBoo());
+                setupUtils.pluginEnabled(new DevilChicks());
+                setupUtils.pluginEnabled(new citizens());
+                setupUtils.pluginEnabled(new WolfPack());
+            }
+
+        }.runTaskLater(this, 2);
     }
 
     private void shutdown() {
@@ -115,6 +149,9 @@ public final class ThePitRedux extends JavaPlugin {
         setupUtils.pluginDisabled(new GottaGoFast());
         setupUtils.pluginDisabled(new Supine());
         setupUtils.pluginDisabled(new BooBoo());
+        setupUtils.pluginDisabled(new DevilChicks());
+        setupUtils.pluginDisabled(new citizens());
+        setupUtils.pluginDisabled(new WolfPack());
     }
 
     @Override
