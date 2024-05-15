@@ -73,7 +73,6 @@ public class Hearts extends enchantUtil implements setupUtils {
         PlayerJoinEvent playerJoinEvent = (PlayerJoinEvent) args[0];
         Player player = playerJoinEvent.getPlayer();
         UUID uuid = player.getUniqueId();
-
         if (heartsPantsEquipped.containsKey(uuid)) { return; }
 
         // add extra max hearts
@@ -100,6 +99,9 @@ public class Hearts extends enchantUtil implements setupUtils {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
 
+        // return if there is one currently running, so it doesn't duplicate
+        if (runnables.containsKey(uuid)) { return; }
+
         final Hearts thisHearts = this;
 
         runnables.put(uuid, new BukkitRunnable() {
@@ -121,6 +123,7 @@ public class Hearts extends enchantUtil implements setupUtils {
                 boolean success = attemptEnchantExecution(args);
                 if (success || !heartsPantsEquipped.containsKey(uuid)) { return; } // if enchant was successfully executed or pants are not equipped return
 
+                ThePitRedux.getPlugin().getLogger().info("not good ");
                 thisHearts.removeExtraMaxHearts(player);
             }
 
