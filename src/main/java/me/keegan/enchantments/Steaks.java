@@ -31,6 +31,7 @@ public class Steaks extends enchantUtil {
     private final Integer regenerationAmplifier = 0;
 
     // used only for checking if itemstack is similar to steak
+
     private Boolean isSimilar(ItemStack itemStack, ItemStack itemStack2) {
         ItemStack copyItemStack = itemStack.clone();
         ItemStack copyItemStack2 = itemStack2.clone();
