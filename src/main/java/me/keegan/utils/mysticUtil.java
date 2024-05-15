@@ -233,6 +233,15 @@ public class mysticUtil implements CommandExecutor {
         return nonRareMysticEnchants.get(new Random().nextInt(nonRareMysticEnchants.size()));
     }
 
+    public enchantUtil getRandomRareEnchant(ItemStack itemStack) {
+        List<enchantUtil> rareMysticEnchants = mysticEnchants.get(itemStack.getType()).get()
+                .stream()
+                .filter(enchantUtil::isRareEnchant)
+                .collect(Collectors.toList());
+
+        return rareMysticEnchants.get(new Random().nextInt(rareMysticEnchants.size()));
+    }
+
     public Boolean hasEnchant(ItemStack itemStack, enchantUtil enchant) {
         List<String> lore = this.getItemLore(itemStack);
 
