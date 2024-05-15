@@ -54,6 +54,10 @@
 
     <repositories>
         <repository>
+            <id>citizens-repo</id>
+            <url>https://maven.citizensnpcs.co/repo</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -86,6 +90,19 @@
             <artifactId>NoteBlockAPI</artifactId>
             <version>1.6.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.33-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
