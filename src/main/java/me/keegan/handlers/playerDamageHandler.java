@@ -105,10 +105,10 @@ public class playerDamageHandler implements Listener {
         this.trueDamage.put(e, this.getTrueDamage(e) + damage);
     }
 
-    public void doTrueDamage(LivingEntity livingEntity, double damage) {
-        livingEntity.damage(0);
-        livingEntity.setHealth(Math.max(0, Math.min(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-                livingEntity.getHealth() - damage)));
+    public void doTrueDamage(LivingEntity damaged, LivingEntity damager, double damage) {
+        damaged.damage(0.01, damager);
+        damaged.setHealth(Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+                damaged.getHealth() - damage)));
     }
 
     public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
