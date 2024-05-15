@@ -86,7 +86,7 @@ public class BooBoo extends enchantUtil implements setupUtils {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        if (boobooInProgress.contains(uuid) || args.length == 4) { return; }
+        if (boobooInProgress.contains(uuid) || args.length == 4 || runnables.containsKey(uuid)) { return; }
         boobooInProgress.add(uuid);
 
         final BooBoo thisBooBoo = this;
