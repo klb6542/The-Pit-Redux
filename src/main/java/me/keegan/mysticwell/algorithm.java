@@ -49,6 +49,10 @@ public class algorithm {
         this.tierMethods.get(itemStackTier).run();
     }
 
+    private boolean shouldGiveRareEnchant(int minChance, int maxChance) {
+        return new Random().nextInt(maxChance) + 1 < minChance + 1;
+    }
+
     private void addEnchantToTierOne() {
         int RNG = new Random().nextInt(11);
         int enchantCount = mysticUtil.getInstance().getEnchantCount(this.itemStack);
@@ -63,8 +67,7 @@ public class algorithm {
             mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), 2, true);
         }else {
             mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), 1, true);
-            mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack),
-                    new Random().nextInt(2) + 1, true);
+            mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), 1, true);
         }
 
         int randomLives = new Random().nextInt(5 - 4) + 4;
@@ -82,10 +85,14 @@ public class algorithm {
             return;
         }
 
-        if (RNG > 6) {
+        if (RNG > 5) {
             int RNGTwo = new Random().nextInt(5);
 
-            mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+            if (shouldGiveRareEnchant(1, 30)) {
+                mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+            }else{
+                mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+            }
 
             if (RNGTwo < 2) {
                 // filter out max enchants from non maxed enchants
@@ -98,7 +105,11 @@ public class algorithm {
             }
         } else if (RNG > 3) {
             for (int i = enchantCount; i < maxEnchantCount; i++) {
-                mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                if (shouldGiveRareEnchant(1, 15)) {
+                    mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                }else{
+                    mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                }
             }
         }else { // upgrade an enchant
             int RNGTwo = new Random().nextInt(9);
@@ -143,6 +154,7 @@ public class algorithm {
                         .collect(Collectors.toList());
 
                 if (itemStackEnchants.isEmpty()) {
+                    // no clue why I did this just ignore it makes no sense
                     mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), 1, true);
                 }else {
                     mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 1);
@@ -160,6 +172,7 @@ public class algorithm {
                         .collect(Collectors.toList());
 
                 if (itemStackEnchants.isEmpty()) {
+                    // no clue why I did this just ignore it makes no sense
                     mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
                 }else{
                     mysticUtil.getInstance().addEnchantLevel(this.itemStack, itemStackEnchants.get(new Random().nextInt(itemStackEnchants.size())), 2);
@@ -186,7 +199,11 @@ public class algorithm {
             }else{
                 if (enchantCount == 1) {
                     for (int i = enchantCount; i < maxEnchantCount; i++) {
-                        mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                        if (shouldGiveRareEnchant(1, 13)) {
+                            mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                        }else {
+                            mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), new Random().nextInt(2) + 1, true);
+                        }
                     }
                 }else{
                     int RNGTwo = new Random().nextInt(3);
