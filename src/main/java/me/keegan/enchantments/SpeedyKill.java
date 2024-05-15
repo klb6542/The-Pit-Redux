@@ -71,7 +71,7 @@ public class SpeedyKill extends enchantUtil {
         EntityDeathEvent e = (EntityDeathEvent) args[0];
         LivingEntity killer = e.getEntity().getKiller();
 
-        this.setSpeed(killer, speedAmplifierPerLevel[enchantLevel], speedDurationPerLevel[enchantLevel]);
+        this.setSpeed(killer, speedAmplifierPerLevel[enchantLevel], speedDurationPerLevel[enchantLevel].doubleValue());
     }
 
     @EventHandler
