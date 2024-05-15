@@ -7,6 +7,7 @@ package me.keegan.utils;
 import me.keegan.enums.cooldownEnums;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
@@ -37,19 +38,29 @@ public abstract class enchantUtil implements Listener {
        entity.setHealth(Math.max(0.0, Math.min(entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), amount + entity.getHealth())));
     }
 
-    public void setSpeed(LivingEntity entity, Integer amplifier, Integer duration) {
+    public void setSpeed(LivingEntity entity, Integer amplifier, Double duration) {
         // times 20 because 20 ticks = 1 second
-        entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration * 20, amplifier));
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) (duration * 20), amplifier));
     }
 
-    public void setJumpBoost(LivingEntity entity, Integer amplifier, Integer duration) {
+    public void slowdown(LivingEntity entity, Integer amplifier, Double duration) {
         // times 20 because 20 ticks = 1 second
-        entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration * 20, amplifier));
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (duration * 20), amplifier));
+    }
+
+    public void setJumpBoost(LivingEntity entity, Integer amplifier, Double duration) {
+        // times 20 because 20 ticks = 1 second
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, (int) (duration * 20), amplifier));
     }
 
     public void addPotionEffect(LivingEntity entity, PotionEffectType potionEffectType, Integer amplifier, Double duration) {
         // times 20 because 20 ticks = 1 second
         entity.addPotionEffect(new PotionEffect(potionEffectType, (int) (duration * 20), amplifier));
+    }
+
+    // entity is the target
+    public void createExplosionEffect(LivingEntity entity, Location location) {
+        entity.setVelocity(entity.getLocation().toVector().subtract(location.toVector()).normalize());
     }
 
     /*
@@ -150,5 +161,11 @@ public abstract class enchantUtil implements Listener {
         this.executeEnchant(args);
 
         return true;
+    }
+
+    public int getEnchantLevel(ItemStack itemStack, enchantUtil enchant) {
+        if (itemStack == null || enchant == null) { return -1; }
+
+        return mysticUtil.getInstance().getEnchantLevel(itemStack, enchant) - 1;
     }
 }
