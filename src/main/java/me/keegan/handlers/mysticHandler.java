@@ -186,7 +186,7 @@ public class mysticHandler implements Listener {
             }.runTaskTimer(ThePitRedux.getPlugin(), 1, 0);
         }
 
-        @EventHandler(priority = EventPriority.HIGHEST)
+        @EventHandler(priority = EventPriority.HIGH)
         public void entityDied(EntityDeathEvent e) {
             LivingEntity killed = e.getEntity();
 
@@ -194,7 +194,7 @@ public class mysticHandler implements Listener {
                 Location location = killed.getLocation();
                 location.add(0, 1, 0);
 
-                killed.getWorld().dropItem(location, instance.createMysticDrop());
+                e.getDrops().add(instance.createMysticDrop());
                 killed.getWorld().spawnParticle(Particle.WATER_SPLASH, location, 200, 0.14, 0.275, 0.14); // i = amount
 
                 instance.playMainSound(killed);
