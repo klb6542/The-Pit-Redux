@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
@@ -89,7 +90,6 @@ public class pants_bundle extends itemUtil {
                 : -1;
     }
 
-
     private void createFullPantsBundle(Player player, ItemStack itemStack) {
         List<ItemStack> fresh = mysticUtil.getInstance().getPlayerMystics(player, false, false)
                 .stream()
@@ -150,7 +150,6 @@ public class pants_bundle extends itemUtil {
                     .toArray(ItemStack[]::new);
 
             // if the player does not have 10 empty slots return
-            ThePitRedux.getPlugin().getLogger().info(itemStacks.length + " length");
             if (itemStacks.length < 10) { return; }
 
             List<String> lore = e.getItem().getItemMeta().getLore();
