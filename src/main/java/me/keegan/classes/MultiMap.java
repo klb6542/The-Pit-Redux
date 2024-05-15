@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 public class MultiMap<K, V, B> {
     // used to save two values represented by one key
-    // 4/22/2024: I just realized this 'MultiMap' is completely useless, sorry
 
     private final Class<V> valueClass;
     private final Class<B> bonusClass;
@@ -22,23 +21,28 @@ public class MultiMap<K, V, B> {
         this.bonusClass = bonusClass;
     }
 
-    public void put(K key, Object object) throws ClassNotFoundException {
+    public void put(K key, Object object) {
         // object is either a value or bonus
         // check if its either and then put in hashmap
 
+        // this is kinda shitty cuz value and bonus can't be the same types
         if (object.getClass().equals(this.valueClass)) {
             this.values.put(key, this.valueClass.cast(object));
-            return;
         }
 
         if (object.getClass().equals(this.bonusClass)) {
             this.bonuses.put(key, this.bonusClass.cast(object));
-            return;
         }
+    }
 
-        throw new ClassNotFoundException("Object is not of type "
-                + this.valueClass.getTypeName() + " or "
-                + this.bonusClass.getTypeName());
+    public void put(K key, Object object, Object object2) {
+        this.put(key, object);
+        this.put(key, object2);
+    }
+
+    public void resetMaps(K key) {
+        this.values.remove(key);
+        this.bonuses.remove(key);
     }
 
     @Nullable
@@ -49,5 +53,9 @@ public class MultiMap<K, V, B> {
     @Nullable
     public B getBonus(K key) {
         return this.bonuses.getOrDefault(key, null);
+    }
+
+    public boolean containsKey(K key) {
+        return this.values.containsKey(key) && this.bonuses.containsKey(key);
     }
 }
