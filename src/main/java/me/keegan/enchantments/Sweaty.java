@@ -23,6 +23,7 @@ public class Sweaty extends enchantUtil {
 
     private static final HashMap<EntityDeathEvent, Integer> xp = new HashMap<>();
 
+
     @Override
     public Material[] getEnchantMaterial() {
         return new Material[]{
