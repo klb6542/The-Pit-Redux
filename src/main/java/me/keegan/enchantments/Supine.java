@@ -137,7 +137,7 @@ public class Supine extends enchantUtil implements setupUtils {
                         thisSupine,
                 };
 
-                boolean success = attemptEnchantExecution(args);
+                boolean success = attemptEnchantExecution(null, args);
                 if (success || !supinePantsEquipped.containsKey(uuid)) { return; } // if enchant was successfully executed or pants are not equipped return
 
                 thisSupine.removeSupine(player);

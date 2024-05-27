@@ -120,10 +120,9 @@ public class Hearts extends enchantUtil implements setupUtils {
                         thisHearts
                 };
 
-                boolean success = attemptEnchantExecution(args);
+                boolean success = attemptEnchantExecution(null, args);
                 if (success || !heartsPantsEquipped.containsKey(uuid)) { return; } // if enchant was successfully executed or pants are not equipped return
 
-                ThePitRedux.getPlugin().getLogger().info("not good ");
                 thisHearts.removeExtraMaxHearts(player);
             }
 

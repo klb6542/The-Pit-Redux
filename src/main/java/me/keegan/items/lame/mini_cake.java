@@ -35,6 +35,7 @@ public class mini_cake extends itemUtil {
         lore.add(gray + "The king's favorite!");
 
         propertiesUtil.setProperty(propertiesUtil.notPlaceable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);

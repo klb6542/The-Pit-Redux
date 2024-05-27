@@ -85,6 +85,6 @@ public class Parasite extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(shooter, args);
     }
 }

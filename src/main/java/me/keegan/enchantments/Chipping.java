@@ -88,6 +88,6 @@ public class Chipping extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(shooter, args);
     }
 }

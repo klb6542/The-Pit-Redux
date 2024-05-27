@@ -40,6 +40,7 @@ public class vile_block extends itemUtil {
 
         propertiesUtil.setProperty(propertiesUtil.notPlaceable, itemMeta);
         propertiesUtil.setProperty(propertiesUtil.notBurnable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);

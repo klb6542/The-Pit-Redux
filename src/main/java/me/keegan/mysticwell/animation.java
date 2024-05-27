@@ -54,6 +54,12 @@ public class animation {
         }
     }
 
+    private boolean isEnchantingSlotDye() {
+        ItemStack slotItemStack = this.inventory.getItem(25);
+
+        return slotItemStack != null && slotItemStack.getType().getKey().toString().contains("dye");
+    }
+
     private void cooldown(int duration, CompletableFuture<Boolean> completableFuture) {
         this.runnableTasks.add(new BukkitRunnable() {
             int counter = 0;
@@ -77,7 +83,7 @@ public class animation {
     }
 
     // creates scrambled dyes in the mystic slot
-    private void scrambleState(int delay, int period) {
+    private void scrambleState() {
         Inventory runnableInventory = this.inventory;
         final animation thisAnimation = this;
 
@@ -89,7 +95,7 @@ public class animation {
                 mysticWell.playCustomPitchSound(thisAnimation.player, (new Random().nextInt(11 - 9) / 10f) + 1f);
             }
 
-        }.runTaskTimer(ThePitRedux.getPlugin(), delay, period));
+        }.runTaskTimer(ThePitRedux.getPlugin(), 0, 2));
     }
 
     private void idleMaxState() {
@@ -132,7 +138,7 @@ public class animation {
             public void run() {
                 animation animation = mysticWell.animations.get(thisPlayer.getUniqueId());
 
-                if (mysticUtil.getInstance().getTier(animation.itemStack) >= 3) {
+                if (mysticUtil.getInstance().getTier(animation.itemStack) >= mysticUtil.getInstance().getMaxTier(itemStack)) {
                     animation.idleMaxState();
                 }
 
@@ -141,6 +147,10 @@ public class animation {
 
                 j = i;
                 i = (i == glassPanesArray.length - 1) ? 0 : i + 1;
+
+                if (isEnchantingSlotDye() && i == 0) {
+
+                }
             }
 
         }.runTaskTimer(ThePitRedux.getPlugin(), 0, 3));
@@ -210,7 +220,7 @@ public class animation {
 
         phaseOneCompletable.thenRun(() -> {
             this.idleState();
-            this.scrambleState(0, 2);
+            this.scrambleState();
             this.cooldown(4, phaseTwoCompletable);
         });
 
@@ -227,7 +237,7 @@ public class animation {
                 mysticWell.displayPantsSlot(this.inventory);
             }
 
-            if (mysticUtil.getInstance().getTier(this.itemStack) >= 3) {
+            if (mysticUtil.getInstance().getTier(this.itemStack) >= mysticUtil.getInstance().getMaxTier(this.itemStack)) {
                 this.idleMaxState();
                 return;
             }

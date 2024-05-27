@@ -28,7 +28,7 @@ import static me.keegan.utils.romanUtil.integerToRoman;
 
 
 public class kings_helmet extends itemUtil {
-    private final Integer protectionLevel = 7;
+    private final Integer protectionLevel = 5;
 
     @Override
     public String getNamespaceName() {
@@ -70,23 +70,6 @@ public class kings_helmet extends itemUtil {
 
     @Override
     public void createRecipe() {
-        NamespacedKey key = new NamespacedKey(
-                ThePitRedux.getPlugin(),
-                this.getNamespaceName());
 
-        ShapedRecipe recipe = new ShapedRecipe(key, this.createItem());
-
-        RecipeChoice golden_helmet = new RecipeChoice.MaterialChoice(Material.GOLDEN_HELMET);
-        RecipeChoice mini_cake = new RecipeChoice.ExactChoice(new mini_cake().createItem());
-        RecipeChoice gold_block = new RecipeChoice.MaterialChoice(Material.GOLD_BLOCK);
-
-
-        // top - middle - bottom
-        recipe.shape("BNB", "NHN", "BNB");
-        recipe.setIngredient('H', golden_helmet);
-        recipe.setIngredient('N', mini_cake);
-        recipe.setIngredient('B', gold_block);
-
-        ThePitRedux.getPlugin().getServer().addRecipe(recipe);
     }
 }

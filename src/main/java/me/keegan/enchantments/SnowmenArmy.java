@@ -186,7 +186,7 @@ public class SnowmenArmy extends enchantUtil implements setupUtils {
                 this,
         };
 
-        boolean success = this.attemptEnchantExecution(args);
+        boolean success = this.attemptEnchantExecution(killer, args);
         if (!success) { return; }
         if (killer.getInventory().firstEmpty() == -1) { return; }
 

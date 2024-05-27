@@ -2,6 +2,7 @@ package me.keegan.enchantments;
 
 import me.keegan.enums.cooldownEnums;
 import me.keegan.enums.mysticEnums;
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -84,7 +85,7 @@ public class Perun extends enchantUtil {
 
         EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) args[0];
         LivingEntity damaged = (LivingEntity) e.getEntity();
-        Player damager = (Player) e.getDamager();
+        LivingEntity damager = (LivingEntity) e.getDamager();
 
         UUID damagerUniqueId = damager.getUniqueId();
 
@@ -132,6 +133,6 @@ public class Perun extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damager, args);
     }
 }

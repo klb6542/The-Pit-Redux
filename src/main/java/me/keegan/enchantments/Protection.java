@@ -34,9 +34,9 @@ public class Protection extends enchantUtil {
     @Override
     public String[] getEnchantDescription() {
         return new String[]{
-                MessageFormat.format("{0}Receive -{1}{2}%{0} damage", gray, blue, damageReductionPerLevel[0]),
-                MessageFormat.format("{0}Receive -{1}{2}%{0} damage", gray, blue, damageReductionPerLevel[1]),
-                MessageFormat.format("{0}Receive -{1}{2}%{0} damage", gray, blue, damageReductionPerLevel[2]),
+                MessageFormat.format("{0}Receive {1}-{2}%{0} damage", gray, blue, damageReductionPerLevel[0]),
+                MessageFormat.format("{0}Receive {1}-{2}%{0} damage", gray, blue, damageReductionPerLevel[1]),
+                MessageFormat.format("{0}Receive {1}-{2}%{0} damage", gray, blue, damageReductionPerLevel[2]),
         };
     }
 
@@ -77,6 +77,6 @@ public class Protection extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damaged, args);
     }
 }

@@ -132,7 +132,7 @@ public class Volley extends enchantUtil {
 
                 );
 
-                // proc other enchantments
+                // proc other enchantHandler
                 ThePitRedux.getPlugin().getServer().getPluginManager().callEvent(volleyEvent);
             }
 
@@ -150,6 +150,6 @@ public class Volley extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution((LivingEntity) ((Arrow) e.getProjectile()).getShooter(), args);
     }
 }

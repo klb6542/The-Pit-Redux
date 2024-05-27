@@ -95,6 +95,6 @@ public class PurpleCaffeine extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(player, args);
     }
 }

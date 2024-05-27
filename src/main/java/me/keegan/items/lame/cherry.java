@@ -3,6 +3,7 @@ package me.keegan.items.lame;
 import me.keegan.builders.mystic;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.itemUtil;
+import me.keegan.utils.propertiesUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -44,6 +45,8 @@ public class cherry extends itemUtil {
 
         lore.add(mystic.defaultLore.get(0));
         lore.add(gray + "Cake ingredient");
+
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);

@@ -3,6 +3,7 @@ package me.keegan.builders;
 import me.keegan.classes.Tier;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
+import me.keegan.utils.mysticUtil;
 import me.keegan.utils.tierUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -221,7 +222,8 @@ public class mystic {
 
         @Override
         public @Nullable Material getColorPaneFromTier(int tier) {
-            if (getMysticType(pants) == mysticEnums.NORMAL) {
+            if (getMysticType(pants) == mysticEnums.NORMAL
+                    || getMysticType(pants) == mysticEnums.AQUA) {
                 return normalPaneColorTiers.getOrDefault(tier - 1, Material.PINK_STAINED_GLASS_PANE);
             }
 

@@ -78,6 +78,6 @@ public class Guts extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damaged, args);
     }
 }

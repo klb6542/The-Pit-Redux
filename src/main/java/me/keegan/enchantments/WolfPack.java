@@ -132,7 +132,7 @@ public class WolfPack extends enchantUtil implements setupUtils {
                 this,
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(killer, args);
     }
 
     @Override

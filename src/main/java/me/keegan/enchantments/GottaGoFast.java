@@ -123,7 +123,7 @@ public class GottaGoFast extends enchantUtil implements setupUtils {
                         thisGGF
                 };
 
-                boolean success = attemptEnchantExecution(args);
+                boolean success = attemptEnchantExecution(null, args);
                 if (success || !ggfPantsEquipped.containsKey(uuid)) { return; } // if enchant was successfully executed or pants are not equipped return
 
                 thisGGF.removeExtraMovementSpeed(player);

@@ -1,6 +1,7 @@
 package me.keegan.items.special;
 
 import me.keegan.builders.mystic;
+import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import me.keegan.utils.itemUtil;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
+import static me.keegan.utils.itemStackUtil.isSimilar;
 import static me.keegan.utils.romanUtil.integerToRoman;
 
 /*
@@ -68,6 +70,7 @@ public class gem extends itemUtil {
         lore.add(yellow + "Hold and right-click to use!");
 
         propertiesUtil.setProperty(propertiesUtil.notCraftable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemMeta.addEnchant(Enchantment.DURABILITY, 1, false);
@@ -162,26 +165,29 @@ public class gem extends itemUtil {
         this.removeLoreFooter(currentMystic);
 
         for (ItemStack itemStack : playerInventory) {
-            if (itemStack == null || !itemStack.isSimilar(currentMystic)) { continue; }
+            if (itemStack == null || !isSimilar(itemStack, currentMystic)) { continue; }
 
             itemStack.setAmount(0);
             break;
         }
     }
 
-    private void removeGem(Player player) {
+    private boolean removeGem(Player player) {
         PlayerInventory playerInventory = player.getInventory();
         ItemStack mainHandItemStack = playerInventory.getItemInMainHand();
         ItemStack offHandItemStack = playerInventory.getItemInOffHand();
 
-        if (mainHandItemStack.isSimilar(this.createItem())) {
+        if (isSimilar(mainHandItemStack, this.createItem())) {
             mainHandItemStack.setAmount(mainHandItemStack.getAmount() - 1);
-            return;
+            return true;
         }
 
-        if (offHandItemStack.isSimilar(this.createItem())) {
+        if (isSimilar(offHandItemStack, this.createItem())) {
             offHandItemStack.setAmount(offHandItemStack.getAmount() - 1);
+            return true;
         }
+
+        return false;
     }
 
     @EventHandler
@@ -189,7 +195,7 @@ public class gem extends itemUtil {
         if ((e.getAction() != Action.RIGHT_CLICK_AIR
                 && e.getAction() != Action.RIGHT_CLICK_BLOCK)
                 || e.getItem() == null
-                || !e.getItem().isSimilar(this.createItem())) { return; }
+                || !isSimilar(e.getItem(), this.createItem())) { return; }
         Player player = e.getPlayer();
 
         // create gem selector inventory
@@ -198,13 +204,14 @@ public class gem extends itemUtil {
                 36,
                 inventoryName);
 
-        // filter gemmed mystics
-        List<ItemStack> mystics = mysticUtil.getInstance().getPlayerMystics(player, true, true)
+        // filter mystics
+        List<ItemStack> gemmableMystics = mysticUtil.getInstance().getPlayerMystics(player, true, true)
                 .stream()
                 .filter(itemStack -> !mysticUtil.getInstance().isGemmed(itemStack))
+                .filter(itemStack -> mystic.getMysticType(itemStack) == mysticEnums.NORMAL)
                 .collect(Collectors.toList());
 
-        for (ItemStack itemStack : mystics) {
+        for (ItemStack itemStack : gemmableMystics) {
             String loreFooter = this.getFooter(itemStack);
 
             ItemMeta itemMeta = itemStack.getItemMeta();
@@ -216,7 +223,7 @@ public class gem extends itemUtil {
             itemStack.setItemMeta(itemMeta);
         }
 
-        inventory.addItem(mystics.toArray(new ItemStack[0]));
+        inventory.addItem(gemmableMystics.toArray(new ItemStack[0]));
         player.openInventory(inventory);
     }
 
@@ -296,11 +303,12 @@ public class gem extends itemUtil {
             // continue when enchant name is not found in upgrade string or when player has item equipped
             if (!lore.get(this.getUpgradeIndex(lore)).contains(blue + enchant.getName())) { continue; }
 
+            // remove one gem from player's inventory
+            boolean success = this.removeGem(player);
+            if (!success) { return; }
+
             // removes old, ungemmed mystic
             this.removeOldMystic(player);
-
-            // remove one gem from player's inventory
-            this.removeGem(player);
 
             mysticUtil.getInstance().addEnchantLevel(currentMystic, enchant, 1);
             mysticUtil.getInstance().gem(currentMystic);

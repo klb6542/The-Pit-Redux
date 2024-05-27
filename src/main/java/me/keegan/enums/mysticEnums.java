@@ -7,8 +7,12 @@ package me.keegan.enums;
 public enum mysticEnums {
     /*
      * NORMAL - normal mystics like dyed pants, mystic swords, and mystics bows (other materials soon)
+     * AQUA - aqua pants
      * HELMET - helmet mystics like the royalty helmet (golden helmet in pit)
+     * PICKAXE - pickaxe mystics
      */
     NORMAL,
-    HELMET
+    AQUA,
+    HELMET,
+    PICKAXE
 }

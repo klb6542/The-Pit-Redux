@@ -45,16 +45,16 @@ public class ComboDamage extends enchantUtil {
     public String[] getEnchantDescription() {
         return new String[]{
                 MessageFormat.format("{0}Every {1}{3}{0} strike deals/n"
-                                + "{2}%{4}+{0} damage",
+                                + "{2}+{4}%{0} damage",
                         gray, yellow, red, integerToOrdinal(hitsNeededPerLevel[0]), damagePerLevel[0]),
 
                 MessageFormat.format("{0}Every {1}{3}{0} strike deals/n"
-                                + "{2}%{4}+{0} damage",
+                                + "{2}+{4}%{0} damage",
                         gray, yellow, red, integerToOrdinal(hitsNeededPerLevel[1]), damagePerLevel[1]),
 
                 MessageFormat.format("{0}Every {1}{3}{0} strike deals/n"
-                                + "{2}%{4}+{0} damage",
-                        gray, yellow, red, integerToOrdinal(hitsNeededPerLevel[1]), damagePerLevel[1]),
+                                + "{2}+{4}%{0} damage",
+                        gray, yellow, red, integerToOrdinal(hitsNeededPerLevel[2]), damagePerLevel[2]),
         };
     }
 
@@ -106,6 +106,6 @@ public class ComboDamage extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damager, args);
     }
 }

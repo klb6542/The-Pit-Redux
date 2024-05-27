@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -146,14 +147,14 @@ public class nightQuestHandler implements Listener, setupUtils {
         this.addNightQuestProgress(nightQuest, uuid, 1);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void playerFished(PlayerFishEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
         if (e.getCaught() == null
                 || e.getState() != PlayerFishEvent.State.CAUGHT_FISH
                 || !activeNightQuests.containsKey(uuid)
-                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.KILL
+                || activeNightQuests.get(uuid).getNightQuestType() != nightQuestEnums.FISH
                 || !isInOverWorld(player.getWorld())) { return; }
 
         Item item = (Item) e.getCaught();
@@ -163,7 +164,7 @@ public class nightQuestHandler implements Listener, setupUtils {
         Material target = (Material) nightQuest.getTarget();
         if (itemStack.getType() != target) { return; }
 
-        this.addNightQuestProgress(nightQuest, uuid, 1);
+        this.addNightQuestProgress(nightQuest, uuid, itemStack.getAmount());
     }
 
     @Override
@@ -174,9 +175,7 @@ public class nightQuestHandler implements Listener, setupUtils {
 
             @Override
             public void run() {
-                ThePitRedux plugin = ThePitRedux.getPlugin();
-
-                for (Player player : plugin.getServer().getOnlinePlayers()) {
+                for (Player player : ThePitRedux.getPlugin().getServer().getOnlinePlayers()) {
                     World world = player.getWorld();
                     UUID uuid = player.getUniqueId();
 

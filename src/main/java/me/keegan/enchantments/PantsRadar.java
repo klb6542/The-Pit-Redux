@@ -91,7 +91,7 @@ public class PantsRadar extends enchantUtil {
                     this
             };
 
-            this.attemptEnchantExecution(args);
+            this.attemptEnchantExecution(killer, args);
         }
 
         // sword check
@@ -102,7 +102,7 @@ public class PantsRadar extends enchantUtil {
                     this
             };
 
-            this.attemptEnchantExecution(args);
+            this.attemptEnchantExecution(killer, args);
         }
 
         // bow check
@@ -116,7 +116,7 @@ public class PantsRadar extends enchantUtil {
                     this
             };
 
-            this.attemptEnchantExecution(args);
+            this.attemptEnchantExecution(killer, args);
         }
     }
 }

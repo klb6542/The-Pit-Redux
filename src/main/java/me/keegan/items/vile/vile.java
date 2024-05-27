@@ -37,6 +37,7 @@ public class vile extends itemUtil {
         lore.add(red + "Heretic artifact");
 
         propertiesUtil.setProperty(propertiesUtil.notBurnable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -59,10 +60,5 @@ public class vile extends itemUtil {
         recipe.addIngredient(vile_block);
 
         ThePitRedux.getPlugin().getServer().addRecipe(recipe);
-    }
-
-    @EventHandler
-    public void furnaceBurn(FurnaceBurnEvent e) {
-        if (e.getFuel().isSimilar(this.createItem())) { e.setCancelled(true); }
     }
 }

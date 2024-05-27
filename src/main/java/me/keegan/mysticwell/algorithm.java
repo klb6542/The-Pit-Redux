@@ -1,6 +1,9 @@
 package me.keegan.mysticwell;
 
+import me.keegan.builders.mystic;
+import me.keegan.enchantments.Inspire;
 import me.keegan.enums.livesEnums;
+import me.keegan.enums.mysticEnums;
 import me.keegan.utils.enchantUtil;
 import me.keegan.utils.mysticUtil;
 import org.bukkit.entity.Player;
@@ -30,6 +33,10 @@ public class algorithm {
         put(2, () -> addEnchantToTierThree());
     }};
 
+    private final HashMap<mysticEnums, algorithmUtil> algorithms = new HashMap<mysticEnums, algorithmUtil>(){{
+       put(mysticEnums.AQUA, new aqua_algorithm());
+    }};
+
     private final Integer maxEnchantCount = 3;
 
     private Player player;
@@ -46,7 +53,15 @@ public class algorithm {
         );
 
         int itemStackTier = mysticUtil.getInstance().getTier(this.itemStack);
-        this.tierMethods.get(itemStackTier).run();
+
+        mysticEnums mysticType = mystic.getMysticType(this.itemStack);
+        if (mysticType == null) { return; }
+
+        if (algorithms.containsKey(mysticType)) {
+            algorithms.get(mysticType).run(this.player, this.itemStack, itemStackTier);
+        }else{
+            this.tierMethods.get(itemStackTier).run();
+        }
     }
 
     private boolean shouldGiveRareEnchant(int minChance, int maxChance) {
@@ -231,5 +246,43 @@ public class algorithm {
         mysticUtil.getInstance().addTier(this.itemStack, 1);
         mysticUtil.getInstance().addLives(this.itemStack, randomLives, livesEnums.MAX_LIVES);
         mysticUtil.getInstance().addLives(this.itemStack, randomLives, livesEnums.LIVES);
+    }
+
+    public static class aqua_algorithm implements algorithmUtil {
+        private final Integer maxEnchantCount = 2;
+
+        private Player player;
+        private ItemStack itemStack;
+
+        @Override
+        public void run(Player player, ItemStack itemStack, int tier) {
+            if (tier != 0) { return; }
+
+            this.player = player;
+            this.itemStack = itemStack;
+
+            addEnchantToTierOne();
+        }
+
+        private void addEnchantToTierOne() {
+            int RNG = new Random().nextInt(3);
+            int enchantCount = mysticUtil.getInstance().getEnchantCount(this.itemStack);
+
+            if (enchantCount >= maxEnchantCount) {
+                return;
+            }
+
+            mysticUtil.getInstance().addEnchant(this.itemStack, new Inspire(), 1, false);
+
+            if (RNG > -1) {
+                mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomNonRareEnchant(this.itemStack), 1, true);
+            }else{
+                mysticUtil.getInstance().addEnchant(this.itemStack, mysticUtil.getInstance().getRandomRareEnchant(this.itemStack), 1, true);
+            }
+
+            mysticUtil.getInstance().addTier(this.itemStack, 1);
+            mysticUtil.getInstance().addLives(this.itemStack, 5, livesEnums.MAX_LIVES);
+            mysticUtil.getInstance().addLives(this.itemStack, 5, livesEnums.LIVES);
+        }
     }
 }

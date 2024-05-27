@@ -2,6 +2,7 @@ package me.keegan.enchantments;
 
 import me.keegan.enums.mysticEnums;
 import me.keegan.handlers.playerDamageHandler;
+import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.enchantUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -20,7 +21,7 @@ import static me.keegan.utils.formatUtil.red;
  */
 
 public class Lifesteal extends enchantUtil {
-    private final Integer[] healingPercentPerLevel = new Integer[]{4, 8, 13};
+    private final Integer[] healingPercentPerLevel = new Integer[]{8, 16, 26};
     private final double maxHeartsToHeal = 1.5; // in hearts not hp
 
     @Override
@@ -94,6 +95,6 @@ public class Lifesteal extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damager, args);
     }
 }

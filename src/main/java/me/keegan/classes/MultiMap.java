@@ -3,6 +3,7 @@ package me.keegan.classes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /*
  * Copyright (c) 2024. Created by klb.
@@ -43,6 +44,10 @@ public class MultiMap<K, V, B> {
     public void resetMaps(K key) {
         this.values.remove(key);
         this.bonuses.remove(key);
+    }
+
+    public Set<K> getKeySet() {
+        return this.values.keySet();
     }
 
     @Nullable

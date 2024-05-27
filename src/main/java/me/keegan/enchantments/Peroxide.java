@@ -98,6 +98,6 @@ public class Peroxide extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damaged, args);
     }
 }

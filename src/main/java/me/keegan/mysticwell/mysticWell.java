@@ -39,11 +39,11 @@ public class mysticWell extends itemUtil {
     static final HashMap<UUID, Inventory> inventories = new HashMap<>();
     static final HashMap<UUID, animation> animations = new HashMap<>();
 
-    private final boolean requirePantsToTierThree = false;
+    private final boolean requirePantsToTierThree = true;
 
     private final List<mysticEnums> allowedMysticsToEnchant = new ArrayList<>(Arrays.asList(
-            mysticEnums.NORMAL
-            //mysticEnums.DARK
+            mysticEnums.NORMAL,
+            mysticEnums.AQUA
     ));
 
     @Override
@@ -244,13 +244,12 @@ public class mysticWell extends itemUtil {
 
     @EventHandler
     public void inventoryClosed(InventoryCloseEvent e) {
-        InventoryView inventoryView = e.getView();
         Inventory inventory = e.getInventory();
 
         Player player = (Player) e.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        if (!inventoryView.getTitle()
+        if (!e.getView().getTitle()
             .equals(ChatColor.stripColor(this.createItem().getItemMeta().getDisplayName())))
             { return; }
 
@@ -302,20 +301,14 @@ public class mysticWell extends itemUtil {
 
     @EventHandler
     public void inventoryClicked(InventoryClickEvent e) {
-        InventoryView inventoryView = e.getView();
-
         Inventory inventory = e.getInventory();
         Inventory inventoryClicked = e.getClickedInventory();
 
         ItemStack currentItemStack = e.getCurrentItem();
-
         int inventorySlot = e.getSlot();
 
-        // clicked out of inventory
-        if (inventorySlot < 0 || currentItemStack == null) { return; }
-
         // check if they opened the mystic well
-        if (!inventoryView.getTitle()
+        if (!e.getView().getTitle()
             .equals(ChatColor.stripColor(this.createItem().getItemMeta().getDisplayName())))
             { return; }
 

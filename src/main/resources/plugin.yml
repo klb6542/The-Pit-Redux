@@ -7,3 +7,6 @@ commands:
   hello:
     description: test
     usage: /<command>
+  announce:
+    description: Announce any message to all players
+    usage: /<command> message

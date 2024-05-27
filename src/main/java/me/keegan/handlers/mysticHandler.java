@@ -1,21 +1,26 @@
 package me.keegan.handlers;
 
 import me.keegan.builders.mystic;
+import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -65,6 +70,15 @@ public class mysticHandler implements Listener {
     }
 
     @EventHandler
+    public void prepareAnvil2(PrepareAnvilEvent e) {
+        if (e.getResult() == null || e.getResult().getItemMeta() == null) { return; }
+
+        e.setResult((propertiesUtil.hasProperty(propertiesUtil.unavailableForAnvil, e.getResult().getItemMeta()))
+                        ? new ItemStack(Material.AIR)
+                        : e.getResult());
+    }
+
+    @EventHandler
     public void prepareItemEnchant(PrepareItemEnchantEvent e) {
         e.setCancelled(mysticUtil.getInstance().isMystic(e.getItem()));
     }
@@ -82,9 +96,40 @@ public class mysticHandler implements Listener {
 
     @EventHandler
     public void blockPlaced(BlockPlaceEvent e) {
-        if (e.getItemInHand().getItemMeta() == null) { return; }
+        if (e.getItemInHand().getItemMeta() == null || e.isCancelled()) { return; }
 
         e.setCancelled(propertiesUtil.hasProperty(propertiesUtil.notPlaceable, e.getItemInHand().getItemMeta()));
+    }
+
+    @EventHandler
+    public void blockPlaced(PlayerInteractEvent e) {
+        if (e.getItem() == null || e.getItem().getItemMeta() == null) { return; }
+
+        e.setCancelled(propertiesUtil.hasProperty(propertiesUtil.notInteractable, e.getItem().getItemMeta()));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void playerDied(PlayerDeathEvent e) {
+        if (e.getKeepInventory()) { return; }
+        e.getDrops().clear();
+        e.setKeepInventory(true);
+
+        Player player = e.getEntity();
+        ItemStack[] contents = player.getInventory().getContents();
+
+        for (ItemStack itemStack : contents) {
+            if (itemStack == null || mysticUtil.getInstance().isKeptOnDeath(itemStack)) { continue; }
+
+            if (mysticUtil.getInstance().isMystic(itemStack)) {
+                mysticUtil.getInstance().removeLives(itemStack, 1, livesEnums.LIVES);
+                continue;
+            }
+
+            ItemStack itemStackClone = itemStack.clone();
+            player.getWorld().dropItem(player.getLocation(), itemStackClone);
+
+            itemStack.setAmount(0);
+        }
     }
 
     // FRESH MYSTIC DROP HANDLER

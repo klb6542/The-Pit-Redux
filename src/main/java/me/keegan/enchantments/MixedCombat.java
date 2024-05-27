@@ -113,7 +113,7 @@ public class MixedCombat extends enchantUtil {
                 true
         };
 
-        boolean success = this.attemptEnchantExecution(args);
+        boolean success = this.attemptEnchantExecution(shooter, args);
         if (!success) { return; }
 
         extraDamages.put(shooter.getUniqueId(),
@@ -134,6 +134,6 @@ public class MixedCombat extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damager, args);
     }
 }

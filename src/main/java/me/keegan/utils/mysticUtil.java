@@ -5,6 +5,10 @@ import me.keegan.enchantments.*;
 import me.keegan.enums.livesEnums;
 import me.keegan.enums.mysticEnums;
 import me.keegan.items.hats.kings_helmet;
+import me.keegan.items.lame.first_aid_egg;
+import me.keegan.items.pants.aqua_pants;
+import me.keegan.items.pickaxes.eternal_pickaxe;
+import me.keegan.items.special.funky_feather;
 import me.keegan.items.special.gem;
 import me.keegan.items.special.philosophers_cactus;
 import me.keegan.mysticwell.mysticWell;
@@ -13,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -175,6 +180,15 @@ public class mysticUtil implements CommandExecutor {
         return (enchantIndex != -1) ? romanToInteger(splitLore[splitLore.length - 1]) : 0;
     }
 
+    public boolean isKeptOnDeath(ItemStack itemStack) {
+        return itemStack != null
+                && itemStack.getItemMeta() != null
+                && itemStack.getItemMeta().getLore() != null
+                && !itemStack.getItemMeta().getLore().isEmpty()
+                && itemStack.getItemMeta().getLore().get(0).equals(mystic.defaultLore.get(0));
+    }
+
+
     public Integer getEnchantTokens(ItemStack itemStack) {
         List<String> lore = this.getItemLore(itemStack);
         int tokens = 0;
@@ -220,14 +234,19 @@ public class mysticUtil implements CommandExecutor {
     }
 
     public enchantUtil getRandomEnchant(ItemStack itemStack) {
-        return mysticEnchants.get(itemStack.getType()).get()
-                .get(new Random().nextInt(mysticEnchants.get(itemStack.getType()).get().size()));
+        List<enchantUtil> allMysticEnchants = mysticEnchants.get(itemStack.getType()).get()
+                .stream()
+                .filter(enchant -> enchant.getEnchantType() == mystic.getMysticType(itemStack))
+                .collect(Collectors.toList());
+
+        return allMysticEnchants.get(new Random().nextInt(allMysticEnchants.size()));
     }
 
     public enchantUtil getRandomNonRareEnchant(ItemStack itemStack) {
         List<enchantUtil> nonRareMysticEnchants = mysticEnchants.get(itemStack.getType()).get()
                 .stream()
                 .filter(enchantUtil -> !enchantUtil.isRareEnchant())
+                .filter(enchant -> enchant.getEnchantType() == mystic.getMysticType(itemStack))
                 .collect(Collectors.toList());
 
         return nonRareMysticEnchants.get(new Random().nextInt(nonRareMysticEnchants.size()));
@@ -237,6 +256,7 @@ public class mysticUtil implements CommandExecutor {
         List<enchantUtil> rareMysticEnchants = mysticEnchants.get(itemStack.getType()).get()
                 .stream()
                 .filter(enchantUtil::isRareEnchant)
+                .filter(enchant -> enchant.getEnchantType() == mystic.getMysticType(itemStack))
                 .collect(Collectors.toList());
 
         return rareMysticEnchants.get(new Random().nextInt(rareMysticEnchants.size()));
@@ -286,6 +306,19 @@ public class mysticUtil implements CommandExecutor {
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
+
+        List<enchantUtil> rareEnchants = this.getEnchants(itemStack)
+                .stream()
+                .filter(enchantUtil::isRareEnchant)
+                .collect(Collectors.toList());
+
+        ChatColor chatColor = this.getItemStackTierColor(itemStack, this.getTier(itemStack));
+
+        if (rareEnchants.size() == 2) {
+            itemMeta.setDisplayName(chatColor + "Extraordinary " + itemMeta.getDisplayName());
+        }else if (this.getEnchantTokens(itemStack) == 8) {
+            itemMeta.setDisplayName(chatColor + "Legendary " + itemMeta.getDisplayName());
+        }
     }
 
     public void removeEnchant(ItemStack itemStack, enchantUtil enchant) {
@@ -376,6 +409,23 @@ public class mysticUtil implements CommandExecutor {
         return (itemStack != null && mysticMaterials.contains(itemStack.getType()))
                 ? materialGlassPanes.get(itemStack.getType()).apply(itemStack, tier)
                 : PINK_STAINED_GLASS_PANE;
+    }
+
+    public Integer getMaxTier(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        return (itemMeta != null &&
+                itemMeta.getPersistentDataContainer().has(new NamespacedKey(ThePitRedux.getPlugin(), "max_tier"), PersistentDataType.INTEGER))
+                ? itemMeta.getPersistentDataContainer().get(new NamespacedKey(ThePitRedux.getPlugin(), "max_tier"), PersistentDataType.INTEGER)
+                : 3;
+    }
+
+    public void setMaxTier(ItemStack itemStack, int tier) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) { return; }
+
+        itemMeta.getPersistentDataContainer().set(new NamespacedKey(ThePitRedux.getPlugin(), "max_tier"), PersistentDataType.INTEGER, tier);
+        itemStack.setItemMeta(itemMeta);
     }
 
     public Integer getTier(ItemStack itemStack) {
@@ -598,6 +648,8 @@ public class mysticUtil implements CommandExecutor {
         if (!(commandSender instanceof Player)) { return false; }
         Player player = (Player) commandSender;
 
+        if (!player.isOp()) { return false; }
+
         ItemStack itemStack = new mystic.Builder()
                             .material(GOLDEN_SWORD)
                             .type(mysticEnums.NORMAL)
@@ -623,22 +675,10 @@ public class mysticUtil implements CommandExecutor {
 
         ItemStack itemStack5 = new gem().createItem();
 
-        ItemStack itemStack4 = new mystic.Builder()
-                .material(LEATHER_LEGGINGS)
-                .type(mysticEnums.NORMAL)
-                .color(Color.BLUE)
-                .chatColor(blue)
-                .build();
-
-        mysticUtil.getInstance().addLives(itemStack4, 25, livesEnums.MAX_LIVES);
-        mysticUtil.getInstance().addLives(itemStack4, 25, livesEnums.LIVES);
-
-        this.addEnchant(itemStack4, new Supine(), 2, false);
-
+        ItemStack itemStack4 = new funky_feather().createItem();
         ItemStack itemStack10 = new philosophers_cactus().createItem();
 
-        ItemStack itemStack6 = new gem().createItem();
-        itemStack6.setAmount(64);
+        ItemStack itemStack6 = new eternal_pickaxe().createItem();
 
         ItemStack itemStack7 = new mystic.Builder()
                 .material(GOLDEN_SWORD)
@@ -647,9 +687,10 @@ public class mysticUtil implements CommandExecutor {
 
         ItemStack itemStack8 = new mysticWell().createItem();
 
-        ItemStack itemStack11 = new kings_helmet().createItem();
+        ItemStack itemStack11 = new first_aid_egg().createItem();
+        ItemStack itemStack12 = new aqua_pants().createItem();
 
-        player.getInventory().addItem(itemStack11, itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10);
+        player.getInventory().addItem(itemStack11, itemStack, itemStack2, itemStack3, itemStack4, itemStack6, itemStack5, itemStack7, itemStack8, itemStack10, itemStack12);
         return true;
     }
 }

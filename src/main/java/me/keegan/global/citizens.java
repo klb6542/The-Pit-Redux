@@ -1,22 +1,28 @@
 package me.keegan.global;
 
-import me.keegan.pitredux.ThePitRedux;
-import me.keegan.utils.setupUtils;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class citizens implements setupUtils {
+import java.util.HashMap;
+import java.util.function.BiConsumer;
 
-    @Override
-    public void enable() {
-        if (!ThePitRedux.getPlugin().Citizens) { return; }
+/*
+ * Copyright (c) 2024. Created by klb.
+ */
 
-        NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
-        npcRegistry.forEach(npc -> ThePitRedux.getPlugin().getLogger().info(npc.getName()));
-    }
+public class citizens implements Listener {
+    // key = npc name
+    public static final HashMap<String, BiConsumer<Player, NPC>> npcsRegistered = new HashMap<>();
 
-    @Override
-    public void disable() {
+    @EventHandler
+    public void npcClicked(NPCRightClickEvent e) {
+        NPC npc = e.getNPC();
+        npc.getEntity().setInvulnerable(true);
 
+        if (!npcsRegistered.containsKey(npc.getName())) { return; }
+        npcsRegistered.get(npc.getName()).accept(e.getClicker(), npc);
     }
 }

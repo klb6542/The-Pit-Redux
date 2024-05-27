@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -23,8 +24,10 @@ public class XPDuplex extends enchantUtil {
     private final Integer[] multiplierAmountPerLevel = new Integer[]{2, 3, 3};
 
     private void playMultiplierSound(LivingEntity livingEntity) {
+        if (!(livingEntity instanceof Player)) { return; }
+        Player player = (Player) livingEntity;
+
         new BukkitRunnable(){
-            final World world = livingEntity.getWorld();
             final Location location = livingEntity.getLocation();
 
             int count = 0;
@@ -34,15 +37,15 @@ public class XPDuplex extends enchantUtil {
             public void run() {
                 switch (count) {
                     case 0:
-                        world.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
+                        player.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
                         break;
                     case 1:
                         pitch = 1f;
-                        world.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
+                        player.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
                         break;
                     case 2:
                         pitch = 5.5f;
-                        world.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
+                        player.playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 3f, pitch);
                         this.cancel();
                 }
 
@@ -122,6 +125,6 @@ public class XPDuplex extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(killer, args);
     }
 }

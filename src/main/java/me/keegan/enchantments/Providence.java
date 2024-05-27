@@ -124,6 +124,6 @@ public class Providence extends enchantUtil {
                 this,
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(killer, args);
     }
 }

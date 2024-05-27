@@ -102,6 +102,6 @@ public class MegaLongbow extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution((LivingEntity) ((Arrow) e.getProjectile()).getShooter(), args);
     }
 }

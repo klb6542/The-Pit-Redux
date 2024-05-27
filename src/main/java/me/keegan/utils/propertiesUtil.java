@@ -12,6 +12,10 @@ public class propertiesUtil {
             ThePitRedux.getPlugin(),
             "not_placeable");
 
+    public static final NamespacedKey notInteractable = new NamespacedKey(
+            ThePitRedux.getPlugin(),
+            "not_interactable");
+
     public static final NamespacedKey notBurnable = new NamespacedKey(
             ThePitRedux.getPlugin(),
             "not_burnable");
@@ -19,6 +23,10 @@ public class propertiesUtil {
     public static final NamespacedKey notCraftable = new NamespacedKey(
             ThePitRedux.getPlugin(),
             "not_craftable");
+
+    public static final NamespacedKey unavailableForAnvil = new NamespacedKey(
+            ThePitRedux.getPlugin(),
+            "unavailable_for_anvil");
 
     public static void setProperty(NamespacedKey key, ItemMeta itemMeta) {
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "");

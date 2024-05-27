@@ -1,43 +1,71 @@
 package me.keegan.pitredux;
 
+import com.mongodb.client.MongoCollection;
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderHook;
+import me.keegan.commands.announce;
 import me.keegan.enchantments.*;
+import me.keegan.global.mongodb;
+import me.keegan.global.placeholder;
+import me.keegan.items.lame.first_aid_egg;
+import me.keegan.items.pickaxes.eternal_pickaxe;
+import me.keegan.items.potions.jump_boost;
+import me.keegan.lobby.enchantedlake.enchantedLakeHandler;
 import me.keegan.events.nightquest.nightQuestHandler;
 import me.keegan.global.citizens;
-import me.keegan.handlers.entityDamageHandler;
-import me.keegan.handlers.mysticHandler;
-import me.keegan.handlers.playerDamageHandler;
+import me.keegan.handlers.*;
 import me.keegan.items.hats.kings_helmet;
 import me.keegan.items.lame.cherry;
 import me.keegan.items.lame.mini_cake;
 import me.keegan.items.lame.pants_bundle;
 import me.keegan.items.pants.dark_pants;
+import me.keegan.items.special.funky_feather;
 import me.keegan.items.special.gem;
 import me.keegan.items.special.philosophers_cactus;
 import me.keegan.items.vile.vile;
 import me.keegan.items.vile.vile_block;
+import me.keegan.lobby.lobbyHandler;
 import me.keegan.mysticwell.mysticWell;
-import me.keegan.utils.itemUtil;
-import me.keegan.utils.mysticUtil;
-import me.keegan.utils.setupUtils;
+import me.keegan.npcs.*;
+import me.keegan.utils.*;
+import me.keegan.vanilla.anvilHandler;
+import me.keegan.vanilla.itemHandler;
+import me.keegan.vanilla.potionHandler;
+import org.bson.Document;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import static com.comphenix.protocol.ProtocolLibrary.getProtocolManager;
 
 /*
  * Copyright (c) 2024. Created by klb.
  */
 
-public final class ThePitRedux extends JavaPlugin {
+public final class ThePitRedux extends JavaPlugin implements Listener {
     private static ThePitRedux plugin;
 
     public boolean NoteBlockAPI = true;
     public boolean Citizens = true;
+    public boolean ProtocolLib = true;
 
     private void registerListeners() {
+        getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new playerDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new entityDamageHandler(), this);
         getServer().getPluginManager().registerEvents(new mysticHandler(), this);
         getServer().getPluginManager().registerEvents(new mysticHandler.mysticDrops(), this);
         getServer().getPluginManager().registerEvents(new nightQuestHandler(), this);
+        getServer().getPluginManager().registerEvents(new citizens(), this);
+        getServer().getPluginManager().registerEvents(new enchantedLakeHandler(), this);
+        getServer().getPluginManager().registerEvents(new anvilHandler(), this);
+        getServer().getPluginManager().registerEvents(new entityPickUpItemHandler(), this);
+        getServer().getPluginManager().registerEvents(new lobbyHandler(), this);
+        getServer().getPluginManager().registerEvents(new potionHandler(), this);
+        getServer().getPluginManager().registerEvents(new prestige.prestigeHandler(), this);
+        getServer().getPluginManager().registerEvents(new prestige.renownShopHandler(), this);
     }
 
     private void registerEnchants() {
@@ -71,7 +99,7 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Steaks());
         mysticUtilInstance.registerEnchant(new Billionaire());
         mysticUtilInstance.registerEnchant(new Supine());
-        mysticUtilInstance.registerEnchant(new BooBoo());
+        //mysticUtilInstance.registerEnchant(new BooBoo());
         mysticUtilInstance.registerEnchant(new Royalty());
         mysticUtilInstance.registerEnchant(new DevilChicks());
         mysticUtilInstance.registerEnchant(new Chipping());
@@ -87,6 +115,17 @@ public final class ThePitRedux extends JavaPlugin {
         mysticUtilInstance.registerEnchant(new Protection());
         mysticUtilInstance.registerEnchant(new McSwimmer());
         mysticUtilInstance.registerEnchant(new Grasshopper());
+        mysticUtilInstance.registerEnchant(new Sniper());
+        mysticUtilInstance.registerEnchant(new BottomlessQuiver());
+        mysticUtilInstance.registerEnchant(new Gamble());
+        mysticUtilInstance.registerEnchant(new Calidum());
+
+        // aqua
+        mysticUtilInstance.registerEnchant(new Inspire());
+        mysticUtilInstance.registerEnchant(new AquaticGuard());
+        mysticUtilInstance.registerEnchant(new Stereo());
+        mysticUtilInstance.registerEnchant(new GuardiansAura());
+        mysticUtilInstance.registerEnchant(new TheRod());
     }
 
     private void registerItems() {
@@ -100,10 +139,34 @@ public final class ThePitRedux extends JavaPlugin {
         itemUtil.registerItem(new mini_cake());
         itemUtil.registerItem(new cherry());
         itemUtil.registerItem(new pants_bundle());
+        itemUtil.registerItem(new funky_feather());
+        itemUtil.registerItem(new jump_boost());
+        itemUtil.registerItem(new first_aid_egg());
+        itemUtil.registerItem(new eternal_pickaxe());
+    }
+
+    private void registerNPCs() {
+        npcUtil.registerNPC(new king());
+        npcUtil.registerNPC(new itemshop());
+        npcUtil.registerNPC(new quests());
+        npcUtil.registerNPC(new upgrades());
+        npcUtil.registerNPC(new prestige());
+        npcUtil.registerNPC(new fisherman());
+        npcUtil.registerNPC(new miner());
     }
 
     private void registerCommands() {
         getCommand("hello").setExecutor(new mysticUtil());
+        getCommand("announce").setExecutor(new announce());
+    }
+
+    private void registerPacketListeners() {
+        protocolUtil.registerPackets(new first_aid_egg());
+        protocolUtil.registerPackets(new lobbyHandler());
+    }
+
+    private void registerPlaceholders() {
+        new placeholder().register();
     }
 
     private void registerDependencies() {
@@ -116,6 +179,11 @@ public final class ThePitRedux extends JavaPlugin {
             getLogger().severe("*** Citizens is not installed or not enabled. ***");
             Citizens = false;
         }
+
+        if (!this.getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
+            getLogger().severe("*** ProtocolLib is not installed or not enabled. ***");
+            ProtocolLib = false;
+        }
     }
 
     private void startup() {
@@ -124,7 +192,6 @@ public final class ThePitRedux extends JavaPlugin {
 
             @Override
             public void run() {
-                setupUtils.pluginEnabled(new Stereo());
                 setupUtils.pluginEnabled(new Hearts());
                 setupUtils.pluginEnabled(new SnowmenArmy());
                 setupUtils.pluginEnabled(new nightQuestHandler());
@@ -132,8 +199,8 @@ public final class ThePitRedux extends JavaPlugin {
                 setupUtils.pluginEnabled(new Supine());
                 setupUtils.pluginEnabled(new BooBoo());
                 setupUtils.pluginEnabled(new DevilChicks());
-                setupUtils.pluginEnabled(new citizens());
                 setupUtils.pluginEnabled(new WolfPack());
+                setupUtils.pluginEnabled(new itemHandler());
             }
 
         }.runTaskLater(this, 2);
@@ -142,7 +209,6 @@ public final class ThePitRedux extends JavaPlugin {
     private void shutdown() {
         // this gets fired on server reload as well as server shutdown
 
-        setupUtils.pluginDisabled(new Stereo());
         setupUtils.pluginDisabled(new Hearts());
         setupUtils.pluginDisabled(new SnowmenArmy());
         setupUtils.pluginDisabled(new nightQuestHandler());
@@ -150,26 +216,54 @@ public final class ThePitRedux extends JavaPlugin {
         setupUtils.pluginDisabled(new Supine());
         setupUtils.pluginDisabled(new BooBoo());
         setupUtils.pluginDisabled(new DevilChicks());
-        setupUtils.pluginDisabled(new citizens());
         setupUtils.pluginDisabled(new WolfPack());
+        setupUtils.pluginDisabled(new itemHandler());
     }
 
     @Override
     public void onEnable() {
         plugin = this;
 
+        mongodb.getInstance().startDatabaseConnection();
         registerEnchants(); // also registers the event listeners
         registerItems(); // also registers the event listeners
         registerListeners();
         registerCommands();
         registerDependencies();
+        registerPacketListeners();
+        registerPlaceholders();
+        registerNPCs();
 
         startup();
     }
 
     @Override
     public void onDisable() {
+        mongodb.getInstance().closeDatabaseConnection();
+        getProtocolManager().removePacketListeners(this);
         shutdown();
+    }
+
+    // auto updater for documents in the survival collection
+    @EventHandler
+    public void playerJoined(PlayerJoinEvent e) {
+        MongoCollection<Document> collection = mongodb.getInstance().getSurvivalCollection();
+        if (collection == null) { return; }
+
+        Document defaultPlayerDocument = mongodb.getInstance().createDefaultPlayerDocument(e.getPlayer());
+        Document playerDocument = mongodb.getInstance().getDocumentFromCollection(collection, defaultPlayerDocument);
+
+        if (playerDocument == null) {
+            collection.insertOne(defaultPlayerDocument);
+        }else{
+            for (String key : defaultPlayerDocument.keySet()) {
+                if (playerDocument.containsKey(key)) { continue; }
+
+                playerDocument.append(key, defaultPlayerDocument.get(key));
+            }
+
+            mongodb.getInstance().replaceDocumentFromCollection(collection, playerDocument);
+        }
     }
 
     public static ThePitRedux getPlugin() {

@@ -83,6 +83,6 @@ public class Fletching extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(shooter, args);
     }
 }

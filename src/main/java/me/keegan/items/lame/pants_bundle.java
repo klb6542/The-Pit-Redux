@@ -2,31 +2,31 @@ package me.keegan.items.lame;
 
 import me.keegan.builders.mystic;
 import me.keegan.enums.mysticEnums;
-import me.keegan.items.vile.vile;
-import me.keegan.pitredux.ThePitRedux;
+import me.keegan.items.pants.aqua_pants;
 import me.keegan.utils.itemUtil;
 import me.keegan.utils.mysticUtil;
 import me.keegan.utils.propertiesUtil;
 import me.keegan.utils.stringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.keegan.utils.formatUtil.*;
+import static me.keegan.utils.itemStackUtil.isSimilar;
 
 public class pants_bundle extends itemUtil {
+    private final List<ItemStack> specialPants = new ArrayList<ItemStack>(){{
+        add(new aqua_pants().createItem());
+    }};
+
     private final Material fullPantsBundle = Material.CHEST_MINECART;
 
     @Override
@@ -42,11 +42,11 @@ public class pants_bundle extends itemUtil {
         itemMeta.setDisplayName(aqua + "Pants Bundle");
         List<String> lore = new ArrayList<>();
 
-        lore.add(mystic.defaultLore.get(0));
         lore.add(gray + "Hold and right-click to store 10");
         lore.add(gray + "fresh pair of pants.");
 
-        propertiesUtil.setProperty(propertiesUtil.notPlaceable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.notInteractable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -56,20 +56,7 @@ public class pants_bundle extends itemUtil {
 
     @Override
     public void createRecipe() {
-        NamespacedKey key = new NamespacedKey(
-                ThePitRedux.getPlugin(),
-                this.getNamespaceName());
 
-        ShapedRecipe recipe = new ShapedRecipe(key, this.createItem());
-        RecipeChoice vile = new RecipeChoice.ExactChoice(new vile().createItem());
-        RecipeChoice iron = new RecipeChoice.MaterialChoice(Material.IRON_INGOT);
-
-        // top - middle - bottom
-        recipe.shape("   ", "IVI", "III");
-        recipe.setIngredient('V', vile);
-        recipe.setIngredient('I', iron);
-
-        ThePitRedux.getPlugin().getServer().addRecipe(recipe);
     }
 
     private int getContentsLoreIndex(List<String> lore) {
@@ -136,11 +123,13 @@ public class pants_bundle extends itemUtil {
         if ((e.getAction() != Action.RIGHT_CLICK_AIR
                 && e.getAction() != Action.RIGHT_CLICK_BLOCK)
                 || e.getItem() == null) { return; }
+        e.setCancelled(true);
+
         Player player = e.getPlayer();
         ItemStack unfilledPantsBundle = this.createItem();
 
         // empty pb
-        if (e.getItem().isSimilar(unfilledPantsBundle)) {
+        if (isSimilar(e.getItem(), unfilledPantsBundle)) {
             createFullPantsBundle(player, e.getItem());
         }else if(e.getItem().getItemMeta().getDisplayName() // full pb
                 .equals(unfilledPantsBundle.getItemMeta().getDisplayName())
@@ -167,18 +156,32 @@ public class pants_bundle extends itemUtil {
                 ChatColor pantsChatColor = ChatColor.getByChar(splitString[1].substring(1, 2));
 
                 int chatColorIndex = getColorIndex(pantsChatColor);
-                if (chatColorIndex == -1) { return; }
 
-                // add pants to the player
-                for (int j = 0; j < amountOfFresh; j++) {
-                    ItemStack pants = new mystic.Builder()
-                            .material(Material.LEATHER_LEGGINGS)
-                            .type(mysticEnums.NORMAL)
-                            .chatColor(pantsChatColor)
-                            .color(mysticUtil.getInstance().defaultPantsColors.get(chatColorIndex))
-                            .build();
+                if (chatColorIndex != -1) { // normal mystic pants
+                    for (int j = 0; j < amountOfFresh; j++) {
+                        ItemStack pants = new mystic.Builder()
+                                .material(Material.LEATHER_LEGGINGS)
+                                .type(mysticEnums.NORMAL)
+                                .chatColor(pantsChatColor)
+                                .color(mysticUtil.getInstance().defaultPantsColors.get(chatColorIndex))
+                                .build();
 
-                    player.getInventory().addItem(pants);
+                        player.getInventory().addItem(pants);
+                    }
+                }else{ // special mystic pants
+                    ItemStack pants = null;
+
+                    for (ItemStack itemStack : specialPants) {
+                        if (ChatColor.getByChar(itemStack.getItemMeta().getDisplayName().substring(1, 2)) != pantsChatColor) { continue; }
+
+                        pants = itemStack;
+                        break;
+                    }
+
+                    if (pants == null) { return; }
+                    for (int j = 0; j < amountOfFresh; j++) {
+                        player.getInventory().addItem(pants);
+                    }
                 }
             }
 

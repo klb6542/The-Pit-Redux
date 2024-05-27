@@ -39,7 +39,7 @@ public class Royalty extends enchantUtil {
     @Override
     public String[] getEnchantDescription() {
         return new String[]{
-                MessageFormat.format("{0}Earn {1}+{2}% XP{0} from kills", gray, aqua, xpMultiplier * 100)
+                MessageFormat.format("{0}Earn {1}+{2}% XP{0} from kills", gray, aqua, xpMultiplier * 100 / 2)
         };
     }
 
@@ -75,6 +75,6 @@ public class Royalty extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(killer, args);
     }
 }

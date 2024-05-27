@@ -178,7 +178,7 @@ public class DevilChicks extends enchantUtil implements setupUtils {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(shooter, args);
     }
 
     @Override

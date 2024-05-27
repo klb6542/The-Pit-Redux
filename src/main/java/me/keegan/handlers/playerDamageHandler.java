@@ -2,6 +2,7 @@ package me.keegan.handlers;
 
 import me.keegan.pitredux.ThePitRedux;
 import me.keegan.utils.entityUtil;
+import org.bukkit.EntityEffect;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -106,9 +107,29 @@ public class playerDamageHandler implements Listener {
     }
 
     public void doTrueDamage(LivingEntity damaged, LivingEntity damager, double damage) {
-        damaged.damage(0.01, damager);
-        damaged.setHealth(Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-                damaged.getHealth() - damage)));
+        // check mirrors here
+
+        double newHealth = Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+                damaged.getHealth() - damage));
+
+        if (newHealth < 1) {
+            damaged.damage(999999.0, damager);
+        }else{
+            damaged.setHealth(newHealth);
+            damaged.playEffect(EntityEffect.HURT);
+        }
+    }
+
+    public void doTrueDamageIgnoreMirror(LivingEntity damaged, LivingEntity damager, double damage) {
+        double newHealth = Math.max(0, Math.min(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+                damaged.getHealth() - damage));
+
+        if (newHealth < 1) {
+            damaged.damage(999999.0, damager);
+        }else{
+            damaged.setHealth(newHealth);
+            damaged.playEffect(EntityEffect.HURT);
+        }
     }
 
     public void reduceDamage(EntityDamageByEntityEvent e, double damage) {
@@ -121,25 +142,22 @@ public class playerDamageHandler implements Listener {
 
     // executed last
     // use playerDamagerHandler.instance, otherwise you are calculating values from this class which is
-    // not used by other enchantments; aka they won't exist
+    // not used by other enchantHandler; aka they won't exist
     @EventHandler(priority = EventPriority.HIGHEST)
     public void playerDamaged(EntityDamageByEntityEvent e) {
         if (!((e.getEntity() instanceof LivingEntity)
                 || (e.getDamager() instanceof LivingEntity))
                 && (!(entityUtil.damagerIsArrow(e))
                 || !(entityUtil.damagerIsSnowball(e)))) { return; }
-        Entity damaged = e.getEntity();
+        LivingEntity damaged = (LivingEntity) e.getEntity();
 
         double calculatedDamage = playerDamageHandler.getInstance().calculateNewDamage(e, e.getFinalDamage());
         double trueDamage = playerDamageHandler.instance.calculateTrueDamage(e);
 
-        e.setDamage(calculatedDamage);
+        this.doTrueDamage(damaged, null, trueDamage);
 
-        if (damaged instanceof LivingEntity) {
-            LivingEntity livingDamaged = (LivingEntity) damaged;
-
-            livingDamaged.setHealth(Math.max(0, Math.min(livingDamaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-                    livingDamaged.getHealth() - trueDamage)));
+        if (!damaged.isDead()) {
+            e.setDamage(calculatedDamage);
         }
 
         playerDamageHandler.instance.resetDamageValues(e);

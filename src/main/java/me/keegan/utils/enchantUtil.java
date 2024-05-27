@@ -9,6 +9,7 @@ import me.keegan.enums.mysticEnums;
 import me.keegan.pitredux.ThePitRedux;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Listener;
@@ -18,6 +19,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+
+import static me.keegan.lobby.spawn.spawnHandler.isInSpawn;
 
 public abstract class enchantUtil implements Listener {
     private final List<UUID> cooldown = new ArrayList<>();
@@ -53,6 +56,7 @@ public abstract class enchantUtil implements Listener {
         entity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, (int) (duration * 20), amplifier));
     }
 
+
     public void addPotionEffect(LivingEntity entity, PotionEffectType potionEffectType, Integer amplifier, Double duration) {
         // times 20 because 20 ticks = 1 second
         entity.addPotionEffect(new PotionEffect(potionEffectType, (int) (duration * 20), amplifier));
@@ -61,6 +65,48 @@ public abstract class enchantUtil implements Listener {
     // entity is the target
     public void createExplosionEffect(LivingEntity entity, Location location) {
         entity.setVelocity(entity.getLocation().toVector().subtract(location.toVector()).normalize());
+    }
+
+    public double getDistance(LivingEntity livingEntity, LivingEntity livingEntity2) {
+        Location location = livingEntity.getLocation();
+        Location location2 = livingEntity2.getLocation();
+
+        return Math.sqrt((Math.pow(Math.abs(location2.getX() - location.getX()), 2)) + (Math.pow(Math.abs(location2.getZ() - location.getZ()), 2)));
+    }
+
+    public boolean isInAir(LivingEntity livingEntity) {
+        return !livingEntity.isOnGround() && livingEntity.getFallDistance() > 0.0f;
+    }
+
+    public boolean isCriticalHit(LivingEntity livingEntity) {
+        return isInAir(livingEntity)
+                && livingEntity.getVehicle() == null
+                && !livingEntity.hasPotionEffect(PotionEffectType.BLINDNESS)
+                && livingEntity.getLocation().getBlock().getType() != Material.LADDER
+                && livingEntity.getLocation().getBlock().getType() != Material.VINE
+                && livingEntity.getLocation().getBlock().getType() != Material.WATER
+                && livingEntity.getLocation().getBlock().getType() != Material.LAVA
+                && livingEntity.getLocation().getBlock().getType() != Material.WEEPING_VINES
+                && livingEntity.getLocation().getBlock().getType() != Material.TWISTING_VINES;
+    }
+
+    public boolean isNearWater(Location location, int blockRange) {
+        World world = location.getWorld();
+        int blockX = location.getBlockX();
+        int blockY = location.getBlockY();
+        int blockZ = location.getBlockZ();
+
+        for (int x = blockX - blockRange; x <= blockX + blockRange; x++) {
+            for (int y = blockY - blockRange; y <= blockY + blockRange; y++) {
+                for (int z = blockZ - blockRange; z <= blockZ + blockRange; z++) {
+                    if (new Location(world, x, y, z).getBlock().getType() != Material.WATER) { continue; }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /*
@@ -154,8 +200,10 @@ public abstract class enchantUtil implements Listener {
      * args[2] = enchant level - 1
      */
 
-    public boolean attemptEnchantExecution(Object[] args) {
-        if (args[1] == null || !mysticUtil.getInstance().hasEnchant((ItemStack) args[1], (enchantUtil) args[2])) { return false; }
+    public boolean attemptEnchantExecution(LivingEntity target, Object[] args) {
+        if (args[1] == null
+                || !mysticUtil.getInstance().hasEnchant((ItemStack) args[1], (enchantUtil) args[2])
+                || isInSpawn(target)) { return false; }
 
         args[2] = mysticUtil.getInstance().getEnchantLevel((ItemStack) args[1], (enchantUtil) args[2]) - 1;
         this.executeEnchant(args);

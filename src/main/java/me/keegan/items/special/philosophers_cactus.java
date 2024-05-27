@@ -26,6 +26,7 @@ import java.util.List;
 
 import static me.keegan.utils.formatUtil.*;
 import static me.keegan.utils.formatUtil.yellow;
+import static me.keegan.utils.itemStackUtil.isSimilar;
 
 public class philosophers_cactus extends itemUtil {
     private final ChatColor philosophersCactusChatColor = green;
@@ -57,6 +58,7 @@ public class philosophers_cactus extends itemUtil {
 
         propertiesUtil.setProperty(propertiesUtil.notBurnable, itemMeta);
         propertiesUtil.setProperty(propertiesUtil.notPlaceable, itemMeta);
+        propertiesUtil.setProperty(propertiesUtil.unavailableForAnvil, itemMeta);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -76,7 +78,7 @@ public class philosophers_cactus extends itemUtil {
         if ((e.getAction() != Action.RIGHT_CLICK_AIR
                 && e.getAction() != Action.RIGHT_CLICK_BLOCK)
                 || e.getItem() == null
-                || !e.getItem().isSimilar(cactus)) { return; }
+                || !isSimilar(e.getItem(), cactus)) { return; }
         Player player = e.getPlayer();
 
         // create inventory
@@ -100,7 +102,7 @@ public class philosophers_cactus extends itemUtil {
             List<String> lore = new ArrayList<>();
             lore.add(gray + "Consume the " + philosophersCactusDisplayName.split(" ")[0]);
             lore.add(philosophersCactusChatColor + philosophersCactusDisplayName.split(" ")[1] + gray + " to obtain fresh");
-            lore.add(gray + "fresh pants of this color.");
+            lore.add(gray + "pants of this color.");
             lore.add("");
             lore.add(yellow + "Click to pet the cactus!");
 
@@ -132,6 +134,17 @@ public class philosophers_cactus extends itemUtil {
                 || itemStack == null
                 || playerInventory.firstEmpty() == -1) { return; }
 
+        ItemStack mainHandItemStack = playerInventory.getItemInMainHand();
+        ItemStack offHandItemStack = playerInventory.getItemInOffHand();
+
+        if (isSimilar(mainHandItemStack, this.createItem())) {
+            mainHandItemStack.setAmount(mainHandItemStack.getAmount() - 1);
+        }else if (isSimilar(offHandItemStack, this.createItem())) {
+            offHandItemStack.setAmount(offHandItemStack.getAmount() - 1);
+        }else{
+            return;
+        }
+
         int index = startingIndex;
 
         for (int i = 0; i < mysticUtil.getInstance().defaultPantsChatColors.size(); i++) {
@@ -149,15 +162,6 @@ public class philosophers_cactus extends itemUtil {
 
             playerInventory.addItem(freshPants);
             break;
-        }
-
-        ItemStack mainHandItemStack = playerInventory.getItemInMainHand();
-        ItemStack offHandItemStack = playerInventory.getItemInOffHand();
-
-        if (mainHandItemStack.isSimilar(this.createItem())) {
-            mainHandItemStack.setAmount(mainHandItemStack.getAmount() - 1);
-        }else if (offHandItemStack.isSimilar(this.createItem())) {
-            offHandItemStack.setAmount(offHandItemStack.getAmount() - 1);
         }
 
         new BukkitRunnable() {

@@ -99,6 +99,6 @@ public class Billionaire extends enchantUtil {
                 this
         };
 
-        this.attemptEnchantExecution(args);
+        this.attemptEnchantExecution(damager, args);
     }
 }

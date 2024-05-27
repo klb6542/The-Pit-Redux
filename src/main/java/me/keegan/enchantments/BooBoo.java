@@ -102,7 +102,7 @@ public class BooBoo extends enchantUtil implements setupUtils {
                         true
                 };
 
-                boolean success = attemptEnchantExecution(args);
+                boolean success = attemptEnchantExecution(player, args);
 
                 if (success) {
                     thisBooBoo.heal(player, heartsToRegain * 2.0);
@@ -115,10 +115,9 @@ public class BooBoo extends enchantUtil implements setupUtils {
     }
 
     private void removeBooBoo(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (!boobooPantsEquipped.containsKey(uuid)) { return; }
+        if (!boobooPantsEquipped.containsKey(player.getUniqueId())) { return; }
 
-        boobooPantsEquipped.remove(uuid);
+        boobooPantsEquipped.remove(player.getUniqueId());
     }
 
     @EventHandler
@@ -144,7 +143,7 @@ public class BooBoo extends enchantUtil implements setupUtils {
                         thisBooBoo
                 };
 
-                boolean success = attemptEnchantExecution(args);
+                boolean success = attemptEnchantExecution(null, args);
                 if (success || !boobooPantsEquipped.containsKey(uuid)) { return; } // if enchant was successfully executed or pants are not equipped return
 
                 thisBooBoo.removeBooBoo(player);
@@ -157,12 +156,14 @@ public class BooBoo extends enchantUtil implements setupUtils {
     public void playerLeft(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
-
         this.removeBooBoo(player);
-        if (!runnables.containsKey(uuid)) { return; }
 
-        runnables.get(uuid).cancel();
-        runnables.remove(uuid);
+        if (runnables.containsKey(uuid)) {
+            runnables.get(uuid).cancel();
+            runnables.remove(uuid);
+        }
+
+        boobooInProgress.remove(uuid);
     }
 
     @Override
